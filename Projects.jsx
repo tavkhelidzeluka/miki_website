@@ -158,6 +158,13 @@ function CategoryStrip({ category, tweaks, openDetail }) {
         <div>
           <div className="cat-label-id">[ {category.id} ]</div>
           <div className="cat-label-cat" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.categoryLabel`}>{category.categoryLabel ? t(category.categoryLabel) : tCat(category.category, lang)}</div>
+          <button
+            type="button"
+            className="editor-add-tile"
+            data-editor-action="add-work"
+            data-editor-list-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.works`}
+            data-editor-asset-folder={`assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`}
+          >+ add work</button>
         </div>
       </div>
 

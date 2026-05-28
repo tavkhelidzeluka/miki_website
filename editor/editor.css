@@ -205,3 +205,24 @@ body.editor-mode-on [data-content-path][data-editor-dirty="true"]::before {
   font-size: 11px;
   opacity: 0.7;
 }
+
+/* Add-new affordance: hidden by default, shown in edit mode. */
+.editor-add-tile {
+  display: none;
+}
+body.editor-mode-on .editor-add-tile {
+  display: inline-block;
+  margin-top: 8px;
+  background: transparent;
+  color: inherit;
+  border: 1.5px dashed currentColor;
+  padding: 6px 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.65;
+  transition: opacity 0.15s;
+}
+body.editor-mode-on .editor-add-tile:hover {
+  opacity: 1;
+}

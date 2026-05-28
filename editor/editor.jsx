@@ -9,12 +9,117 @@ window.__editor = window.__editor || {};
   const { Popover } = window.__editor;
   const github = window.__editor.github;
 
+  // Modal for adding a new work (or any work-shaped item: name + desc + image
+  // + optional price). When image is provided, the editor uploads it next
+  // to the new content.json write in a single commit.
+  function AddWorkModal({ assetFolder, onSave, onCancel }) {
+    const [name, setName] = React.useState('');
+    const [desc, setDesc] = React.useState('');
+    const [price, setPrice] = React.useState('');
+    const [file, setFile] = React.useState(null);
+    const [filename, setFilename] = React.useState('');
+    const [previewUrl, setPreviewUrl] = React.useState(null);
+    const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+      if (!file) { setPreviewUrl(null); return; }
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }, [file]);
+
+    React.useEffect(() => {
+      const onKey = (e) => { if (e.key === 'Escape') onCancel(); };
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    }, [onCancel]);
+
+    const slugify = (s) => (s || 'work')
+      .toString().toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+
+    const onPick = (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      if (f.size > 5 * 1024 * 1024) {
+        setError(`File too large (${Math.round(f.size/1024/1024)}MB). Max 5MB.`);
+        return;
+      }
+      if (!/^image\//.test(f.type)) {
+        setError(`Not an image: ${f.type || '(unknown)'}`);
+        return;
+      }
+      setError(null);
+      setFile(f);
+      const ext = (f.name.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
+      setFilename(`${slugify(name)}${ext}`);
+    };
+
+    React.useEffect(() => {
+      // If user changes name AFTER picking a file, refresh suggested filename
+      // unless they've already manually edited it.
+      if (file && filename && filename.startsWith(slugify(filename.split('.')[0]))) {
+        const ext = (filename.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
+        setFilename(`${slugify(name)}${ext}`);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [name]);
+
+    const onSubmit = () => {
+      const trimmedName = name.trim();
+      if (!trimmedName) { setError('Name is required.'); return; }
+      const item = {
+        name: trimmedName,
+        desc: desc.trim(),
+        thumb: null,
+        price: price.trim() || null,
+      };
+      let imagePath = null;
+      if (file) {
+        const cleanName = (filename || `${slugify(trimmedName)}.png`).replace(/[^a-zA-Z0-9._-]+/g, '-');
+        imagePath = `${assetFolder}/${cleanName}`;
+        item.thumb = imagePath;
+      }
+      onSave(item, file, imagePath);
+    };
+
+    return (
+      <div className="editor-modal-scrim" onMouseDown={onCancel}>
+        <div className="editor-modal" onMouseDown={(e) => e.stopPropagation()}>
+          <div className="editor-popover-label">add new work</div>
+          <div className="editor-popover-label">name</div>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+          <div className="editor-popover-label">description (optional)</div>
+          <textarea value={desc} onChange={(e) => setDesc(e.target.value)} style={{ minHeight: 60, resize: 'vertical' }} />
+          <div className="editor-popover-label">price (optional, any format)</div>
+          <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder='e.g. "200 €" or "ціна на запит"' />
+          <div className="editor-popover-label">image (optional)</div>
+          <input type="file" accept="image/*" onChange={onPick} />
+          {previewUrl && <img src={previewUrl} alt="preview" className="preview" />}
+          {file && (
+            <React.Fragment>
+              <div className="editor-popover-label">filename</div>
+              <input type="text" value={filename} onChange={(e) => setFilename(e.target.value)} />
+              <div className="editor-modal-meta">will save as: <code>{assetFolder}/{filename}</code></div>
+            </React.Fragment>
+          )}
+          {error && <div className="editor-modal-error">{error}</div>}
+          <div className="editor-popover-actions">
+            <button data-variant="cancel" onClick={onCancel}>cancel</button>
+            <button onClick={onSubmit}>queue add</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function EditorRoot() {
     const [editMode, setEditMode] = React.useState(false);
     // pending: Map<path, { type: 'text', value }>
     const [pending, setPending] = React.useState(new Map());
     const [popover, setPopover] = React.useState(null); // { anchor, path, initialValue }
     const [imageModal, setImageModal] = React.useState(null); // { path, existing, folder, slugBasis }
+    const [addModal, setAddModal] = React.useState(null); // { kind, listPath, assetFolder }
     const [saving, setSaving] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [toast, setToast] = React.useState(null);
@@ -30,10 +135,18 @@ window.__editor = window.__editor || {};
       if (!editMode) return;
       const handle = (e) => {
         let el = e.target;
-        while (el && !el.dataset?.contentPath) el = el.parentElement;
+        while (el && !el.dataset?.contentPath && !el.dataset?.editorAction) el = el.parentElement;
         if (!el) return;
         e.preventDefault();
         e.stopPropagation();
+        if (el.dataset.editorAction === 'add-work') {
+          setAddModal({
+            kind: 'work',
+            listPath: el.dataset.editorListPath,
+            assetFolder: el.dataset.editorAssetFolder,
+          });
+          return;
+        }
         const path = el.dataset.contentPath;
         if (el.dataset.editorKind === 'image') {
           const folder = el.dataset.assetFolder;
@@ -101,6 +214,18 @@ window.__editor = window.__editor || {};
       });
     }, []);
 
+    // Queue an "add to list" change. We key by an opaque add token so multiple
+    // adds to the same list don't collide.
+    const addCounter = React.useRef(0);
+    const applyAddChange = React.useCallback((listPath, item, file, imagePath) => {
+      const key = `__add:${listPath}:${addCounter.current++}`;
+      setPending((prev) => {
+        const next = new Map(prev);
+        next.set(key, { type: 'add', listPath, item, file, imagePath });
+        return next;
+      });
+    }, []);
+
     const discardAll = React.useCallback(() => {
       if (
         pending.size === 0 ||
@@ -117,22 +242,31 @@ window.__editor = window.__editor || {};
       try {
         let nextContent = window.CONTENT;
         const images = [];
-        const textCount = { n: 0 };
-        const imgCount = { n: 0 };
+        const counts = { text: 0, img: 0, add: 0 };
         const lines = [];
-        for (const [path, change] of pending.entries()) {
-          nextContent = setByPath(nextContent, path, change.value);
-          if (change.type === 'image') {
+        for (const [key, change] of pending.entries()) {
+          if (change.type === 'add') {
+            const existing = window.__editor.getByPath(nextContent, change.listPath) || [];
+            const newList = [...existing, change.item];
+            nextContent = setByPath(nextContent, change.listPath, newList);
+            if (change.file && change.imagePath) {
+              images.push({ path: change.imagePath, file: change.file });
+            }
+            counts.add++;
+            lines.push(`- ADD ${change.listPath} ← ${JSON.stringify(change.item.name || change.item.title || '<new>')}`);
+          } else if (change.type === 'image') {
+            nextContent = setByPath(nextContent, key, change.value);
             images.push({ path: change.value, file: change.file });
-            imgCount.n++;
-            lines.push(`- ${path} (uploaded ${change.value})`);
+            counts.img++;
+            lines.push(`- ${key} (uploaded ${change.value})`);
           } else {
-            textCount.n++;
-            lines.push(`- ${path}`);
+            nextContent = setByPath(nextContent, key, change.value);
+            counts.text++;
+            lines.push(`- ${key}`);
           }
         }
         const summary =
-          `edit(inline): ${textCount.n} text change(s), ${imgCount.n} image upload(s)`;
+          `edit(inline): ${counts.text} text, ${counts.img} image, ${counts.add} added`;
         const message = summary + '\n\n' + lines.join('\n');
         await github.saveAtomic(
           { contentJson: nextContent, images },
@@ -221,6 +355,17 @@ window.__editor = window.__editor || {};
               setImageModal(null);
             }}
             onCancel={() => setImageModal(null)}
+          />
+        )}
+
+        {addModal && addModal.kind === 'work' && (
+          <AddWorkModal
+            assetFolder={addModal.assetFolder}
+            onSave={(item, file, imagePath) => {
+              applyAddChange(addModal.listPath, item, file, imagePath);
+              setAddModal(null);
+            }}
+            onCancel={() => setAddModal(null)}
           />
         )}
 
