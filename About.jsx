@@ -45,13 +45,29 @@ function About({ tweaks }) {
         <div className="about-col-head"><b>[ 01 ]</b> <span data-content-path="ui.aboutPage.experienceHeader">{t(window.CONTENT.ui.aboutPage.experienceHeader)}</span></div>
         <hr className="hairline" />
         {a.experience.map((e, i) => (
-          <div className="exp-item" key={i}>
+          <div className="exp-item" key={i} style={{ position: 'relative' }}>
+            <button
+              type="button"
+              className="editor-delete-action editor-delete-action--corner"
+              data-editor-action="delete-item"
+              data-editor-list-path="about.experience"
+              data-editor-list-index={i}
+              data-editor-item-label={(e.title && e.title.en) || `experience ${i + 1}`}
+            >×</button>
             <div className="exp-title" data-content-path={`about.experience.${i}.title`}>{t(e.title)}</div>
             <div className="exp-role" data-content-path={`about.experience.${i}.role`}>{t(e.role)}</div>
             {e.subRole && <div className="exp-role" data-content-path={`about.experience.${i}.subRole`}>{t(e.subRole)}</div>}
             <div className="exp-date" data-content-path={`about.experience.${i}.date`}>{t(e.date)}</div>
           </div>
         ))}
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new experience"
+          data-editor-add-schema="experience"
+          data-editor-list-path="about.experience"
+        >+ add experience</button>
       </div>
 
       <div className="about-projects">
@@ -59,17 +75,53 @@ function About({ tweaks }) {
         <hr className="hairline" />
         <div className="projects-grid">
           {a.exhibitions.map((x, i) => (
-            <span key={i} data-content-path={`about.exhibitions.${i}.label`}>{t(x.label)}</span>
+            <div key={i} style={{ position: 'relative' }}>
+              <button
+                type="button"
+                className="editor-delete-action editor-delete-action--corner"
+                data-editor-action="delete-item"
+                data-editor-list-path="about.exhibitions"
+                data-editor-list-index={i}
+                data-editor-item-label={(x.label && x.label.en) || `exhibition ${i + 1}`}
+              >×</button>
+              <span data-content-path={`about.exhibitions.${i}.label`}>{t(x.label)}</span>
+            </div>
           ))}
         </div>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new exhibition"
+          data-editor-add-schema="exhibition"
+          data-editor-list-path="about.exhibitions"
+        >+ add exhibition</button>
       </div>
 
       <div className="about-col about-col--skills">
         <div className="about-col-head"><b>[ 03 ]</b> <span data-content-path="ui.aboutPage.skillsHeader">{t(window.CONTENT.ui.aboutPage.skillsHeader)}</span></div>
         <hr className="hairline" />
         {a.skills.map((s, i) => (
-          <div className="skill" key={i} data-content-path={`about.skills.${i}.label`}>{t(s.label)}</div>
+          <div className="skill" key={i} style={{ position: 'relative' }}>
+            <button
+              type="button"
+              className="editor-delete-action editor-delete-action--corner"
+              data-editor-action="delete-item"
+              data-editor-list-path="about.skills"
+              data-editor-list-index={i}
+              data-editor-item-label={(s.label && s.label.en) || `skill ${i + 1}`}
+            >×</button>
+            <span data-content-path={`about.skills.${i}.label`}>{t(s.label)}</span>
+          </div>
         ))}
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new skill"
+          data-editor-add-schema="skill"
+          data-editor-list-path="about.skills"
+        >+ add skill</button>
       </div>
     </div>
   );
