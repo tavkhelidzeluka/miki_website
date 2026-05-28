@@ -7,13 +7,47 @@
 
 // Builds the flat WORK strip from posts + carousel covers/slides.
 function buildWorkItems(posts, carousels) {
-  const out = [...posts];
-  for (const c of carousels) {
-    out.push({ src: c.cover, brand: c.brand, set: c.id, role: "cover" });
-    c.slides.forEach((s, i) => {
-      out.push({ src: s, brand: c.brand, set: c.id, role: "slide", n: i + 2 });
+  // Each item carries per-item edit metadata so the strip can offer edit +
+  // delete affordances even though items come from three different paths
+  // in content.json:
+  //   _editPath  → image src path in content.json (for image-edit popover)
+  //   _listPath  → path to the array this item lives in (for delete)
+  //   _listIdx   → index inside that list (for delete)
+  //   _label     → friendly name for the delete confirm dialog
+  // Carousel covers get _editPath only (no _listPath) because deleting a
+  // cover means deleting the whole carousel — out of scope for inline delete.
+  const out = [];
+  posts.forEach((p, i) => {
+    out.push({
+      ...p,
+      _editPath: `social.posts.${i}.src`,
+      _listPath: 'social.posts',
+      _listIdx: i,
+      _label: p.brand || `post ${i + 1}`,
     });
-  }
+  });
+  carousels.forEach((c, ci) => {
+    out.push({
+      src: c.cover,
+      brand: c.brand,
+      set: c.id,
+      role: 'cover',
+      _editPath: `social.carousels.${ci}.cover`,
+    });
+    c.slides.forEach((s, si) => {
+      out.push({
+        src: s,
+        brand: c.brand,
+        set: c.id,
+        role: 'slide',
+        n: si + 2,
+        _editPath: `social.carousels.${ci}.slides.${si}`,
+        _listPath: `social.carousels.${ci}.slides`,
+        _listIdx: si,
+        _label: `${c.brand} slide ${si + 1}`,
+      });
+    });
+  });
   return out;
 }
 
@@ -51,12 +85,13 @@ function SocialHero({ lang }) {
 }
 
 // ─── Section header ─────────────────────────────────────────────────
-function SectionHead({ idx, label, count }) {
+function SectionHead({ idx, label, count, current }) {
+  const pad = (n) => String(n).padStart(2, "0");
   return (
     <header className="sm2-head">
-      <span className="sm2-head-id">[ {String(idx).padStart(2, "0")} ]</span>
+      <span className="sm2-head-id">[ {pad(idx)} ]</span>
       <h2 className="sm2-head-label">{label}</h2>
-      <span className="sm2-head-count">/ {count}</span>
+      <span className="sm2-head-count">{current !== undefined ? `${pad(current + 1)} / ${pad(count)}` : `/ ${count}`}</span>
     </header>
   );
 }
@@ -116,7 +151,7 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
 
   return (
     <section className={"sm2-section sm2-section--gal sm2-section--" + variant}>
-      <SectionHead idx={sectionIdx} label={sectionLabel} count={N} />
+      <SectionHead idx={sectionIdx} label={sectionLabel} count={N} current={i} />
 
       <div className={"sm2-gal sm2-gal--" + variant}>
         <button className="sm2-gal-arrow sm2-gal-arrow--prev" onClick={prev} aria-label="prev">←</button>
@@ -127,9 +162,15 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
             const slot = off < 0 ? "n" + (-off) : "" + off;
             const active = off === 0;
             const tileIdx = ((i + off) % N + N) % N;
-            const tileProps = pathBase
+            // Prefer per-item metadata (work strip), fall back to pathBase
+            // (stories / ads).
+            const editPath = item._editPath || (pathBase ? `${pathBase}.${tileIdx}.src` : null);
+            const listPath = item._listPath || pathBase;
+            const listIdx = item._listIdx !== undefined ? item._listIdx : tileIdx;
+            const deleteLabel = item._label || item.brand || `item ${tileIdx + 1}`;
+            const tileProps = editPath
               ? {
-                  'data-content-path': `${pathBase}.${tileIdx}.src`,
+                  'data-content-path': editPath,
                   'data-editor-kind': 'image',
                   'data-asset-folder': assetFolder || 'assets/images/social',
                   'data-content-name': item.brand,
@@ -147,14 +188,14 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                 style={{ aspectRatio: aspect || item.aspect || "4 / 5" }}
                 {...tileProps}
               >
-                <div className="sm2-gal-img" style={smBg(item.src, pathBase ? `${pathBase}.${tileIdx}.src` : null)} />
-                {pathBase && (
+                <div className="sm2-gal-img" style={smBg(item.src, editPath)} />
+                {listPath && (
                   <span
                     className="editor-delete-action editor-delete-action--corner"
                     data-editor-action="delete-item"
-                    data-editor-list-path={pathBase}
-                    data-editor-list-index={tileIdx}
-                    data-editor-item-label={item.brand || `item ${tileIdx + 1}`}
+                    data-editor-list-path={listPath}
+                    data-editor-list-index={listIdx}
+                    data-editor-item-label={deleteLabel}
                   >×</span>
                 )}
               </button>
