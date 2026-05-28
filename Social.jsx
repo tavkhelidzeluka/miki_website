@@ -104,7 +104,7 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, lang, aspect, kindLa
   );
 }
 
-function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel, variant }) {
+function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel, variant, pathBase, assetFolder }) {
   const N = items.length;
   const [i, setI] = React.useState(0);
   const [zoom, setZoom] = React.useState(false);
@@ -127,6 +127,15 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
             const item = at(off);
             const slot = off < 0 ? "n" + (-off) : "" + off;
             const active = off === 0;
+            const tileIdx = ((i + off) % N + N) % N;
+            const tileProps = pathBase
+              ? {
+                  'data-content-path': `${pathBase}.${tileIdx}.src`,
+                  'data-editor-kind': 'image',
+                  'data-asset-folder': assetFolder || 'assets/images/social',
+                  'data-content-name': item.brand,
+                }
+              : {};
             return (
               <button
                 key={"g-" + i + "-" + off}
@@ -137,6 +146,7 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                 }}
                 aria-label={item.brand}
                 style={{ aspectRatio: aspect || item.aspect || "4 / 5" }}
+                {...tileProps}
               >
                 <div className="sm2-gal-img" style={smBg(item.src)} />
               </button>
@@ -206,6 +216,8 @@ function StoriesSection({ lang }) {
       sectionIdx={2}
       sectionLabel={lang === "UA" ? "СТОРІС" : "STORIES"}
       variant="stories"
+      pathBase="social.stories"
+      assetFolder="assets/images/social"
     />
   );
 }
@@ -221,6 +233,8 @@ function AdsSection({ lang }) {
       sectionIdx={3}
       sectionLabel={lang === "UA" ? "РЕКЛАМА" : "ADS"}
       variant="ads"
+      pathBase="social.ads"
+      assetFolder="assets/images/social"
     />
   );
 }
