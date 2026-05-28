@@ -418,7 +418,7 @@
       "year": "2024 — 2025",
       "category": "ANIMATION",
       "prose": "A long-arc creature animation gig. I keyframed by hand on twos, working from rough director's storyboards and finishing into clean line. The crystal scenes — fragmented, refractive — were the most challenging. We treated each facet as its own animation rig.",
-      "coverImage": null,
+      "coverImage": "assets/images/projects/covers/animation-cover.png",
       "categoryLabel": {
         "en": "ANIMATION",
         "ua": "АНІМАЦІЯ"
@@ -652,7 +652,7 @@
       "year": "2024",
       "category": "BOOKS",
       "prose": "Three projects in this folder. The Exposure zine started as a poster series; the publishers asked to turn it into a perfect-bound 24-page book. Hand-bound the first run myself.",
-      "coverImage": null,
+      "coverImage": "assets/images/projects/covers/books-cover.png",
       "categoryLabel": {
         "en": "BOOKS",
         "ua": "КНИГИ"
