@@ -226,3 +226,58 @@ body.editor-mode-on .editor-add-tile {
 body.editor-mode-on .editor-add-tile:hover {
   opacity: 1;
 }
+
+/* Delete affordances: visible only in edit mode. */
+.editor-delete-action {
+  display: none;
+}
+body.editor-mode-on .editor-delete-action {
+  display: inline-block;
+  background: transparent;
+  color: #c00;
+  border: 1.5px dashed #c00;
+  padding: 6px 10px;
+  margin-top: 6px;
+  margin-left: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+body.editor-mode-on .editor-delete-action:hover {
+  opacity: 1;
+  background: rgba(204, 0, 0, 0.08);
+}
+
+/* Per-item × badge (top-right corner of a list item). */
+.editor-delete-action--corner { display: none; }
+body.editor-mode-on .editor-delete-action--corner {
+  display: block;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 10;
+  background: rgba(204, 0, 0, 0.85);
+  color: #fff;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+body.editor-mode-on .editor-delete-action--corner:hover {
+  background: #c00;
+}
+
+/* Make article tiles a positioned parent in edit mode so absolutely-positioned
+   delete badges anchor correctly. */
+body.editor-mode-on .prod {
+  position: relative;
+}

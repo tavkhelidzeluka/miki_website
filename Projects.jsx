@@ -226,6 +226,14 @@ function CategoryStrip({ category, tweaks, openDetail }) {
                 style={{ marginTop: 6, fontWeight: 600, opacity: 0.9 }}
               >{cur.price}</div>
             )}
+            <button
+              type="button"
+              className="editor-delete-action"
+              data-editor-action="delete-item"
+              data-editor-list-path={`projects.${catIdx}.works`}
+              data-editor-list-index={i}
+              data-editor-item-label={cur.name}
+            >× delete this work</button>
           </div>
         );
       })()}

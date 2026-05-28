@@ -139,6 +139,15 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
               <article key={it.id} className="prod" data-content-name={it.title}>
                 <button
                   type="button"
+                  className="editor-delete-action editor-delete-action--corner"
+                  data-editor-action="delete-item"
+                  data-editor-list-path="canvas.items"
+                  data-editor-list-index={idx}
+                  data-editor-item-label={it.title}
+                  aria-label={`delete ${it.title}`}
+                >×</button>
+                <button
+                  type="button"
                   className={tilePrefix + (it.img ? " prod-img--photo prod-img--zoomable" : "")}
                   style={it.img ? { backgroundImage: `url("${it.img}")`, ...window.imgDisplay(`canvas.items.${idx}.img`) } : undefined}
                   onClick={() => it.img && setZoom(it)}

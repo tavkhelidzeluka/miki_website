@@ -147,6 +147,16 @@ window.__editor = window.__editor || {};
           });
           return;
         }
+        if (el.dataset.editorAction === 'delete-item') {
+          const listPath = el.dataset.editorListPath;
+          const index = parseInt(el.dataset.editorListIndex, 10);
+          const label = el.dataset.editorItemLabel || `item ${index}`;
+          if (Number.isNaN(index)) return;
+          if (confirm(`Delete "${label}"? This will be committed when you click Save.`)) {
+            applyDeleteChange(listPath, index, label);
+          }
+          return;
+        }
         const path = el.dataset.contentPath;
         if (el.dataset.editorKind === 'image') {
           const folder = el.dataset.assetFolder;
@@ -232,6 +242,19 @@ window.__editor = window.__editor || {};
       });
     }, []);
 
+    // Queue a "delete from list" change. Indices are recorded as-of click time;
+    // saveAll groups and sorts them descending per list so splices don't shift
+    // higher indices.
+    const delCounter = React.useRef(0);
+    const applyDeleteChange = React.useCallback((listPath, index, label) => {
+      const key = `__del:${listPath}:${index}:${delCounter.current++}`;
+      setPending((prev) => {
+        const next = new Map(prev);
+        next.set(key, { type: 'delete', listPath, index, label });
+        return next;
+      });
+    }, []);
+
     const discardAll = React.useCallback(() => {
       if (
         pending.size === 0 ||
@@ -248,9 +271,31 @@ window.__editor = window.__editor || {};
       try {
         let nextContent = window.CONTENT;
         const images = [];
-        const counts = { text: 0, img: 0, add: 0 };
+        const counts = { text: 0, img: 0, add: 0, del: 0 };
         const lines = [];
+
+        // Apply deletes first, grouped per list and sorted descending so
+        // splices don't shift indices we still need to reference.
+        const deleteGroups = {};
+        for (const [, change] of pending.entries()) {
+          if (change.type !== 'delete') continue;
+          (deleteGroups[change.listPath] = deleteGroups[change.listPath] || []).push(change);
+        }
+        for (const [listPath, group] of Object.entries(deleteGroups)) {
+          const list = [...(window.__editor.getByPath(nextContent, listPath) || [])];
+          // Dedupe by index, sort descending.
+          const indices = [...new Set(group.map((g) => g.index))].sort((a, b) => b - a);
+          for (const idx of indices) {
+            list.splice(idx, 1);
+          }
+          nextContent = setByPath(nextContent, listPath, list);
+          counts.del += indices.length;
+          const labels = group.map((g) => g.label).join(', ');
+          lines.push(`- DELETE ${listPath}[${indices.join(',')}] (${labels})`);
+        }
+
         for (const [key, change] of pending.entries()) {
+          if (change.type === 'delete') continue; // already handled
           if (change.type === 'add') {
             const existing = window.__editor.getByPath(nextContent, change.listPath) || [];
             const newList = [...existing, change.item];
@@ -288,7 +333,7 @@ window.__editor = window.__editor || {};
           }
         }
         const summary =
-          `edit(inline): ${counts.text} text, ${counts.img} image, ${counts.add} added`;
+          `edit(inline): ${counts.text} text, ${counts.img} image, ${counts.add} added, ${counts.del} deleted`;
         const message = summary + '\n\n' + lines.join('\n');
         await github.saveAtomic(
           { contentJson: nextContent, images },
