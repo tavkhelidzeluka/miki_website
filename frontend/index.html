@@ -4038,6 +4038,24 @@ window.__CV = {
 <!-- App.jsx -->
 <script type="text/babel" src="App.jsx"></script>
 
+<!-- Pre-mount content fetch — exposes window.CONTENT and window.__contentReady -->
+<script>
+  window.__contentReady = (async function () {
+    try {
+      const res = await fetch('content/content.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('content fetch failed: ' + res.status);
+      window.CONTENT = await res.json();
+    } catch (err) {
+      const root = document.getElementById('root');
+      const pre = document.createElement('pre');
+      pre.style.cssText = 'padding:24px;font-family:monospace;color:#c00';
+      pre.textContent = 'Failed to load content/content.json — ' + String(err);
+      root.replaceChildren(pre);
+      throw err;
+    }
+  })();
+</script>
+
 <script type="text/babel">
   function Scaled() {
     const [scale, setScale] = React.useState(1);
@@ -4061,7 +4079,9 @@ window.__CV = {
       </div>
     );
   }
-  ReactDOM.createRoot(document.getElementById("root")).render(<Scaled />);
+  window.__contentReady.then(() => {
+    ReactDOM.createRoot(document.getElementById("root")).render(<Scaled />);
+  });
 </script>
 </body>
 </html>
