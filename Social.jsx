@@ -19,12 +19,10 @@ function buildWorkItems(posts, carousels) {
 
 // ─── Helpers ────────────────────────────────────────────────────────
 
-const smBg = (url) => url ? {
+const smBg = (url, path) => url ? {
   backgroundImage: `url("${url}")`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
   backgroundColor: "var(--paper)",
+  ...window.imgDisplay(path),
 } : undefined;
 
 // ─── Hero ───────────────────────────────────────────────────────────
@@ -149,7 +147,7 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                 style={{ aspectRatio: aspect || item.aspect || "4 / 5" }}
                 {...tileProps}
               >
-                <div className="sm2-gal-img" style={smBg(item.src)} />
+                <div className="sm2-gal-img" style={smBg(item.src, pathBase ? `${pathBase}.${tileIdx}.src` : null)} />
               </button>
             );
           })}

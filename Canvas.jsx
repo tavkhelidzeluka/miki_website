@@ -140,7 +140,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                 <button
                   type="button"
                   className={tilePrefix + (it.img ? " prod-img--photo prod-img--zoomable" : "")}
-                  style={it.img ? { backgroundImage: `url("${it.img}")` } : undefined}
+                  style={it.img ? { backgroundImage: `url("${it.img}")`, ...window.imgDisplay(`canvas.items.${idx}.img`) } : undefined}
                   onClick={() => it.img && setZoom(it)}
                   aria-label={it.img ? t(window.CONTENT.ui.canvasPage.zoomImage) : undefined}
                   data-content-path={`canvas.items.${idx}.img`}

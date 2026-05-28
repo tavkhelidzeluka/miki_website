@@ -87,7 +87,7 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
           >
             <div
               className={tileBg + (p.category === "ANIMATION" ? " proj-tile--cover proj-tile--anim" : p.category === "CANVAS" ? " proj-tile--cover proj-tile--canvas" : p.category === "ILLUSTRATION" ? " proj-tile--cover proj-tile--illustration" : p.category === "POSTERS" ? " proj-tile--cover proj-tile--posters" : p.category === "PHOTOS" ? " proj-tile--cover proj-tile--photos" : p.category === "SOCIAL MEDIA" ? " proj-tile--cover proj-tile--social" : "")}
-              style={p.coverImage ? { backgroundImage: `url("${p.coverImage}")` } : undefined}
+              style={p.coverImage ? { backgroundImage: `url("${p.coverImage}")`, ...window.imgDisplay(`projects.${idx}.coverImage`) } : undefined}
               data-content-path={`projects.${idx}.coverImage`}
               data-editor-kind="image"
               data-asset-folder="assets/images/projects/covers"
@@ -179,8 +179,9 @@ function CategoryStrip({ category, tweaks, openDetail }) {
             + (hasImg ? " cat-thumb--img" : "")
             + (isActive ? " cat-thumb--active" : "")
             + (isActive && pulse ? " cat-thumb--pulse" : "");
-          const style = hasImg ? { backgroundImage: `url("${w.thumb}")` } : undefined;
           const catIdx = (window.CONTENT.projects || []).findIndex(p => p.id === category.id);
+          const thumbPath = `projects.${catIdx}.works.${idx}.thumb`;
+          const style = hasImg ? { backgroundImage: `url("${w.thumb}")`, ...window.imgDisplay(thumbPath) } : undefined;
           const assetFolder = `assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`;
           return (
             <div
@@ -251,7 +252,10 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
     : tweaks.tileStyle === "checker"
       ? baseImgClass + " proj-tile--checker"
       : baseImgClass;
-  const imgStyle = hasImg ? { backgroundImage: `url("${project.thumb}")` } : undefined;
+  const detailThumbPath = project.workIndex !== undefined
+    ? `projects.${(window.CONTENT.projects || []).findIndex(p => p.id === project.id)}.works.${project.workIndex}.thumb`
+    : null;
+  const imgStyle = hasImg ? { backgroundImage: `url("${project.thumb}")`, ...(detailThumbPath ? window.imgDisplay(detailThumbPath) : {}) } : undefined;
 
   return (
     <div className="detail-scrim">

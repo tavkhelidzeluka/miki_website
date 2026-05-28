@@ -1,16 +1,16 @@
-// Image upload modal. Shows file picker + preview + filename field.
+// Image modal: file picker + preview + filename + display settings
+// (background-size / position / repeat). File is OPTIONAL — the artist may
+// just want to adjust display settings without re-uploading.
 
 window.__editor = window.__editor || {};
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
 function deriveDefaultFilename(existingPath, suggestedSlug, file) {
-  // If we have an existing path, default to overwriting it (same filename).
   if (existingPath) {
     const idx = existingPath.lastIndexOf('/');
     return existingPath.slice(idx + 1);
   }
-  // Otherwise: slug + original-file-extension.
   const ext = (file.name.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
   const slug = (suggestedSlug || 'image')
     .toString()
@@ -22,26 +22,36 @@ function deriveDefaultFilename(existingPath, suggestedSlug, file) {
 }
 
 window.__editor.ImageModal = function ImageModal(props) {
-  const { existingPath, assetFolder, suggestedSlug, onSave, onCancel } = props;
+  const { existingPath, assetFolder, suggestedSlug, contentPath, onSave, onCancel } = props;
   const [file, setFile] = React.useState(null);
   const [filename, setFilename] = React.useState('');
   const [error, setError] = React.useState(null);
   const [previewUrl, setPreviewUrl] = React.useState(null);
 
+  // Display settings — initialise from current stored values.
+  const stored = (window.CONTENT && window.CONTENT.imageDisplay && contentPath
+    ? window.CONTENT.imageDisplay[contentPath]
+    : null) || {};
+  const D = window.imgDisplay.DEFAULTS;
+  const [fit, setFit] = React.useState(stored.fit || D.fit);
+  const [position, setPosition] = React.useState(stored.position || D.position);
+  const [customPosition, setCustomPosition] = React.useState(
+    window.imgDisplay.POSITIONS.includes(stored.position || D.position) ? '' : (stored.position || '')
+  );
+  const [usingCustomPos, setUsingCustomPos] = React.useState(
+    !!(stored.position && !window.imgDisplay.POSITIONS.includes(stored.position))
+  );
+  const [repeat, setRepeat] = React.useState(stored.repeat || D.repeat);
+
   React.useEffect(() => {
-    if (!file) {
-      setPreviewUrl(null);
-      return;
-    }
+    if (!file) { setPreviewUrl(null); return; }
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
   React.useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') onCancel();
-    };
+    const onKey = (e) => { if (e.key === 'Escape') onCancel(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onCancel]);
@@ -64,28 +74,79 @@ window.__editor.ImageModal = function ImageModal(props) {
     setFilename(deriveDefaultFilename(existingPath, suggestedSlug, f));
   };
 
+  // Build a delta of display settings vs DEFAULTS. We only persist non-default
+  // values to keep content.json clean.
+  const buildDisplayDelta = () => {
+    const effectivePos = usingCustomPos ? (customPosition.trim() || D.position) : position;
+    const delta = {};
+    if (fit !== D.fit) delta.fit = fit;
+    if (effectivePos !== D.position) delta.position = effectivePos;
+    if (repeat !== D.repeat) delta.repeat = repeat;
+    return delta;
+  };
+
   const onSubmit = () => {
-    if (!file) {
-      setError('Pick a file first.');
+    const displayDelta = buildDisplayDelta();
+    const displayChanged = JSON.stringify(displayDelta) !== JSON.stringify(stored || {});
+
+    if (!file && !displayChanged) {
+      setError('Pick a file or change a display setting to save.');
       return;
     }
-    const cleanName = filename.replace(/[^a-zA-Z0-9._-]+/g, '-');
-    const fullPath = `${assetFolder}/${cleanName}`;
-    onSave({ file, path: fullPath });
+
+    let fileResult = null;
+    if (file) {
+      const cleanName = filename.replace(/[^a-zA-Z0-9._-]+/g, '-');
+      const fullPath = `${assetFolder}/${cleanName}`;
+      fileResult = { file, path: fullPath };
+    }
+
+    onSave({
+      file: fileResult,
+      display: displayChanged ? displayDelta : null,
+    });
   };
+
+  // Live preview of background-size on the preview image.
+  const previewStyle = previewUrl
+    ? {
+        backgroundImage: `url("${previewUrl}")`,
+        backgroundSize: fit,
+        backgroundPosition: usingCustomPos ? (customPosition || position) : position,
+        backgroundRepeat: repeat,
+        backgroundColor: '#f0f0f0',
+        height: 200,
+        border: '1px solid #ddd',
+        margin: '8px 0',
+      }
+    : null;
+
+  // Live preview using EXISTING image when no new file picked.
+  const existingPreviewStyle = !previewUrl && existingPath
+    ? {
+        backgroundImage: `url("${existingPath}")`,
+        backgroundSize: fit,
+        backgroundPosition: usingCustomPos ? (customPosition || position) : position,
+        backgroundRepeat: repeat,
+        backgroundColor: '#f0f0f0',
+        height: 200,
+        border: '1px solid #ddd',
+        margin: '8px 0',
+      }
+    : null;
 
   return (
     <div className="editor-modal-scrim" onMouseDown={onCancel}>
-      <div className="editor-modal" onMouseDown={(e) => e.stopPropagation()}>
-        <div className="editor-popover-label">replace image</div>
+      <div className="editor-modal" onMouseDown={(e) => e.stopPropagation()} style={{ minWidth: 420 }}>
+        <div className="editor-popover-label">image</div>
         {existingPath && (
           <div className="editor-modal-meta">
-            currently: <code>{existingPath}</code>
+            current: <code>{existingPath}</code>
           </div>
         )}
         <input type="file" accept="image/*" onChange={onPick} />
-        {previewUrl && (
-          <img src={previewUrl} alt="preview" className="preview" />
+        {(previewStyle || existingPreviewStyle) && (
+          <div style={previewStyle || existingPreviewStyle} />
         )}
         {file && (
           <React.Fragment>
@@ -100,10 +161,58 @@ window.__editor.ImageModal = function ImageModal(props) {
             </div>
           </React.Fragment>
         )}
+
+        <div className="editor-popover-label" style={{ marginTop: 12 }}>display</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: 6, alignItems: 'center' }}>
+          <label>fit</label>
+          <select value={fit} onChange={(e) => setFit(e.target.value)}>
+            {window.imgDisplay.FITS.map((f) => (
+              <option key={f} value={f}>{f}</option>
+            ))}
+          </select>
+
+          <label>position</label>
+          <div style={{ display: 'flex', gap: 4 }}>
+            <select
+              value={usingCustomPos ? '__custom' : position}
+              onChange={(e) => {
+                if (e.target.value === '__custom') {
+                  setUsingCustomPos(true);
+                } else {
+                  setUsingCustomPos(false);
+                  setPosition(e.target.value);
+                }
+              }}
+              style={{ flex: 1 }}
+            >
+              {window.imgDisplay.POSITIONS.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+              <option value="__custom">custom…</option>
+            </select>
+            {usingCustomPos && (
+              <input
+                type="text"
+                value={customPosition}
+                onChange={(e) => setCustomPosition(e.target.value)}
+                placeholder="e.g. 50% 30%"
+                style={{ flex: 1 }}
+              />
+            )}
+          </div>
+
+          <label>repeat</label>
+          <select value={repeat} onChange={(e) => setRepeat(e.target.value)}>
+            {window.imgDisplay.REPEATS.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+        </div>
+
         {error && <div className="editor-modal-error">{error}</div>}
         <div className="editor-popover-actions">
           <button data-variant="cancel" onClick={onCancel}>cancel</button>
-          <button onClick={onSubmit} disabled={!file}>save</button>
+          <button onClick={onSubmit}>save</button>
         </div>
       </div>
     </div>

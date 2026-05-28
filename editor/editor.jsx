@@ -193,22 +193,28 @@ window.__editor = window.__editor || {};
       });
     }, []);
 
-    const applyImageChange = React.useCallback((path, file, newPath) => {
+    const applyImageChange = React.useCallback((path, fileResult, displayDelta) => {
       setPending((prev) => {
         const next = new Map(prev);
-        next.set(path, { type: 'image', value: newPath, file });
+        const file = fileResult ? fileResult.file : null;
+        const newPath = fileResult ? fileResult.path : null;
+        next.set(path, {
+          type: 'image',
+          value: newPath,    // null if only display settings changed
+          file,              // null if no file picked
+          display: displayDelta || null,
+        });
         return next;
       });
-      // Optimistic preview: swap the visible image to a blob URL.
-      const blobUrl = URL.createObjectURL(file);
+      // Optimistic preview.
       const els = document.querySelectorAll(
         `[data-content-path="${CSS.escape(path)}"]`
       );
+      const blobUrl = fileResult ? URL.createObjectURL(fileResult.file) : null;
       els.forEach((el) => {
-        if (el.tagName === 'IMG') {
-          el.src = blobUrl;
-        } else if (el.style.backgroundImage !== undefined) {
-          el.style.backgroundImage = `url("${blobUrl}")`;
+        if (blobUrl) {
+          if (el.tagName === 'IMG') el.src = blobUrl;
+          else if (el.style.backgroundImage !== undefined) el.style.backgroundImage = `url("${blobUrl}")`;
         }
         el.dataset.editorDirty = 'true';
       });
@@ -255,10 +261,26 @@ window.__editor = window.__editor || {};
             counts.add++;
             lines.push(`- ADD ${change.listPath} ← ${JSON.stringify(change.item.name || change.item.title || '<new>')}`);
           } else if (change.type === 'image') {
-            nextContent = setByPath(nextContent, key, change.value);
-            images.push({ path: change.value, file: change.file });
+            // Path update (only if a new file was picked)
+            if (change.value && change.file) {
+              nextContent = setByPath(nextContent, key, change.value);
+              images.push({ path: change.value, file: change.file });
+              lines.push(`- ${key} (uploaded ${change.value})`);
+            }
+            // Display settings update (independent of file)
+            if (change.display) {
+              const currentMap = (nextContent.imageDisplay || {});
+              const updated = { ...currentMap };
+              // If delta is empty (all defaults) drop the entry to keep JSON clean.
+              if (Object.keys(change.display).length === 0) {
+                delete updated[key];
+              } else {
+                updated[key] = change.display;
+              }
+              nextContent = { ...nextContent, imageDisplay: updated };
+              lines.push(`- ${key} (display: ${JSON.stringify(change.display)})`);
+            }
             counts.img++;
-            lines.push(`- ${key} (uploaded ${change.value})`);
           } else {
             nextContent = setByPath(nextContent, key, change.value);
             counts.text++;
@@ -350,8 +372,9 @@ window.__editor = window.__editor || {};
             existingPath={imageModal.existing}
             assetFolder={imageModal.folder}
             suggestedSlug={imageModal.slugBasis}
-            onSave={({ file, path: newPath }) => {
-              applyImageChange(imageModal.path, file, newPath);
+            contentPath={imageModal.path}
+            onSave={({ file, display }) => {
+              applyImageChange(imageModal.path, file, display);
               setImageModal(null);
             }}
             onCancel={() => setImageModal(null)}
