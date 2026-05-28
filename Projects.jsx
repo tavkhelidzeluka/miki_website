@@ -72,7 +72,7 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
       {/* headline */}
       <div className="proj-headline">
         <span className="bk-bracket">[</span>
-        <span className="bk-word">{t({ en: "PROJECTS", ua: "ПРОЄКТИ" })}</span>
+        <span className="bk-word" data-content-path="ui.headers.projects">{t(window.CONTENT.ui.headers.projects)}</span>
         <span className="bk-bracket">]</span>
       </div>
 
@@ -88,7 +88,7 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
             <div
               className={tileBg + (p.category === "ANIMATION" ? " proj-tile--cover proj-tile--anim" : p.category === "CANVAS" ? " proj-tile--cover proj-tile--canvas" : p.category === "ILLUSTRATION" ? " proj-tile--cover proj-tile--illustration" : p.category === "POSTERS" ? " proj-tile--cover proj-tile--posters" : p.category === "PHOTOS" ? " proj-tile--cover proj-tile--photos" : p.category === "SOCIAL MEDIA" ? " proj-tile--cover proj-tile--social" : "")}
             >
-              <span className="proj-tile-hover">[ {t({ en: "open", ua: "відкрити" })} → ]</span>
+              <span className="proj-tile-hover">[ <span data-content-path="ui.projectsPage.openHover">{t(window.CONTENT.ui.projectsPage.openHover)}</span> ]</span>
             </div>
             <div className="proj-card-foot">
               <span className="proj-card-id">[ {p.id} ]</span>
