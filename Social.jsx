@@ -33,18 +33,19 @@ const smBg = (url) => url ? {
 // echoing the "(In) (No) (Particular) (Order)" reference.
 
 function SocialHero({ lang }) {
+  const { t } = useLang();
   return (
     <section className="sm2-hero">
       <h1 className="sm2-hero-headline" aria-label="Posts. Stories. Carousels. Ads.">
         <span className="sm2-h-row">
-          <span className="sm2-h-word">[&nbsp;{lang === "UA" ? "ПОСТИ" : "POSTS"}&nbsp;]</span>
-          <span className="sm2-h-word">[&nbsp;{lang === "UA" ? "СТОРІС" : "STORIES"}&nbsp;]</span>
+          <span className="sm2-h-word">[&nbsp;<span data-content-path="ui.socialPage.heroPosts">{t(window.CONTENT.ui.socialPage.heroPosts)}</span>&nbsp;]</span>
+          <span className="sm2-h-word">[&nbsp;<span data-content-path="ui.socialPage.heroStories">{t(window.CONTENT.ui.socialPage.heroStories)}</span>&nbsp;]</span>
         </span>
         <span className="sm2-h-row sm2-h-row--center">
-          <span className="sm2-h-word sm2-h-word--big">[&nbsp;{lang === "UA" ? "КАРУСЕЛІ" : "CAROUSELS"}&nbsp;]</span>
+          <span className="sm2-h-word sm2-h-word--big">[&nbsp;<span data-content-path="ui.socialPage.heroCarousels">{t(window.CONTENT.ui.socialPage.heroCarousels)}</span>&nbsp;]</span>
         </span>
         <span className="sm2-h-row sm2-h-row--end">
-          <span className="sm2-h-word">[&nbsp;{lang === "UA" ? "РЕКЛАМА" : "ADS"}&nbsp;]</span>
+          <span className="sm2-h-word">[&nbsp;<span data-content-path="ui.socialPage.heroAds">{t(window.CONTENT.ui.socialPage.heroAds)}</span>&nbsp;]</span>
         </span>
       </h1>
     </section>
@@ -190,6 +191,7 @@ const adsKindLabel = (cur, lang) =>
     : (lang === "UA" ? "рекламний пост · 1:1" : "ad square · 1:1");
 
 function WorkSection({ lang }) {
+  const { t } = useLang();
   const s = window.CONTENT.social;
   const workItems = React.useMemo(() => buildWorkItems(s.posts, s.carousels), [s]);
   return (
@@ -199,13 +201,14 @@ function WorkSection({ lang }) {
       kindLabel={workKindLabel}
       lang={lang}
       sectionIdx={1}
-      sectionLabel={lang === "UA" ? "ПОСТИ" : "POSTS"}
+      sectionLabel={t(window.CONTENT.ui.socialPage.sectionPosts)}
       variant="work"
     />
   );
 }
 
 function StoriesSection({ lang }) {
+  const { t } = useLang();
   const STORIES = window.CONTENT.social.stories;
   return (
     <GalleryStrip
@@ -214,7 +217,7 @@ function StoriesSection({ lang }) {
       kindLabel={storyKindLabel}
       lang={lang}
       sectionIdx={2}
-      sectionLabel={lang === "UA" ? "СТОРІС" : "STORIES"}
+      sectionLabel={t(window.CONTENT.ui.socialPage.sectionStories)}
       variant="stories"
       pathBase="social.stories"
       assetFolder="assets/images/social"
@@ -223,6 +226,7 @@ function StoriesSection({ lang }) {
 }
 
 function AdsSection({ lang }) {
+  const { t } = useLang();
   const ADS = window.CONTENT.social.ads;
   return (
     <GalleryStrip
@@ -231,7 +235,7 @@ function AdsSection({ lang }) {
       kindLabel={adsKindLabel}
       lang={lang}
       sectionIdx={3}
-      sectionLabel={lang === "UA" ? "РЕКЛАМА" : "ADS"}
+      sectionLabel={t(window.CONTENT.ui.socialPage.sectionAds)}
       variant="ads"
       pathBase="social.ads"
       assetFolder="assets/images/social"
@@ -241,23 +245,14 @@ function AdsSection({ lang }) {
 
 // ─── Statement band ─────────────────────────────────────────────────
 function Statement({ lang }) {
+  const { t } = useLang();
   return (
     <section className="sm-statement">
       <div className="sm-statement-bg" />
       <h2 className="sm-statement-text">
-        {lang === "UA" ? (
-          <React.Fragment>
-            <span>КОЖЕН ПОСТ</span>
-            <span>ЦЕ</span>
-            <span>ЗАЯВА</span>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <span>EVERY POST</span>
-            <span>IS A</span>
-            <span>STATEMENT</span>
-          </React.Fragment>
-        )}
+        <span data-content-path="ui.socialPage.statementLine1">{t(window.CONTENT.ui.socialPage.statementLine1)}</span>
+        <span data-content-path="ui.socialPage.statementLine2">{t(window.CONTENT.ui.socialPage.statementLine2)}</span>
+        <span data-content-path="ui.socialPage.statementLine3">{t(window.CONTENT.ui.socialPage.statementLine3)}</span>
       </h2>
       <div className="sm-statement-corner sm-statement-corner--tl">[</div>
       <div className="sm-statement-corner sm-statement-corner--tr">]</div>
@@ -271,7 +266,7 @@ function Statement({ lang }) {
 function Outro({ t }) {
   return (
     <section className="sm-outro">
-      <span className="sm-outro-line">→ {t({ en: "FOR COLLABORATIONS", ua: "ДЛЯ КОЛАБОРАЦІЙ" })}</span>
+      <span className="sm-outro-line">→ <span data-content-path="ui.socialPage.outroCta">{t(window.CONTENT.ui.socialPage.outroCta)}</span></span>
       <a className="sm-outro-mail" href="mailto:seriton3@gmail.com">
         seriton3@gmail.com
       </a>
