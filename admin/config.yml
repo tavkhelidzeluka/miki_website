@@ -1,0 +1,125 @@
+backend:
+  name: github
+  repo: tavkhelidzeluka/miki_website
+  branch: main
+  # TODO: replace with the deployed Cloudflare Worker URL before launch
+  base_url: https://miki-oauth.PLACEHOLDER.workers.dev
+
+media_folder: "assets/images"
+public_folder: "/assets/images"
+
+collections:
+  - name: site
+    label: "Site content"
+    files:
+      - name: content
+        label: "Content"
+        file: "content/content.json"
+        format: json
+        fields:
+          - { name: contact, label: Contact, widget: object, fields: [
+              { name: email, widget: string },
+              { name: telegram, widget: string },
+              { name: instagram, widget: list, field: { name: handle, widget: string } },
+              { name: tiktok, widget: string },
+              { name: location, widget: object, fields: [
+                  { name: en, widget: string },
+                  { name: ua, widget: string }
+              ]}
+          ]}
+          - { name: orderForm, label: "Order form (Web3Forms)", widget: object, fields: [
+              { name: web3formsKey, label: "Web3Forms access key", widget: string }
+          ]}
+          - { name: about, label: About, widget: object, fields: [
+              { name: bio, widget: object, fields: [
+                  { name: en, widget: list, field: { name: line, widget: string } },
+                  { name: ua, widget: list, field: { name: line, widget: string } }
+              ]},
+              { name: experience, widget: list, fields: [
+                  { name: title, widget: object, fields: [
+                      { name: en, widget: string },
+                      { name: ua, widget: string }
+                  ]},
+                  { name: role, widget: object, fields: [
+                      { name: en, widget: string },
+                      { name: ua, widget: string }
+                  ]},
+                  { name: subRole, widget: object, required: false, fields: [
+                      { name: en, widget: string },
+                      { name: ua, widget: string }
+                  ]},
+                  { name: date, widget: object, fields: [
+                      { name: en, widget: string },
+                      { name: ua, widget: string }
+                  ]}
+              ]},
+              { name: exhibitions, widget: list, fields: [
+                  { name: label, widget: object, fields: [
+                      { name: en, widget: string },
+                      { name: ua, widget: string }
+                  ]}
+              ]},
+              { name: skills, widget: list, fields: [
+                  { name: label, widget: object, fields: [
+                      { name: en, widget: string },
+                      { name: ua, widget: string }
+                  ]}
+              ]}
+          ]}
+          - { name: projects, label: Projects, widget: list, fields: [
+              { name: id, widget: string },
+              { name: category, widget: select,
+                options: [ANIMATION, ILLUSTRATION, POSTERS, CANVAS, BOOKS, PHOTOS, "SOCIAL MEDIA"] },
+              { name: year, widget: string },
+              { name: name, widget: string },
+              { name: client, widget: string },
+              { name: role, widget: string },
+              { name: medium, widget: string },
+              { name: desc, widget: text },
+              { name: prose, widget: text },
+              { name: works, widget: list, fields: [
+                  { name: name, widget: string },
+                  { name: desc, widget: text },
+                  { name: thumb, widget: image, required: false },
+                  { name: price, widget: number, required: false, value_type: int }
+              ]}
+          ]}
+          - { name: canvas, label: "Canvas (shop)", widget: object, fields: [
+              { name: items, widget: list, fields: [
+                  { name: id, widget: string },
+                  { name: title, widget: string },
+                  { name: medium, widget: string },
+                  { name: mediumUa, widget: string },
+                  { name: img, widget: image, required: false },
+                  { name: price, label: "Price (USD)", widget: number, required: false, value_type: int }
+              ]}
+          ]}
+          - { name: social, label: Social, widget: object, fields: [
+              { name: posts, widget: list, fields: [
+                  { name: src, widget: image },
+                  { name: brand, widget: string }
+              ]},
+              { name: carousels, widget: list, fields: [
+                  { name: id, widget: string },
+                  { name: brand, widget: string },
+                  { name: title, widget: string },
+                  { name: titleEn, widget: string },
+                  { name: cover, widget: image },
+                  { name: slides, widget: list, field: { name: src, widget: image } }
+              ]},
+              { name: stories, widget: list, fields: [
+                  { name: src, widget: image },
+                  { name: brand, widget: string }
+              ]},
+              { name: ads, widget: list, fields: [
+                  { name: src, widget: image },
+                  { name: aspect, widget: string },
+                  { name: brand, widget: string }
+              ]},
+              { name: services, widget: list, fields: [
+                  { name: id, widget: string },
+                  { name: title, widget: string },
+                  { name: sub, widget: string },
+                  { name: subUa, widget: string }
+              ]}
+          ]}
