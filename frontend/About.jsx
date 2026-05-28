@@ -1,6 +1,10 @@
 // About.jsx — Halftone portrait + bio + experience + skills + exhibitions + contact.
 function About({ tweaks }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const CV = (typeof window !== "undefined" && window.__CV) || {};
+  const cvHref = lang === "UA"
+    ? (CV.ru || "assets/Mykyta_Kirichenko_CV_RU.pdf")
+    : (CV.en || "assets/Mykyta_Kirichenko_CV_EN.pdf");
   return (
     <div className="page page--about">
       <div className="about-portrait" />
@@ -27,6 +31,15 @@ function About({ tweaks }) {
             ua: "Поєдную класичне мистецтво з сучасним цифровим дизайном — кожна робота починається з чорного квадрата.",
           })}
         </div>
+        <a
+          className="about-cv-btn"
+          href={cvHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          download={lang === "UA" ? "Mykyta_Kirichenko_CV_RU.pdf" : "Mykyta_Kirichenko_CV_EN.pdf"}
+        >
+          [ {t({ en: "DOWNLOAD CV", ua: "ЗАВАНТАЖИТИ CV" })} ↓ ]
+        </a>
       </div>
 
       <div className="about-col about-col--exp">
@@ -77,3 +90,4 @@ function About({ tweaks }) {
 }
 
 window.About = About;
+

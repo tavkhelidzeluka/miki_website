@@ -365,3 +365,4 @@ function Field({ label, value, onChange, type = "text", full = false, placeholde
 }
 
 window.CheckoutPage = CheckoutPage;
+

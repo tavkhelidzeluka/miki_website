@@ -211,7 +211,7 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
             style={{ animationDelay: `${80 + idx * 60}ms` }}
           >
             <div
-              className={tileBg + (p.category === "ANIMATION" ? " proj-tile--cover proj-tile--anim" : "")}
+              className={tileBg + (p.category === "ANIMATION" ? " proj-tile--cover proj-tile--anim" : p.category === "CANVAS" ? " proj-tile--cover proj-tile--canvas" : p.category === "ILLUSTRATION" ? " proj-tile--cover proj-tile--illustration" : p.category === "POSTERS" ? " proj-tile--cover proj-tile--posters" : p.category === "PHOTOS" ? " proj-tile--cover proj-tile--photos" : p.category === "SOCIAL MEDIA" ? " proj-tile--cover proj-tile--social" : "")}
             >
               <span className="proj-tile-hover">[ {t({ en: "open", ua: "відкрити" })} → ]</span>
             </div>
@@ -388,3 +388,4 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
 window.Projects = Projects;
 window.ProjectDetail = ProjectDetail;
 window.ALL_PROJECTS = ALL_PROJECTS;
+

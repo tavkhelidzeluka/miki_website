@@ -175,3 +175,4 @@ function AnimationPlayer({ work, onClose }) {
 
 window.AnimationStrip = AnimationStrip;
 window.AnimationPlayer = AnimationPlayer;
+
