@@ -35,15 +35,6 @@ function shippingEstimate(country, locale) {
   return { min: fmt(min), max: fmt(max), days: `${band[0]}–${band[1]}` };
 }
 
-// Mock tracking number — deterministic for the session.
-function generateTrackingNumber() {
-  const letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
-  let s = "";
-  for (let i = 0; i < 2; i++) s += letters[Math.floor(Math.random() * letters.length)];
-  for (let i = 0; i < 9; i++) s += Math.floor(Math.random() * 10);
-  return s + "GE";
-}
-
 function CheckoutPage({ cart, onClose, onPlaced }) {
   const { t, lang } = useLang();
   const [step, setStep] = React.useState("form"); // form | pay | done
@@ -56,16 +47,13 @@ function CheckoutPage({ cart, onClose, onPlaced }) {
     address: "",
     postal: "",
     currency: "EUR",
-    method: "card",
+    method: "paypal",
     notes: "",
   });
-  const [card, setCard] = React.useState({ number: "", expiry: "", cvc: "", holder: "" });
   const [processing, setProcessing] = React.useState(false);
-  const [tracking, setTracking] = React.useState(null);
-  const [trackingCopied, setTrackingCopied] = React.useState(false);
+  const [error, setError] = React.useState(null);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const setC = (k, v) => setCard((c) => ({ ...c, [k]: v }));
 
   const estimate = React.useMemo(() => shippingEstimate(form.country, lang), [form.country, lang]);
 
@@ -74,30 +62,43 @@ function CheckoutPage({ cart, onClose, onPlaced }) {
     /\S+@\S+\.\S+/.test(form.email)
   );
 
-  const cardValid = Boolean(
-    card.number.replace(/\s/g, "").length >= 12 &&
-    /^\d{2}\s*\/\s*\d{2}$/.test(card.expiry) &&
-    card.cvc.length >= 3 &&
-    card.holder.trim()
-  );
-
-  const placeOrder = () => {
+  const placeOrder = async () => {
     setProcessing(true);
-    setTimeout(() => {
-      setTracking(generateTrackingNumber());
-      setProcessing(false);
-      setStep("done");
+    setError(null);
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: window.CONTENT.orderForm.web3formsKey,
+          subject: `New order — ${form.fullName}`,
+          from_name: 'miki portfolio',
+          reply_to: form.email,
+          full_name: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          country: form.country,
+          city: form.city,
+          address: form.address,
+          postal: form.postal,
+          currency: form.currency,
+          payment_method: form.method,
+          notes: form.notes,
+          items: cart.map(c => `${c.title || c.name} [${c.id}]`).join('\n'),
+          cart_json: JSON.stringify(cart),
+        }),
+      });
+      if (!res.ok) throw new Error('order submission failed: ' + res.status);
+      setStep('done');
       setTimeout(() => onPlaced && onPlaced(), 8000);
-    }, 1400);
-  };
-
-  const copyTracking = () => {
-    if (!tracking) return;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(tracking);
+    } catch (err) {
+      setError(t({
+        en: `Couldn't send your order automatically. Please email ${window.CONTENT.contact.email} with your items and shipping address — we'll reply with payment instructions.`,
+        ua: `Не вдалося надіслати замовлення автоматично. Будь ласка, напишіть на ${window.CONTENT.contact.email}, ми надішлемо інструкції з оплати.`,
+      }));
+    } finally {
+      setProcessing(false);
     }
-    setTrackingCopied(true);
-    setTimeout(() => setTrackingCopied(false), 1500);
   };
 
   return (
@@ -202,10 +203,10 @@ function CheckoutPage({ cart, onClose, onPlaced }) {
                 <div className="checkout-section-head">[ 02 ] {t({ en: "PAYMENT METHOD", ua: "СПОСІБ ОПЛАТИ" })}</div>
                 <div className="checkout-radios">
                   {[
-                    { v: "card",   l: { en: "Card",          ua: "Картка" } },
-                    { v: "paypal", l: { en: "PayPal",        ua: "PayPal" } },
-                    { v: "bank",   l: { en: "Bank transfer", ua: "Банк. переказ" } },
-                    { v: "crypto", l: { en: "USDT",          ua: "USDT" } },
+                    { v: "paypal",  l: { en: "PayPal",        ua: "PayPal" } },
+                    { v: "bank",    l: { en: "Bank transfer", ua: "Банк. переказ" } },
+                    { v: "crypto",  l: { en: "USDT",          ua: "USDT" } },
+                    { v: "contact", l: { en: "Just contact me", ua: "Зв'яжіться зі мною" } },
                   ].map((m) => (
                     <button
                       key={m.v}
@@ -217,33 +218,36 @@ function CheckoutPage({ cart, onClose, onPlaced }) {
                 </div>
               </div>
 
-              {form.method === "card" && (
-                <div className="checkout-section">
-                  <div className="checkout-section-head">[ ] {t({ en: "CARD DETAILS", ua: "ДАНІ КАРТКИ" })}</div>
-                  <div className="checkout-grid">
-                    <Field label={t({ en: "Card number", ua: "Номер картки" })} value={card.number} onChange={(v) => setC("number", v)} placeholder="0000 0000 0000 0000" full />
-                    <Field label={t({ en: "Expiry (MM / YY)", ua: "Термін (ММ / РР)" })} value={card.expiry} onChange={(v) => setC("expiry", v)} placeholder="01 / 28" />
-                    <Field label="CVC"                                                  value={card.cvc}    onChange={(v) => setC("cvc", v)}    placeholder="000" />
-                    <Field label={t({ en: "Cardholder", ua: "Власник картки" })}        value={card.holder} onChange={(v) => setC("holder", v)} full />
-                  </div>
-                </div>
-              )}
+              <div className="checkout-section">
+                <div className="checkout-section-head">[ ] {form.method.toUpperCase()}</div>
+                <p className="checkout-prose">
+                  {lang === "UA" ? (
+                    <React.Fragment>
+                      {form.method === "contact"
+                        ? <>Залишіть деталі, і ми зв'яжемося з вами на <b>{form.email || "вашу пошту"}</b> з інструкціями.</>
+                        : <>Після підтвердження ми надішлемо {form.method === "paypal" ? "інвойс PayPal" : form.method === "bank" ? "банківські реквізити (IBAN + SWIFT)" : "адресу USDT-гаманця (TRC-20)"} на <b>{form.email || "вашу пошту"}</b>. Замовлення зарезервовано на 48&nbsp;годин до сплати.</>
+                      }
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      {form.method === "contact"
+                        ? <>Leave your details and we'll reach out to <b>{form.email || "your email"}</b> with instructions.</>
+                        : <>After you confirm, we'll send {form.method === "paypal" ? "the PayPal invoice" : form.method === "bank" ? "bank details (IBAN + SWIFT)" : "the USDT wallet address (TRC-20)"} to <b>{form.email || "your email"}</b>. The order is reserved for 48&nbsp;hours pending payment.</>
+                      }
+                    </React.Fragment>
+                  )}
+                </p>
+              </div>
 
-              {form.method !== "card" && (
-                <div className="checkout-section">
-                  <div className="checkout-section-head">[ ] {form.method.toUpperCase()}</div>
-                  <p className="checkout-prose">
-                    {lang === "UA" ? (
-                      <React.Fragment>
-                        Після підтвердження ми надішлемо {form.method === "paypal" ? "інвойс PayPal" : form.method === "bank" ? "банківські реквізити (IBAN + SWIFT)" : "адресу USDT-гаманця (TRC-20)"} на <b>{form.email || "вашу пошту"}</b>. Замовлення зарезервовано на 48&nbsp;годин до сплати.
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
-                        After you confirm, we'll send {form.method === "paypal" ? "the PayPal invoice" : form.method === "bank" ? "bank details (IBAN + SWIFT)" : "the USDT wallet address (TRC-20)"} to <b>{form.email || "your email"}</b>. The order is reserved for 48&nbsp;hours pending payment.
-                      </React.Fragment>
-                    )}
-                  </p>
-                </div>
+              {error && (
+                <div className="checkout-error" style={{
+                  padding: '12px 16px',
+                  margin: '12px 0',
+                  border: '1px solid #c00',
+                  color: '#c00',
+                  fontFamily: 'monospace',
+                  fontSize: '13px',
+                }}>{error}</div>
               )}
 
               <div className="checkout-actions">
@@ -251,7 +255,6 @@ function CheckoutPage({ cart, onClose, onPlaced }) {
                 <button
                   type="button"
                   className="checkout-cta"
-                  disabled={form.method === "card" && !cardValid}
                   onClick={placeOrder}
                 >
                   {processing
@@ -264,55 +267,11 @@ function CheckoutPage({ cart, onClose, onPlaced }) {
 
           {step === "done" && (
             <div className="checkout-done">
-              <div className="checkout-done-mark">[ ✓ ]</div>
-              <h2 className="checkout-done-title">{t({
-                en: "thank you for your order",
-                ua: "дякуємо за замовлення",
-              })}</h2>
-              <p className="checkout-prose">
-                {t({ en: "Confirmation sent to", ua: "Підтвердження надіслано на" })} <b>{form.email}</b>.
-              </p>
-
-              {estimate && (
-                <div className="checkout-eta checkout-eta--done">
-                  <div className="checkout-eta-head">[ ETA ] {t({
-                    en: "estimated delivery to",
-                    ua: "орієнтовна доставка до",
-                  })} {form.country || t({ en: "your country", ua: "вашої країни" })}</div>
-                  <div className="checkout-eta-body">
-                    <span className="checkout-eta-days">{estimate.days} {t({ en: "business days", ua: "робочих днів" })}</span>
-                    <span className="checkout-eta-dates">{estimate.min} — {estimate.max}</span>
-                  </div>
-                </div>
-              )}
-
-              {tracking && (
-                <div className="checkout-tracking">
-                  <div className="checkout-tracking-head">[ {t({ en: "TRACKING NUMBER", ua: "НОМЕР ВІДСТЕЖЕННЯ" })} ]</div>
-                  <div className="checkout-tracking-row">
-                    <span className="checkout-tracking-no">{tracking}</span>
-                    <button className="checkout-tracking-copy" onClick={copyTracking}>
-                      {trackingCopied
-                        ? t({ en: "copied ✓", ua: "скопійовано ✓" })
-                        : t({ en: "copy", ua: "копіювати" })}
-                    </button>
-                    <a
-                      className="checkout-tracking-link"
-                      href={`https://www.17track.net/en/track?nums=${tracking}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >[ {t({ en: "track", ua: "відстежити" })} → ]</a>
-                  </div>
-                  <div className="checkout-tracking-note">
-                    {t({
-                      en: "Use this number to follow your parcel on 17track or your local carrier — updates appear within 24–48 hours.",
-                      ua: "Використайте цей номер на 17track або у вашого локального перевізника — оновлення зʼявляться протягом 24–48 годин.",
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <button className="checkout-cta" onClick={onClose}>[ {t({ en: "back to canvas", ua: "повернутися до канвасу" })} → ]</button>
+              <div className="checkout-section-head">[ 03 ] {t({ en: "ORDER RECEIVED", ua: "ЗАМОВЛЕННЯ ПРИЙНЯТО" })}</div>
+              <p className="checkout-prose">{t({
+                en: `Thanks! Your order is in. Watch your inbox at ${form.email} — we'll reply within 24 hours with payment instructions.`,
+                ua: `Дякуємо! Замовлення отримано. Чекайте листа на ${form.email} — відповімо протягом 24 годин із інструкціями для оплати.`,
+              })}</p>
             </div>
           )}
         </div>
