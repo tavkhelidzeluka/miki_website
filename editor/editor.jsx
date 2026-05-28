@@ -9,6 +9,29 @@ window.__editor = window.__editor || {};
   const { Popover } = window.__editor;
   const github = window.__editor.github;
 
+  // Field schemas for the generic AddListItemModal. Each entry describes the
+  // shape of a list item — used to render the modal inputs and assemble the
+  // queued add payload. Keyed by the schemaName supplied via
+  // data-editor-add-schema on the + add button.
+  const SCHEMAS = {
+    socialTile: [
+      { key: 'src',   label: 'image', type: 'image',  required: true },
+      { key: 'brand', label: 'brand', type: 'string', required: true, placeholder: '@brand or BRAND' },
+    ],
+    experience: [
+      { key: 'title',   label: 'title',                 type: 'i18n', required: true },
+      { key: 'role',    label: 'role',                  type: 'i18n', required: true },
+      { key: 'subRole', label: 'sub-role (optional)',   type: 'i18n', required: false },
+      { key: 'date',    label: 'date',                  type: 'i18n', required: true },
+    ],
+    exhibition: [
+      { key: 'label', label: 'label', type: 'i18n', required: true },
+    ],
+    skill: [
+      { key: 'label', label: 'label', type: 'i18n', required: true },
+    ],
+  };
+
   // Modal for adding a new work (or any work-shaped item: name + desc + image
   // + optional price). When image is provided, the editor uploads it next
   // to the new content.json write in a single commit.
@@ -113,6 +136,161 @@ window.__editor = window.__editor || {};
     );
   }
 
+  // Generic "add item to list" modal. The `fields` schema controls which
+  // inputs render. Returns an item object on save plus optional file+path
+  // for image fields.
+  //
+  //   fields: [
+  //     { key: 'src',   label: 'image',       type: 'image',  required: true },
+  //     { key: 'brand', label: 'brand',       type: 'string', required: true },
+  //     { key: 'title', label: 'title',       type: 'i18n',   required: true },
+  //     { key: 'desc',  label: 'description', type: 'text',   required: false },
+  //     ...
+  //   ]
+  //
+  //   type 'image' = file picker; result item field is the resolved path,
+  //                  with file + imagePath passed alongside.
+  //   type 'i18n'  = pair of en/ua inputs → { en, ua } object
+  function AddListItemModal({ title, fields, assetFolder, onSave, onCancel }) {
+    const [values, setValues] = React.useState(() => {
+      const v = {};
+      for (const f of fields) {
+        if (f.type === 'i18n') v[f.key] = { en: '', ua: '' };
+        else if (f.type === 'image') v[f.key] = { file: null, filename: '' };
+        else v[f.key] = '';
+      }
+      return v;
+    });
+    const [previewUrls, setPreviewUrls] = React.useState({});
+    const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+      const onKey = (e) => { if (e.key === 'Escape') onCancel(); };
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    }, [onCancel]);
+
+    const slugify = (s) => (s || 'item').toString().toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+
+    const updateField = (key, val) => setValues((prev) => ({ ...prev, [key]: val }));
+
+    const handlePickFile = (key, file) => {
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        setError(`File too large (${Math.round(file.size/1024/1024)}MB). Max 5MB.`);
+        return;
+      }
+      if (!/^image\//.test(file.type)) {
+        setError(`Not an image: ${file.type || '(unknown)'}`);
+        return;
+      }
+      setError(null);
+      // Auto-suggest filename based on best available text field.
+      const slugBasis = values.title?.en || values.name || values.brand || values.label?.en || 'item';
+      const ext = (file.name.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
+      const filename = `${slugify(slugBasis)}${ext}`;
+      setValues((prev) => ({ ...prev, [key]: { file, filename } }));
+      const url = URL.createObjectURL(file);
+      setPreviewUrls((prev) => {
+        if (prev[key]) URL.revokeObjectURL(prev[key]);
+        return { ...prev, [key]: url };
+      });
+    };
+
+    React.useEffect(() => () => {
+      Object.values(previewUrls).forEach((u) => URL.revokeObjectURL(u));
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const onSubmit = () => {
+      // Required-field check
+      for (const f of fields) {
+        if (!f.required) continue;
+        const v = values[f.key];
+        if (f.type === 'i18n') {
+          if (!v.en.trim()) { setError(`${f.label} (en) is required.`); return; }
+        } else if (f.type === 'image') {
+          if (!v.file) { setError(`${f.label} is required.`); return; }
+        } else {
+          if (!v.trim()) { setError(`${f.label} is required.`); return; }
+        }
+      }
+      const item = {};
+      let file = null;
+      let imagePath = null;
+      for (const f of fields) {
+        const v = values[f.key];
+        if (f.type === 'image') {
+          if (v.file) {
+            const cleanName = (v.filename || `image.png`).replace(/[^a-zA-Z0-9._-]+/g, '-');
+            imagePath = `${assetFolder}/${cleanName}`;
+            item[f.key] = imagePath;
+            file = v.file;
+          } else {
+            item[f.key] = null;
+          }
+        } else if (f.type === 'i18n') {
+          item[f.key] = { en: v.en.trim(), ua: v.ua.trim() };
+        } else {
+          item[f.key] = v.trim();
+        }
+      }
+      onSave(item, file, imagePath);
+    };
+
+    return (
+      <div className="editor-modal-scrim" onMouseDown={onCancel}>
+        <div className="editor-modal" onMouseDown={(e) => e.stopPropagation()} style={{ minWidth: 380 }}>
+          <div className="editor-popover-label">{title || 'add new item'}</div>
+          {fields.map((f) => (
+            <React.Fragment key={f.key}>
+              <div className="editor-popover-label">{f.label}{f.required ? ' *' : ''}</div>
+              {f.type === 'i18n' ? (
+                <React.Fragment>
+                  <input type="text" value={values[f.key].en} placeholder="EN"
+                    onChange={(e) => updateField(f.key, { ...values[f.key], en: e.target.value })}
+                    autoFocus={fields[0] === f} />
+                  <input type="text" value={values[f.key].ua} placeholder="UA" style={{ marginTop: 4 }}
+                    onChange={(e) => updateField(f.key, { ...values[f.key], ua: e.target.value })} />
+                </React.Fragment>
+              ) : f.type === 'text' ? (
+                <textarea value={values[f.key]}
+                  onChange={(e) => updateField(f.key, e.target.value)}
+                  style={{ minHeight: 60, resize: 'vertical' }} />
+              ) : f.type === 'image' ? (
+                <React.Fragment>
+                  <input type="file" accept="image/*"
+                    onChange={(e) => handlePickFile(f.key, e.target.files?.[0])} />
+                  {previewUrls[f.key] && (
+                    <img src={previewUrls[f.key]} alt="preview" className="preview" />
+                  )}
+                  {values[f.key].file && (
+                    <input type="text" value={values[f.key].filename}
+                      onChange={(e) => updateField(f.key, { ...values[f.key], filename: e.target.value })} />
+                  )}
+                  {values[f.key].file && (
+                    <div className="editor-modal-meta">
+                      will save as: <code>{assetFolder}/{values[f.key].filename}</code>
+                    </div>
+                  )}
+                </React.Fragment>
+              ) : (
+                <input type="text" value={values[f.key]} placeholder={f.placeholder || ''}
+                  onChange={(e) => updateField(f.key, e.target.value)}
+                  autoFocus={fields[0] === f} />
+              )}
+            </React.Fragment>
+          ))}
+          {error && <div className="editor-modal-error">{error}</div>}
+          <div className="editor-popover-actions">
+            <button data-variant="cancel" onClick={onCancel}>cancel</button>
+            <button onClick={onSubmit}>queue add</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function EditorRoot() {
     const [editMode, setEditMode] = React.useState(false);
     // pending: Map<path, { type: 'text', value }>
@@ -144,6 +322,16 @@ window.__editor = window.__editor || {};
             kind: 'work',
             listPath: el.dataset.editorListPath,
             assetFolder: el.dataset.editorAssetFolder,
+          });
+          return;
+        }
+        if (el.dataset.editorAction === 'add-generic') {
+          setAddModal({
+            kind: 'generic',
+            title: el.dataset.editorAddTitle || 'add new item',
+            listPath: el.dataset.editorListPath,
+            assetFolder: el.dataset.editorAssetFolder,
+            schemaName: el.dataset.editorAddSchema,
           });
           return;
         }
@@ -428,6 +616,19 @@ window.__editor = window.__editor || {};
 
         {addModal && addModal.kind === 'work' && (
           <AddWorkModal
+            assetFolder={addModal.assetFolder}
+            onSave={(item, file, imagePath) => {
+              applyAddChange(addModal.listPath, item, file, imagePath);
+              setAddModal(null);
+            }}
+            onCancel={() => setAddModal(null)}
+          />
+        )}
+
+        {addModal && addModal.kind === 'generic' && (
+          <AddListItemModal
+            title={addModal.title}
+            fields={SCHEMAS[addModal.schemaName] || []}
             assetFolder={addModal.assetFolder}
             onSave={(item, file, imagePath) => {
               applyAddChange(addModal.listPath, item, file, imagePath);
