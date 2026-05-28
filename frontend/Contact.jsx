@@ -1,6 +1,7 @@
 // Contact.jsx — Contact / social-media handles (opens from top nav).
 function Contact({ tweaks }) {
   const { t } = useLang();
+  const c = window.CONTENT.contact;
   return (
     <div className="page page--contact">
       <div className="social-portrait" aria-hidden="true" />
@@ -21,26 +22,26 @@ function Contact({ tweaks }) {
         <dl className="social-rows">
           <div className="social-row">
             <dt>{t({ en: "EMAIL", ua: "ПОШТА" })}</dt>
-            <dd>seriton3@gmail.com</dd>
+            <dd>{c.email}</dd>
           </div>
           <div className="social-row">
             <dt>TELEGRAM</dt>
-            <dd>@gtxhi</dd>
+            <dd>{c.telegram}</dd>
           </div>
           <div className="social-row">
             <dt>INSTAGRAM</dt>
             <dd>
-              <span>@gtxhi</span>
-              <span className="social-row-secondary">@mykyta.lg</span>
+              <span>{c.instagram[0]}</span>
+              {c.instagram[1] && <span className="social-row-secondary">{c.instagram[1]}</span>}
             </dd>
           </div>
           <div className="social-row">
             <dt>TIKTOK</dt>
-            <dd>@gtxhi</dd>
+            <dd>{c.tiktok}</dd>
           </div>
           <div className="social-row">
             <dt>{t({ en: "LOCATION", ua: "ЛОКАЦІЯ" })}</dt>
-            <dd>{t({ en: "Tbilisi, GE", ua: "Тбілісі, Грузія" })}</dd>
+            <dd>{t(c.location)}</dd>
           </div>
         </dl>
       </div>
