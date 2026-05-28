@@ -146,7 +146,6 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                   style={it.img ? { backgroundImage: `url("${it.img}")` } : undefined}
                   onClick={() => it.img && setZoom(it)}
                   aria-label={it.img ? t({ en: "zoom image", ua: "збільшити" }) : undefined}
-                  disabled={!it.img}
                   data-content-path={`canvas.items.${idx}.img`}
                   data-editor-kind="image"
                   data-asset-folder="assets"

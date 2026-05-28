@@ -168,14 +168,20 @@ function CategoryStrip({ category, tweaks, openDetail }) {
             + (isActive ? " cat-thumb--active" : "")
             + (isActive && pulse ? " cat-thumb--pulse" : "");
           const style = hasImg ? { backgroundImage: `url("${w.thumb}")` } : undefined;
+          const catIdx = (window.CONTENT.projects || []).findIndex(p => p.id === category.id);
+          const assetFolder = `assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`;
           return (
             <div
               key={"slot-" + j}
               className={cls}
               style={style}
+              data-content-path={`projects.${catIdx}.works.${idx}.thumb`}
+              data-editor-kind="image"
+              data-asset-folder={assetFolder}
+              data-content-name={w && w.name}
               onClick={() => {
                 if (isActive) {
-                  openDetail({ ...category, name: cur.name, desc: cur.desc, thumb: cur.thumb, prose: category.prose });
+                  openDetail({ ...category, name: cur.name, desc: cur.desc, thumb: cur.thumb, prose: category.prose, workIndex: i });
                 } else if (j < 3) {
                   for (let k = 0; k < 3 - j; k++) prev();
                 } else {
@@ -227,18 +233,42 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
       <button className="detail-close" onClick={onClose}>[ {t({ en: "close", ua: "закрити" })} × ]</button>
 
       <div className="detail-grid">
-        <div className={imgClass} style={imgStyle}>
-          <div className="detail-image-label">[ {project.id} ] · {project.medium}</div>
-        </div>
+        {(() => {
+          const pIdx = (window.CONTENT.projects || []).findIndex(p => p.id === project.id);
+          const wIdx = project.workIndex;
+          const thumbPath = wIdx !== undefined
+            ? `projects.${pIdx}.works.${wIdx}.thumb`
+            : null;
+          const assetFolder = `assets/images/projects/${(project.category || "").toLowerCase().replace(/\s+/g, '-')}`;
+          return (
+            <div
+              className={imgClass}
+              style={imgStyle}
+              {...(thumbPath && {
+                'data-content-path': thumbPath,
+                'data-editor-kind': 'image',
+                'data-asset-folder': assetFolder,
+                'data-content-name': project.name,
+              })}
+            >
+              <div className="detail-image-label">[ {project.id} ] · {project.medium}</div>
+            </div>
+          );
+        })()}
         <div>
           {(() => {
             const pIdx = (window.CONTENT.projects || []).findIndex(p => p.id === project.id);
+            const wIdx = project.workIndex;
             const base = `projects.${pIdx}`;
+            // Title + desc are work-level (overridden in openDetail); the rest
+            // are project-level.
+            const namePath = wIdx !== undefined ? `${base}.works.${wIdx}.name` : `${base}.name`;
+            const descPath = wIdx !== undefined ? `${base}.works.${wIdx}.desc` : `${base}.desc`;
             return (
               <React.Fragment>
                 <div className="detail-id">[ {project.id} ] / {tCat(project.category, lang)} / {project.year}</div>
-                <h1 className="detail-title" data-content-path={`${base}.name`}>{project.name}</h1>
-                {project.desc && <p className="detail-desc" data-content-path={`${base}.desc`}>{project.desc}</p>}
+                <h1 className="detail-title" data-content-path={namePath}>{project.name}</h1>
+                {project.desc && <p className="detail-desc" data-content-path={descPath}>{project.desc}</p>}
                 <dl style={{ margin: 0 }}>
                   <div className="detail-row">
                     <dt>{t({ en: "Client", ua: "Клієнт" })}</dt>
