@@ -108,7 +108,7 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
 
 // ─── Category strip — horizontal carousel of works within one category. ───
 function CategoryStrip({ category, tweaks, openDetail }) {
-  const { lang } = useLang();
+  const { t, lang } = useLang();
   const works = category.works || [];
   const [i, setI] = React.useState(0);
   const [pulse, setPulse] = React.useState(false);
