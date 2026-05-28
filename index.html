@@ -4055,6 +4055,18 @@ window.__CV = {
     }
   })();
 </script>
+<!-- Editor affordances: hidden by default for all visitors. editor/editor.css
+     (loaded only when logged in via the bootstrap) re-shows them via
+     body.editor-mode-on selectors with higher specificity.
+     This rule MUST be inline — the project's styles.css is itself inlined
+     in this document and not loaded as an external stylesheet, so edits
+     to it would have no effect. -->
+<style>
+  .editor-add-tile,
+  .editor-delete-action,
+  .editor-delete-action--corner { display: none; }
+</style>
+
 <!-- Per-image display helper: window.imgDisplay(path) → {backgroundSize, …} -->
 <script src="image-display.js"></script>
 
