@@ -14,6 +14,7 @@ window.__editor = window.__editor || {};
     // pending: Map<path, { type: 'text', value }>
     const [pending, setPending] = React.useState(new Map());
     const [popover, setPopover] = React.useState(null); // { anchor, path, initialValue }
+    const [imageModal, setImageModal] = React.useState(null); // { path, existing, folder, slugBasis }
     const [saving, setSaving] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [toast, setToast] = React.useState(null);
@@ -31,16 +32,28 @@ window.__editor = window.__editor || {};
         let el = e.target;
         while (el && !el.dataset?.contentPath) el = el.parentElement;
         if (!el) return;
-        // Only intercept if this is a text path (image handling is added in a
-        // later phase).
-        if (el.dataset.editorKind === 'image') return;
         e.preventDefault();
         e.stopPropagation();
         const path = el.dataset.contentPath;
-        const current = pending.has(path)
-          ? pending.get(path).value
-          : getByPath(window.CONTENT, path);
-        setPopover({ anchor: el, path, initialValue: current });
+        if (el.dataset.editorKind === 'image') {
+          const folder = el.dataset.assetFolder;
+          if (!folder) {
+            setError(`image element at ${path} missing data-asset-folder`);
+            return;
+          }
+          const existing = pending.has(path)
+            ? pending.get(path).value
+            : getByPath(window.CONTENT, path);
+          const slugBasis =
+            el.closest('[data-content-name]')?.dataset?.contentName ||
+            path.split('.').pop();
+          setImageModal({ path, existing, folder, slugBasis });
+        } else {
+          const current = pending.has(path)
+            ? pending.get(path).value
+            : getByPath(window.CONTENT, path);
+          setPopover({ anchor: el, path, initialValue: current });
+        }
       };
       // Use capture so we run before the page's own click handlers.
       document.addEventListener('click', handle, true);
@@ -67,6 +80,27 @@ window.__editor = window.__editor || {};
       });
     }, []);
 
+    const applyImageChange = React.useCallback((path, file, newPath) => {
+      setPending((prev) => {
+        const next = new Map(prev);
+        next.set(path, { type: 'image', value: newPath, file });
+        return next;
+      });
+      // Optimistic preview: swap the visible image to a blob URL.
+      const blobUrl = URL.createObjectURL(file);
+      const els = document.querySelectorAll(
+        `[data-content-path="${CSS.escape(path)}"]`
+      );
+      els.forEach((el) => {
+        if (el.tagName === 'IMG') {
+          el.src = blobUrl;
+        } else if (el.style.backgroundImage !== undefined) {
+          el.style.backgroundImage = `url("${blobUrl}")`;
+        }
+        el.dataset.editorDirty = 'true';
+      });
+    }, []);
+
     const discardAll = React.useCallback(() => {
       if (
         pending.size === 0 ||
@@ -82,21 +116,31 @@ window.__editor = window.__editor || {};
       setError(null);
       try {
         let nextContent = window.CONTENT;
-        const changedPaths = [];
+        const images = [];
+        const textCount = { n: 0 };
+        const imgCount = { n: 0 };
+        const lines = [];
         for (const [path, change] of pending.entries()) {
           nextContent = setByPath(nextContent, path, change.value);
-          changedPaths.push(path);
+          if (change.type === 'image') {
+            images.push({ path: change.value, file: change.file });
+            imgCount.n++;
+            lines.push(`- ${path} (uploaded ${change.value})`);
+          } else {
+            textCount.n++;
+            lines.push(`- ${path}`);
+          }
         }
-        const message =
-          `edit(inline): ${changedPaths.length} text change(s)\n\n` +
-          changedPaths.map((p) => `- ${p}`).join('\n');
+        const summary =
+          `edit(inline): ${textCount.n} text change(s), ${imgCount.n} image upload(s)`;
+        const message = summary + '\n\n' + lines.join('\n');
         await github.saveAtomic(
-          { contentJson: nextContent, images: [] },
+          { contentJson: nextContent, images },
           message
         );
         setToast({
           kind: 'ok',
-          text: `Saved ${changedPaths.length} change(s). Pages will redeploy in ~1 min.`,
+          text: `Saved ${pending.size} change(s). Pages will redeploy in ~1 min.`,
         });
         setPending(new Map());
         setTimeout(() => window.location.reload(), 1500);
@@ -164,6 +208,19 @@ window.__editor = window.__editor || {};
               setPopover(null);
             }}
             onCancel={() => setPopover(null)}
+          />
+        )}
+
+        {imageModal && (
+          <window.__editor.ImageModal
+            existingPath={imageModal.existing}
+            assetFolder={imageModal.folder}
+            suggestedSlug={imageModal.slugBasis}
+            onSave={({ file, path: newPath }) => {
+              applyImageChange(imageModal.path, file, newPath);
+              setImageModal(null);
+            }}
+            onCancel={() => setImageModal(null)}
           />
         )}
 
