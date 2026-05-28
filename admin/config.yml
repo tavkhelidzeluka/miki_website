@@ -2,8 +2,12 @@ backend:
   name: github
   repo: tavkhelidzeluka/miki_website
   branch: main
-  # TODO: replace with the deployed Cloudflare Worker URL before launch
-  base_url: https://miki-oauth.PLACEHOLDER.workers.dev
+  # REQUIRED before launch: replace with the deployed Cloudflare Worker URL,
+  # e.g. https://miki-oauth.<your-subdomain>.workers.dev.
+  # Current value uses the reserved .invalid TLD (RFC 2606) so the admin
+  # fails closed — an attacker cannot register the host and intercept the
+  # OAuth flow if this ever ships unfixed.
+  base_url: https://replace-before-deploy.invalid
 
 media_folder: "assets/images"
 public_folder: "/assets/images"

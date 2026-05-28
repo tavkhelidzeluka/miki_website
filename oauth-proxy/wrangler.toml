@@ -1,3 +1,10 @@
 name = "miki-oauth"
 main = "src/index.js"
 compatibility_date = "2024-12-01"
+
+# Origin(s) of the admin page allowed to receive the OAuth token via
+# postMessage. Comma-separated, no trailing slashes. Required: the token
+# is only sent to origins on this allowlist.
+# Replace with your actual GitHub Pages origin (and add localhost for dev).
+[vars]
+ADMIN_ORIGINS = "https://tavkhelidzeluka.github.io,http://localhost:8000"

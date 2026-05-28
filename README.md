@@ -56,7 +56,7 @@ Three independent pieces:
 |---|---|---|
 | **Site** | GitHub Pages | Auto-deploys from `main` (Settings → Pages → Source: branch `main`, `/` root). |
 | **Admin** | Same repo as site, served at `/admin/` | Auto-deploys with the site. |
-| **OAuth proxy** | Cloudflare Workers | Deploy via `wrangler deploy` from `oauth-proxy/`. Holds the GitHub OAuth client secret as a Worker secret. |
+| **OAuth proxy** | Cloudflare Workers | Deploy via `wrangler deploy` from `oauth-proxy/`. Holds the GitHub OAuth client secret as a Worker secret; uses an `ADMIN_ORIGINS` allowlist (in `wrangler.toml`) to pin which sites the access token may be sent to. |
 
 ### One-time setup (already done at launch)
 
