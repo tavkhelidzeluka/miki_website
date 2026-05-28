@@ -6,96 +6,11 @@
 
 // ─── Pools (flattened by content type) ──────────────────────────────
 
-const POSTS = [
-  { src: "assets/social/legnacat/post-1.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-2.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-3.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-4.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-5.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-6.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-7.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-8.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-9.webp",   brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-10.webp",  brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-11.webp",  brand: "@legnacat" },
-  { src: "assets/social/legnacat/post-12.webp",  brand: "@legnacat" },
-  { src: "assets/social/khedi/post-1.webp",      brand: "KHEDI" },
-  { src: "assets/social/khedi/post-2.webp",      brand: "KHEDI" },
-  { src: "assets/social/khedi/post-3.webp",      brand: "KHEDI" },
-  { src: "assets/social/khedi/post-4.webp",      brand: "KHEDI" },
-];
-
-const CAROUSELS = [
-  {
-    id: "01",
-    brand: "@legnacat",
-    title: "Кризис четверти жизни",
-    titleEn: "Quarter-life crisis",
-    cover: "assets/social/legnacat/crisis-cover.webp",
-    slides: [
-      "assets/social/legnacat/crisis-1.webp",
-      "assets/social/legnacat/crisis-2.webp",
-      "assets/social/legnacat/crisis-3.webp",
-      "assets/social/legnacat/crisis-5.webp",
-      "assets/social/legnacat/crisis-6.webp",
-      "assets/social/legnacat/crisis-7.webp",
-    ],
-  },
-  {
-    id: "02",
-    brand: "@legnacat",
-    title: "Starbucks в Грузии",
-    titleEn: "Starbucks in Georgia",
-    cover: "assets/social/legnacat/starbucks-cover.webp",
-    slides: [
-      "assets/social/legnacat/starbucks-1.webp",
-      "assets/social/legnacat/starbucks-2.webp",
-      "assets/social/legnacat/starbucks-3.webp",
-      "assets/social/legnacat/starbucks-4.webp",
-      "assets/social/legnacat/starbucks-5.webp",
-      "assets/social/legnacat/starbucks-6.webp",
-    ],
-  },
-];
-
-const STORIES = [
-  { src: "assets/social/yang/story-1.webp",     brand: "YANG" },
-  { src: "assets/social/yang/story-2.webp",     brand: "YANG" },
-  { src: "assets/social/yang/story-3.webp",     brand: "YANG" },
-  { src: "assets/social/yang/story-4.webp",     brand: "YANG" },
-  { src: "assets/social/realty/story-1.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-2.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-3.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-4.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-5.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-6.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-7.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-8.webp",   brand: "REALTY" },
-  { src: "assets/social/realty/story-9.webp",   brand: "REALTY" },
-  { src: "assets/social/dental/story-1.webp",   brand: "DENTAL" },
-  { src: "assets/social/dental/story-2.webp",   brand: "DENTAL" },
-  { src: "assets/social/dental/story-3.webp",   brand: "DENTAL" },
-  { src: "assets/social/dental/story-4.webp",   brand: "DENTAL" },
-  { src: "assets/social/dental/story-5.webp",   brand: "DENTAL" },
-  { src: "assets/social/dental/story-6.webp",   brand: "DENTAL" },
-  { src: "assets/social/dental/story-7.webp",   brand: "DENTAL" },
-  { src: "assets/social/dental/story-8.webp",   brand: "DENTAL" },
-];
-
-const ADS = [
-  { src: "assets/social/scratch/ad-1.webp", aspect: "1 / 1",  brand: "SCRATCH SCHOOL" },
-  { src: "assets/social/scratch/ad-2.webp", aspect: "1 / 1",  brand: "SCRATCH SCHOOL" },
-  { src: "assets/social/scratch/ad-3.webp", aspect: "1 / 1",  brand: "SCRATCH SCHOOL" },
-  { src: "assets/social/scratch/ad-4.webp", aspect: "16 / 9", brand: "SCRATCH SCHOOL" },
-];
-
-const SERVICES = [
-  { id: "01", title: "BRAND AUDIT",         sub: "Visual identity + content review, competitor scan.",      subUa: "Аудит ідентичності та контенту, конкурентний скан." },
-  { id: "02", title: "STRATEGY & CALENDAR", sub: "Pillars, posting cadence, 2-week launch plans.",          subUa: "Контент-стовпи, ритм публікацій, дводижневі лонч-плани." },
-  { id: "03", title: "STATIC + MOTION",     sub: "Feed posts, stories, reels — print-room rules.",          subUa: "Пости, сторіс, рілси — за правилами друкарні." },
-  { id: "04", title: "CHANNEL DESIGN",      sub: "Telegram covers, sticker packs, post templates.",         subUa: "Обкладинки Telegram, стікер-паки, шаблони постів." },
-  { id: "05", title: "BRAND ANALYSIS",      sub: "Voice & tone, narrative guidelines, case studies.",       subUa: "Голос і тон, наративний гайд, кейс-студії." },
-];
+const POSTS     = window.CONTENT.social.posts;
+const CAROUSELS = window.CONTENT.social.carousels;
+const STORIES   = window.CONTENT.social.stories;
+const ADS       = window.CONTENT.social.ads;
+const SERVICES  = window.CONTENT.social.services;
 
 // Flat list of every still + carousel slide — the WORK strip iterates this.
 const WORK_ITEMS = [
