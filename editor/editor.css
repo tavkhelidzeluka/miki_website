@@ -1,0 +1,162 @@
+/* Inline editor styles. All rules scoped under .editor-* or
+   body.editor-mode-on so they don't bleed into the main site. */
+
+.editor-toolbar {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #000;
+  padding: 8px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.editor-toolbar button {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.editor-toolbar button[disabled] {
+  opacity: 0.4;
+  cursor: default;
+}
+.editor-toolbar--error {
+  border-color: #c00;
+  color: #c00;
+}
+.editor-toolbar--saving {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.editor-toolbar-status {
+  font-size: 12px;
+}
+
+/* Outline + icon for editable elements when edit mode is on. */
+body.editor-mode-on [data-content-path] {
+  position: relative;
+  outline-offset: 2px;
+}
+body.editor-mode-on [data-content-path]:hover {
+  outline: 1px dashed currentColor;
+  cursor: pointer;
+}
+body.editor-mode-on [data-content-path]::after {
+  content: '✎';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 18px;
+  height: 18px;
+  background: #000;
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+  z-index: 2;
+}
+body.editor-mode-on [data-content-path]:hover::after {
+  opacity: 1;
+}
+body.editor-mode-on [data-content-path][data-editor-kind="image"]:hover::after {
+  content: '📷';
+}
+
+/* Dirty indicator. */
+body.editor-mode-on [data-content-path][data-editor-dirty="true"]::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  background: #c00;
+  border-radius: 50%;
+  z-index: 3;
+}
+
+/* Popover. */
+.editor-popover {
+  position: fixed;
+  z-index: 10000;
+  background: #fff;
+  border: 1px solid #000;
+  padding: 12px;
+  min-width: 280px;
+  max-width: 480px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+.editor-popover input,
+.editor-popover textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+}
+.editor-popover textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.editor-popover-label {
+  font-weight: bold;
+  font-size: 11px;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+.editor-popover-label:first-child {
+  margin-top: 0;
+}
+.editor-popover-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.editor-popover-actions button {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.editor-popover-actions button[data-variant="cancel"] {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+/* Toast (transient feedback after save). */
+.editor-toast {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  z-index: 10001;
+  background: #000;
+  color: #fff;
+  padding: 10px 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.editor-toast--error {
+  background: #c00;
+}
