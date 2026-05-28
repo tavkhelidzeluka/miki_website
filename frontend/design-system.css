@@ -1,0 +1,254 @@
+/* ──────────────────────────────────────────────────────────────────
+   MYKYTA / GTXHI — Foundations
+   Visual artist · Animator · Illustrator
+   B&W minimalism · brackets · checkers · halftone collage
+   ────────────────────────────────────────────────────────────────── */
+
+/* Brand display face: Coolvetica (user-supplied). Four cuts in use.
+   Body: Inter (Google Fonts). */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
+
+@font-face {
+  font-family: "Coolvetica";
+  src: url("./fonts/Coolvetica_Rg.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Coolvetica";
+  src: url("./fonts/Coolvetica_Rg_It.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+/* Condensed — mid-size display (100–150px). */
+@font-face {
+  font-family: "Coolvetica Cond";
+  src: url("./fonts/Coolvetica_Rg_Cond.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* Compressed Heavy — bold large display. */
+@font-face {
+  font-family: "Coolvetica Comp";
+  src: url("./fonts/Coolvetica_Hv_Comp.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* Crammed — the narrowest cut. Matches the Figma "Compressed Regular"
+   used at 340/180px hero sizes. */
+@font-face {
+  font-family: "Coolvetica Cram";
+  src: url("./fonts/Coolvetica_Rg_Cram.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ─── Color — STRICTLY two tones ───
+     The brand is ink-on-paper. No neutrals, no accent colours. Where you'd
+     reach for a grey, drop opacity on --ink instead. Anything else is OUT
+     OF BRAND. */
+  --ink:        rgb(10, 10, 10);   /* #0A0A0A — primary text & fills */
+  --ink-true:   rgb(0, 0, 0);      /* #000000 — display headlines, hairlines */
+  --paper:      rgb(255, 255, 255); /* #FFFFFF — background */
+
+  /* Hairline rule — same ink at low opacity for very subtle separators. */
+  --grey-line:  rgba(10, 10, 10, 0.15);
+
+  /* Semantic */
+  --fg-1: var(--ink);
+  --fg-2: rgba(10, 10, 10, 0.6);
+  --fg-3: rgba(10, 10, 10, 0.4);
+  --bg:   var(--paper);
+  --rule: var(--ink);
+  --rule-thin: 1px;
+  --rule-mid:  1.5px;
+  --rule-thick: 6px;
+
+  /* ─── Type ─── */
+  /* Display ladder: Cram (most narrow) for biggest sizes,
+     Cond for mid-size posters, Comp for heavy weight. */
+  --font-display:     "Coolvetica Cram", "Coolvetica", "Helvetica Neue Condensed", "Helvetica", Arial, sans-serif;
+  --font-display-mid: "Coolvetica Cond", "Coolvetica", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display-rg:  "Coolvetica",       "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display-hv:  "Coolvetica Comp",  "Coolvetica", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body:        "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono:        ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Scale — derived from the Figma sizes (340 / 180 / 150 / 96 display; 40/36/22/16/15/13 body) */
+  --t-display-xl:  clamp(120px, 18vw, 340px);  /* hero headlines [ GTXHI/ ] */
+  --t-display-lg:  clamp(96px, 12vw, 180px);   /* section titles ABOUT ME / CANVAS */
+  --t-display-md:  clamp(72px, 9vw, 150px);    /* poster cards (LUHANSK / BOOK) */
+  --t-display-sm:  56px;                       /* card-grid display */
+  --t-h1:          40px;
+  --t-h2:          32px;
+  --t-h3:          22px;
+  --t-h4:          20px;
+  --t-h5:          18px;
+  --t-body-lg:     21px;
+  --t-body:        15px;
+  --t-body-sm:     13px;
+  --t-caption:     12px;
+  --t-mini:        11px;
+
+  /* Spacing */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 44px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* Layout grid — desktop 1440 */
+  --page-pad-x: 44px;
+  --page-pad-y: 36px;
+
+  /* The brand has NO border-radius. Everything is square. */
+  --radius-0: 0px;
+  --radius-pill: 999px;  /* reserved — almost never used */
+
+  /* No shadows; the system relies on contrast + hairline rules */
+  --shadow-none: none;
+}
+
+/* ─── Reset baseline ─── */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─── Semantic ─── */
+.display-xl, h1.display {
+  font-family: var(--font-display);
+  font-size: var(--t-display-xl);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin: 0;
+}
+.display-lg {
+  font-family: var(--font-display);
+  font-size: var(--t-display-lg);
+  line-height: 0.92;
+  letter-spacing: -0.005em;
+  color: var(--ink-true);
+  text-transform: uppercase;
+  margin: 0;
+}
+.display-md {
+  font-family: var(--font-display);
+  font-size: var(--t-display-md);
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0;
+}
+.display-sm {
+  font-family: var(--font-display);
+  font-size: var(--t-display-sm);
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+h1, .h1 { font-family: var(--font-body); font-weight: 700; font-size: var(--t-h1); line-height: 1.14; margin: 0; }
+h2, .h2 { font-family: var(--font-body); font-weight: 700; font-size: var(--t-h2); line-height: 1.15; margin: 0; }
+h3, .h3 { font-family: var(--font-body); font-weight: 700; font-size: var(--t-h3); line-height: 1.2;  margin: 0; }
+h4, .h4 { font-family: var(--font-body); font-weight: 700; font-size: var(--t-h4); line-height: 1.2;  margin: 0; }
+h5, .h5 { font-family: var(--font-body); font-weight: 700; font-size: var(--t-h5); line-height: 1.3;  margin: 0; }
+
+p, .body { font-size: var(--t-body); line-height: 1.5; margin: 0; }
+.body-lg { font-size: var(--t-body-lg); line-height: 1.3; }
+.body-sm { font-size: var(--t-body-sm); line-height: 1.4; }
+.caption { font-size: var(--t-caption); font-style: italic; line-height: 1.3; color: var(--fg-2); }
+.mini    { font-size: var(--t-mini); font-weight: 700; letter-spacing: 0.04em; }
+
+/* ─── Brand primitives ─── */
+
+/* Bracket-wrapper — [ LABEL ] — the signature device.
+   Use on inline elements: <span class="bk">GTXHI</span> */
+.bk::before { content: "[ "; }
+.bk::after  { content: " ]"; }
+
+/* Big poster bracket — display-size [ ABOUT ME ] with wide gaps */
+.bk-poster {
+  font-family: var(--font-display);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.18em;
+}
+.bk-poster::before { content: "["; font-weight: 400; }
+.bk-poster::after  { content: "]"; font-weight: 400; }
+
+/* Hairline horizontal rule (1.5px solid ink). */
+.rule {
+  border: 0;
+  border-top: var(--rule-mid) solid var(--rule);
+  margin: 0;
+}
+
+/* Section index label — [ 01 ] EXPERIENCE */
+.section-idx {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--t-body-sm);
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+/* Outlined button — ЗАКАЗАТЬ → */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--t-mini);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: var(--rule-mid) solid var(--ink);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 120ms linear, color 120ms linear;
+  text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn:active { transform: translateY(0.5px); }
+
+/* Square photo placeholder — pure black square. */
+.square {
+  background: var(--ink);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+/* Checker / squares pattern — repeating 12px tiles */
+.checker {
+  background-image:
+    linear-gradient(45deg, var(--ink) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--ink) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--ink) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--ink) 75%);
+  background-size: 24px 24px;
+  background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+}
