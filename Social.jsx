@@ -148,6 +148,15 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                 {...tileProps}
               >
                 <div className="sm2-gal-img" style={smBg(item.src, pathBase ? `${pathBase}.${tileIdx}.src` : null)} />
+                {pathBase && (
+                  <span
+                    className="editor-delete-action editor-delete-action--corner"
+                    data-editor-action="delete-item"
+                    data-editor-list-path={pathBase}
+                    data-editor-list-index={tileIdx}
+                    data-editor-item-label={item.brand || `item ${tileIdx + 1}`}
+                  >×</span>
+                )}
               </button>
             );
           })}
@@ -193,15 +202,28 @@ function WorkSection({ lang }) {
   const s = window.CONTENT.social;
   const workItems = React.useMemo(() => buildWorkItems(s.posts, s.carousels), [s]);
   return (
-    <GalleryStrip
-      items={workItems}
-      aspect="4 / 5"
-      kindLabel={workKindLabel}
-      lang={lang}
-      sectionIdx={1}
-      sectionLabel={t(window.CONTENT.ui.socialPage.sectionPosts)}
-      variant="work"
-    />
+    <React.Fragment>
+      <GalleryStrip
+        items={workItems}
+        aspect="4 / 5"
+        kindLabel={workKindLabel}
+        lang={lang}
+        sectionIdx={1}
+        sectionLabel={t(window.CONTENT.ui.socialPage.sectionPosts)}
+        variant="work"
+      />
+      <div style={{ textAlign: 'center', marginTop: 12 }}>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new post"
+          data-editor-add-schema="socialTile"
+          data-editor-list-path="social.posts"
+          data-editor-asset-folder="assets/images/social"
+        >+ add post</button>
+      </div>
+    </React.Fragment>
   );
 }
 
@@ -209,17 +231,30 @@ function StoriesSection({ lang }) {
   const { t } = useLang();
   const STORIES = window.CONTENT.social.stories;
   return (
-    <GalleryStrip
-      items={STORIES}
-      aspect="9 / 16"
-      kindLabel={storyKindLabel}
-      lang={lang}
-      sectionIdx={2}
-      sectionLabel={t(window.CONTENT.ui.socialPage.sectionStories)}
-      variant="stories"
-      pathBase="social.stories"
-      assetFolder="assets/images/social"
-    />
+    <React.Fragment>
+      <GalleryStrip
+        items={STORIES}
+        aspect="9 / 16"
+        kindLabel={storyKindLabel}
+        lang={lang}
+        sectionIdx={2}
+        sectionLabel={t(window.CONTENT.ui.socialPage.sectionStories)}
+        variant="stories"
+        pathBase="social.stories"
+        assetFolder="assets/images/social"
+      />
+      <div style={{ textAlign: 'center', marginTop: 12 }}>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new story"
+          data-editor-add-schema="socialTile"
+          data-editor-list-path="social.stories"
+          data-editor-asset-folder="assets/images/social"
+        >+ add story</button>
+      </div>
+    </React.Fragment>
   );
 }
 
@@ -227,17 +262,30 @@ function AdsSection({ lang }) {
   const { t } = useLang();
   const ADS = window.CONTENT.social.ads;
   return (
-    <GalleryStrip
-      items={ADS}
-      aspect={null}
-      kindLabel={adsKindLabel}
-      lang={lang}
-      sectionIdx={3}
-      sectionLabel={t(window.CONTENT.ui.socialPage.sectionAds)}
-      variant="ads"
-      pathBase="social.ads"
-      assetFolder="assets/images/social"
-    />
+    <React.Fragment>
+      <GalleryStrip
+        items={ADS}
+        aspect={null}
+        kindLabel={adsKindLabel}
+        lang={lang}
+        sectionIdx={3}
+        sectionLabel={t(window.CONTENT.ui.socialPage.sectionAds)}
+        variant="ads"
+        pathBase="social.ads"
+        assetFolder="assets/images/social"
+      />
+      <div style={{ textAlign: 'center', marginTop: 12 }}>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new ad"
+          data-editor-add-schema="socialTile"
+          data-editor-list-path="social.ads"
+          data-editor-asset-folder="assets/images/social"
+        >+ add ad</button>
+      </div>
+    </React.Fragment>
   );
 }
 
