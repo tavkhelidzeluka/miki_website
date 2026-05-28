@@ -2,24 +2,20 @@
 // Hero → WORK strip (posts + carousels, Rue-Studio-style horizontal
 // gallery) → STORIES grid → ADS → services.
 
-// ─── Pools (flattened by content type) ──────────────────
+// ─── Pools — read lazily inside each section (window.CONTENT isn't
+//     set when this file is evaluated; the content fetch is async). ──
 
-// ─── Pools (flattened by content type) ──────────────────────────────
-
-const POSTS     = window.CONTENT.social.posts;
-const CAROUSELS = window.CONTENT.social.carousels;
-const STORIES   = window.CONTENT.social.stories;
-const ADS       = window.CONTENT.social.ads;
-const SERVICES  = window.CONTENT.social.services;
-
-// Flat list of every still + carousel slide — the WORK strip iterates this.
-const WORK_ITEMS = [
-  ...POSTS,
-  { src: CAROUSELS[0].cover, brand: CAROUSELS[0].brand, set: CAROUSELS[0].id, role: "cover" },
-  ...CAROUSELS[0].slides.map((s, i) => ({ src: s, brand: CAROUSELS[0].brand, set: CAROUSELS[0].id, role: "slide", n: i + 2 })),
-  { src: CAROUSELS[1].cover, brand: CAROUSELS[1].brand, set: CAROUSELS[1].id, role: "cover" },
-  ...CAROUSELS[1].slides.map((s, i) => ({ src: s, brand: CAROUSELS[1].brand, set: CAROUSELS[1].id, role: "slide", n: i + 2 })),
-];
+// Builds the flat WORK strip from posts + carousel covers/slides.
+function buildWorkItems(posts, carousels) {
+  const out = [...posts];
+  for (const c of carousels) {
+    out.push({ src: c.cover, brand: c.brand, set: c.id, role: "cover" });
+    c.slides.forEach((s, i) => {
+      out.push({ src: s, brand: c.brand, set: c.id, role: "slide", n: i + 2 });
+    });
+  }
+  return out;
+}
 
 // ─── Helpers ────────────────────────────────────────────────────────
 
@@ -184,9 +180,11 @@ const adsKindLabel = (cur, lang) =>
     : (lang === "UA" ? "рекламний пост · 1:1" : "ad square · 1:1");
 
 function WorkSection({ lang }) {
+  const s = window.CONTENT.social;
+  const workItems = React.useMemo(() => buildWorkItems(s.posts, s.carousels), [s]);
   return (
     <GalleryStrip
-      items={WORK_ITEMS}
+      items={workItems}
       aspect="4 / 5"
       kindLabel={workKindLabel}
       lang={lang}
@@ -198,6 +196,7 @@ function WorkSection({ lang }) {
 }
 
 function StoriesSection({ lang }) {
+  const STORIES = window.CONTENT.social.stories;
   return (
     <GalleryStrip
       items={STORIES}
@@ -212,6 +211,7 @@ function StoriesSection({ lang }) {
 }
 
 function AdsSection({ lang }) {
+  const ADS = window.CONTENT.social.ads;
   return (
     <GalleryStrip
       items={ADS}

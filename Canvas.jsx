@@ -1,5 +1,4 @@
 // Canvas.jsx — Shop. Vertically scrollable grid of originals/prints.
-const ITEMS = window.CONTENT.canvas.items;
 
 // Currency conversion. Base prices are USD; rates apply on top.
 // Fallback rates approximate late-2025 values; live rates fetched on mount.
@@ -13,6 +12,9 @@ const CURRENCIES = [
 const FALLBACK_RATES = { USD: 1, EUR: 0.92, RUB: 92, UAH: 41, GEL: 2.72 };
 
 function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, setCartOpen }) {
+  // Read at render time, not module-eval time — window.CONTENT may not be
+  // set yet when Babel evaluates this file (the content fetch is async).
+  const ITEMS = window.CONTENT.canvas.items;
   const { t, lang } = useLang();
   const [pulse, setPulse] = React.useState(null);
   const [checkoutOpen, setCheckoutOpen] = React.useState(false);

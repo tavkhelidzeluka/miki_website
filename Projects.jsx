@@ -12,8 +12,6 @@ const CAT_UA = {
 };
 const tCat = (en, lang) => (lang === "UA" && CAT_UA[en]) ? CAT_UA[en] : en;
 
-const ALL_PROJECTS = window.CONTENT.projects;
-
 // Categories that use the horizontal strip view.
 // Others (BOOKS) open the project detail overlay directly.
 // ANIMATION + SOCIAL MEDIA are special — their own custom views.
@@ -22,6 +20,9 @@ const ANIM_CAT = "01";
 const SOCIAL_CAT = "07";
 
 function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
+  // Read at render time, not module-eval time — window.CONTENT may not be
+  // set yet when Babel evaluates this file (the content fetch is async).
+  const ALL_PROJECTS = window.CONTENT.projects;
   const { t, lang } = useLang();
   // Run entrance animation only on first mount.
   const [fresh, setFresh] = React.useState(true);
@@ -261,5 +262,10 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
 
 window.Projects = Projects;
 window.ProjectDetail = ProjectDetail;
-window.ALL_PROJECTS = ALL_PROJECTS;
+// Live getter so consumers (e.g. App.jsx detail-nav) always see the current
+// projects array. The fetch resolves before the user can trigger any access.
+Object.defineProperty(window, "ALL_PROJECTS", {
+  configurable: true,
+  get: () => (window.CONTENT && window.CONTENT.projects) || [],
+});
 
