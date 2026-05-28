@@ -5,7 +5,9 @@
 
 (function () {
   // Try the two known patterns; extend if needed.
-  const KEY_PATTERNS = [/^decap-cms\.user$/, /^netlify-cms\.user$/];
+  // Accept either separator (dot or dash) so we work regardless of which
+  // exact key Decap CMS chose for its user object across versions.
+  const KEY_PATTERNS = [/^decap-cms[.-]user$/, /^netlify-cms[.-]user$/];
 
   function findToken() {
     for (let i = 0; i < localStorage.length; i++) {
