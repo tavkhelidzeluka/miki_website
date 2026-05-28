@@ -200,14 +200,27 @@ function CategoryStrip({ category, tweaks, openDetail }) {
 
       <button className="cat-arrow cat-arrow--next" aria-label="next" onClick={next}>→</button>
 
-      <div className="cat-meta" key={cur.name}>
-        <div className="cat-meta-row">
-          <span className="cat-bracket">[</span>
-          <span className="cat-name" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.works.${i}.name`}>{cur.name}</span>
-          <span className="cat-bracket">]</span>
-        </div>
-        <div className="cat-desc" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.works.${i}.desc`}>{cur.desc}</div>
-      </div>
+      {(() => {
+        const catIdx = (window.CONTENT.projects || []).findIndex(p => p.id === category.id);
+        const base = `projects.${catIdx}.works.${i}`;
+        return (
+          <div className="cat-meta" key={cur.name}>
+            <div className="cat-meta-row">
+              <span className="cat-bracket">[</span>
+              <span className="cat-name" data-content-path={`${base}.name`}>{cur.name}</span>
+              <span className="cat-bracket">]</span>
+            </div>
+            <div className="cat-desc" data-content-path={`${base}.desc`}>{cur.desc}</div>
+            {cur.price != null && cur.price !== "" && (
+              <div
+                className="cat-price"
+                data-content-path={`${base}.price`}
+                style={{ marginTop: 6, fontWeight: 600, opacity: 0.9 }}
+              >{cur.price}</div>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }
@@ -287,6 +300,12 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
                     <dt>{t({ en: "Medium", ua: "Техніка" })}</dt>
                     <dd data-content-path={`${base}.medium`}>{project.medium}</dd>
                   </div>
+                  {wIdx !== undefined && (
+                    <div className="detail-row">
+                      <dt>{t({ en: "Price", ua: "Ціна" })}</dt>
+                      <dd data-content-path={`${base}.works.${wIdx}.price`}>{(project.works && project.works[wIdx] && project.works[wIdx].price) || "—"}</dd>
+                    </div>
+                  )}
                 </dl>
                 <p className="detail-prose" data-content-path={`${base}.prose`}>{project.prose}</p>
               </React.Fragment>

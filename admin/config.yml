@@ -85,7 +85,7 @@ collections:
                   { name: name, widget: string },
                   { name: desc, widget: text },
                   { name: thumb, widget: image, required: false },
-                  { name: price, widget: number, required: false, value_type: int }
+                  { name: price, label: "Price (any format — e.g. \"200 €\")", widget: string, required: false }
               ]}
           ]}
           - { name: canvas, label: "Canvas (shop)", widget: object, fields: [
