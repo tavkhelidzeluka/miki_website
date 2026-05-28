@@ -97,7 +97,7 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
             </div>
             <div className="proj-card-foot">
               <span className="proj-card-id">[ {p.id} ]</span>
-              <span className="proj-card-cat">{tCat(p.category, lang)}</span>
+              <span className="proj-card-cat" data-content-path={`projects.${idx}.categoryLabel`}>{p.categoryLabel ? t(p.categoryLabel) : tCat(p.category, lang)}</span>
             </div>
           </button>
         ))}
@@ -157,7 +157,7 @@ function CategoryStrip({ category, tweaks, openDetail }) {
       <div className="cat-label">
         <div>
           <div className="cat-label-id">[ {category.id} ]</div>
-          <div className="cat-label-cat">{tCat(category.category, lang)}</div>
+          <div className="cat-label-cat" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.categoryLabel`}>{category.categoryLabel ? t(category.categoryLabel) : tCat(category.category, lang)}</div>
         </div>
       </div>
 
@@ -271,7 +271,7 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
             const descPath = wIdx !== undefined ? `${base}.works.${wIdx}.desc` : `${base}.desc`;
             return (
               <React.Fragment>
-                <div className="detail-id">[ {project.id} ] / {tCat(project.category, lang)} / {project.year}</div>
+                <div className="detail-id">[ {project.id} ] / <span data-content-path={`${base}.categoryLabel`}>{project.categoryLabel ? t(project.categoryLabel) : tCat(project.category, lang)}</span> / <span data-content-path={`${base}.year`}>{project.year}</span></div>
                 <h1 className="detail-title" data-content-path={namePath}>{project.name}</h1>
                 {project.desc && <p className="detail-desc" data-content-path={descPath}>{project.desc}</p>}
                 <dl style={{ margin: 0 }}>

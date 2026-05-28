@@ -418,7 +418,11 @@
       "year": "2024 — 2025",
       "category": "ANIMATION",
       "prose": "A long-arc creature animation gig. I keyframed by hand on twos, working from rough director's storyboards and finishing into clean line. The crystal scenes — fragmented, refractive — were the most challenging. We treated each facet as its own animation rig.",
-      "coverImage": null
+      "coverImage": null,
+      "categoryLabel": {
+        "en": "ANIMATION",
+        "ua": "АНІМАЦІЯ"
+      }
     },
     {
       "works": [
@@ -474,7 +478,11 @@
       "year": "2024",
       "category": "ILLUSTRATION",
       "prose": "Twelve pieces, A3, all from the same week in October. I started each one with a black square cut from cardstock — the shape was the rule. Everything else (pencil, paint, collage) responded to that anchor.",
-      "coverImage": null
+      "coverImage": null,
+      "categoryLabel": {
+        "en": "ILLUSTRATION",
+        "ua": "ІЛЮСТРАЦІЯ"
+      }
     },
     {
       "works": [
@@ -524,7 +532,11 @@
       "year": "2024",
       "category": "POSTERS",
       "prose": "The brief asked for restraint. Black ink on warm paper, one photograph treated as halftone, big type. We avoided the season's typical illustrative direction entirely.",
-      "coverImage": null
+      "coverImage": null,
+      "categoryLabel": {
+        "en": "POSTERS",
+        "ua": "ПОСТЕРИ"
+      }
     },
     {
       "works": [
@@ -580,7 +592,11 @@
       "year": "2023 — Present",
       "category": "CANVAS",
       "prose": "I work alla-prima, building tone in two or three sessions, then collaging textured paper over the top. The canvas works are the slowest part of the practice — usually one finished piece every two weeks.",
-      "coverImage": null
+      "coverImage": null,
+      "categoryLabel": {
+        "en": "CANVAS",
+        "ua": "ПОЛОТНА"
+      }
     },
     {
       "works": [
@@ -636,7 +652,11 @@
       "year": "2024",
       "category": "BOOKS",
       "prose": "Three projects in this folder. The Exposure zine started as a poster series; the publishers asked to turn it into a perfect-bound 24-page book. Hand-bound the first run myself.",
-      "coverImage": null
+      "coverImage": null,
+      "categoryLabel": {
+        "en": "BOOKS",
+        "ua": "КНИГИ"
+      }
     },
     {
       "works": [
@@ -692,7 +712,11 @@
       "year": "2023 — Present",
       "category": "PHOTOS",
       "prose": "Always one camera, mostly Olympus mju. I scan and treat everything to 1-bit halftone before publishing — the texture matters more than the literal photograph.",
-      "coverImage": null
+      "coverImage": null,
+      "categoryLabel": {
+        "en": "PHOTOS",
+        "ua": "ФОТО"
+      }
     },
     {
       "works": [
@@ -748,7 +772,11 @@
       "year": "2024",
       "category": "SOCIAL MEDIA",
       "prose": "Quick turnaround social work. Two-frame loops in Photoshop, output at 1080×1920 / 1080×1080 / 1080×1350. Same brand voice held across all three.",
-      "coverImage": null
+      "coverImage": null,
+      "categoryLabel": {
+        "en": "SOCIAL MEDIA",
+        "ua": "СОЦМЕРЕЖІ"
+      }
     }
   ],
   "canvas": {
