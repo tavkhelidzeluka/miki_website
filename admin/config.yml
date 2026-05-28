@@ -76,6 +76,7 @@ collections:
               { name: medium, widget: string },
               { name: desc, widget: text },
               { name: prose, widget: text },
+              { name: coverImage, label: "Cover image (3x3 grid tile)", widget: image, required: false },
               { name: works, widget: list, fields: [
                   { name: name, widget: string },
                   { name: desc, widget: text },

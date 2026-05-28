@@ -87,6 +87,11 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
           >
             <div
               className={tileBg + (p.category === "ANIMATION" ? " proj-tile--cover proj-tile--anim" : p.category === "CANVAS" ? " proj-tile--cover proj-tile--canvas" : p.category === "ILLUSTRATION" ? " proj-tile--cover proj-tile--illustration" : p.category === "POSTERS" ? " proj-tile--cover proj-tile--posters" : p.category === "PHOTOS" ? " proj-tile--cover proj-tile--photos" : p.category === "SOCIAL MEDIA" ? " proj-tile--cover proj-tile--social" : "")}
+              style={p.coverImage ? { backgroundImage: `url("${p.coverImage}")` } : undefined}
+              data-content-path={`projects.${idx}.coverImage`}
+              data-editor-kind="image"
+              data-asset-folder="assets/images/projects/covers"
+              data-content-name={p.category.toLowerCase().replace(/\s+/g, '-') + "-cover"}
             >
               <span className="proj-tile-hover">[ <span data-content-path="ui.projectsPage.openHover">{t(window.CONTENT.ui.projectsPage.openHover)}</span> ]</span>
             </div>

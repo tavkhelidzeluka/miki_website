@@ -16,69 +16,213 @@
     "web3formsKey": "9311b89b-4e55-4630-b984-99366614da81"
   },
   "ui": {
-    "brand": { "en": "MIKI / GTXHI", "ua": "MIKI / GTXHI" },
+    "brand": {
+      "en": "MIKI / GTXHI",
+      "ua": "MIKI / GTXHI"
+    },
     "nav": {
-      "projects": { "en": "PROJECTS", "ua": "ПРОЄКТИ" },
-      "about":    { "en": "ABOUT",    "ua": "ПРО МЕНЕ" },
-      "canvas":   { "en": "CANVAS",   "ua": "КАНВАС" },
-      "contact":  { "en": "CONTACT",  "ua": "КОНТАКТ" },
-      "cart":     { "en": "CART",     "ua": "КОШИК" },
-      "back":     { "en": "Back",     "ua": "Назад" }
+      "projects": {
+        "en": "PROJECTS",
+        "ua": "ПРОЄКТИ"
+      },
+      "about": {
+        "en": "ABOUT",
+        "ua": "ПРО МЕНЕ"
+      },
+      "canvas": {
+        "en": "CANVAS",
+        "ua": "КАНВАС"
+      },
+      "contact": {
+        "en": "CONTACT",
+        "ua": "КОНТАКТ"
+      },
+      "cart": {
+        "en": "CART",
+        "ua": "КОШИК"
+      },
+      "back": {
+        "en": "Back",
+        "ua": "Назад"
+      }
     },
     "home": {
-      "thumbLabel": { "en": "LATEST", "ua": "ОСТАННЄ" }
+      "thumbLabel": {
+        "en": "LATEST",
+        "ua": "ОСТАННЄ"
+      }
     },
     "headers": {
-      "projects": { "en": "PROJECTS",  "ua": "ПРОЄКТИ" },
-      "about":    { "en": "ABOUT ME",  "ua": "ПРО МЕНЕ" },
-      "canvas":   { "en": "CANVAS",    "ua": "КАНВАС" },
-      "contact":  { "en": "CONTACT",   "ua": "КОНТАКТ" },
-      "checkout": { "en": "CHECKOUT",  "ua": "ОФОРМЛЕННЯ" }
+      "projects": {
+        "en": "PROJECTS",
+        "ua": "ПРОЄКТИ"
+      },
+      "about": {
+        "en": "ABOUT ME",
+        "ua": "ПРО МЕНЕ"
+      },
+      "canvas": {
+        "en": "CANVAS",
+        "ua": "КАНВАС"
+      },
+      "contact": {
+        "en": "CONTACT",
+        "ua": "КОНТАКТ"
+      },
+      "checkout": {
+        "en": "CHECKOUT",
+        "ua": "ОФОРМЛЕННЯ"
+      }
     },
     "projectsPage": {
-      "openHover": { "en": "open →", "ua": "відкрити →" }
+      "openHover": {
+        "en": "open →",
+        "ua": "відкрити →"
+      }
     },
     "aboutPage": {
-      "role":               { "en": "Visual artist / Animator / Illustrator", "ua": "Візуальний митець / Аніматор / Ілюстратор" },
-      "experienceHeader":   { "en": "EXPERIENCE",            "ua": "ДОСВІД" },
-      "exhibitionsHeader":  { "en": "EXHIBITIONS & PROJECTS","ua": "ВИСТАВКИ ТА ПРОЄКТИ" },
-      "skillsHeader":       { "en": "SKILLS",                "ua": "НАВИЧКИ" }
+      "role": {
+        "en": "Visual artist / Animator / Illustrator",
+        "ua": "Візуальний митець / Аніматор / Ілюстратор"
+      },
+      "experienceHeader": {
+        "en": "EXPERIENCE",
+        "ua": "ДОСВІД"
+      },
+      "exhibitionsHeader": {
+        "en": "EXHIBITIONS & PROJECTS",
+        "ua": "ВИСТАВКИ ТА ПРОЄКТИ"
+      },
+      "skillsHeader": {
+        "en": "SKILLS",
+        "ua": "НАВИЧКИ"
+      }
     },
     "canvasPage": {
-      "tagline":         { "en": "Order in any currency —",                       "ua": "Замовлення у будь-якій валюті —" },
-      "buttonOrder":     { "en": "ЗАКАЗАТЬ →",                                    "ua": "ЗАМОВИТИ →" },
-      "buttonInCart":    { "en": "В КОРЗИНЕ",                                     "ua": "У КОШИКУ" },
-      "buttonAdded":     { "en": "ДОБАВЛЕНО ✓",                                   "ua": "ДОДАНО ✓" },
-      "cartHeader":      { "en": "CART",                                          "ua": "КОШИК" },
-      "cartEmpty":       { "en": "Empty. Add a piece from the grid →",            "ua": "Порожньо. Додайте роботу з сітки →" },
-      "cartClearAll":    { "en": "clear all",                                     "ua": "очистити" },
-      "cartTotal":       { "en": "Total",                                         "ua": "Разом" },
-      "cartCheckout":    { "en": "checkout",                                      "ua": "оформити" },
-      "cartNothing":     { "en": "(nothing here yet)",                            "ua": "(тут поки порожньо)" },
-      "cartRemove":      { "en": "remove",                                        "ua": "видалити" },
-      "priceOnRequest":  { "en": "price on request",                              "ua": "ціна на запит" },
-      "zoomImage":       { "en": "zoom image",                                    "ua": "збільшити" },
-      "close":           { "en": "close",                                         "ua": "закрити" }
+      "tagline": {
+        "en": "Order in any currency —",
+        "ua": "Замовлення у будь-якій валюті —"
+      },
+      "buttonOrder": {
+        "en": "ЗАКАЗАТЬ →",
+        "ua": "ЗАМОВИТИ →"
+      },
+      "buttonInCart": {
+        "en": "В КОРЗИНЕ",
+        "ua": "У КОШИКУ"
+      },
+      "buttonAdded": {
+        "en": "ДОБАВЛЕНО ✓",
+        "ua": "ДОДАНО ✓"
+      },
+      "cartHeader": {
+        "en": "CART",
+        "ua": "КОШИК"
+      },
+      "cartEmpty": {
+        "en": "Empty. Add a piece from the grid →",
+        "ua": "Порожньо. Додайте роботу з сітки →"
+      },
+      "cartClearAll": {
+        "en": "clear all",
+        "ua": "очистити"
+      },
+      "cartTotal": {
+        "en": "Total",
+        "ua": "Разом"
+      },
+      "cartCheckout": {
+        "en": "checkout",
+        "ua": "оформити"
+      },
+      "cartNothing": {
+        "en": "(nothing here yet)",
+        "ua": "(тут поки порожньо)"
+      },
+      "cartRemove": {
+        "en": "remove",
+        "ua": "видалити"
+      },
+      "priceOnRequest": {
+        "en": "price on request",
+        "ua": "ціна на запит"
+      },
+      "zoomImage": {
+        "en": "zoom image",
+        "ua": "збільшити"
+      },
+      "close": {
+        "en": "close",
+        "ua": "закрити"
+      }
     },
     "socialPage": {
-      "heroPosts":       { "en": "POSTS",     "ua": "ПОСТИ" },
-      "heroStories":     { "en": "STORIES",   "ua": "СТОРІС" },
-      "heroCarousels":   { "en": "CAROUSELS", "ua": "КАРУСЕЛІ" },
-      "heroAds":         { "en": "ADS",       "ua": "РЕКЛАМА" },
-      "statementLine1":  { "en": "EVERY POST", "ua": "КОЖЕН ПОСТ" },
-      "statementLine2":  { "en": "IS A",       "ua": "ЦЕ" },
-      "statementLine3":  { "en": "STATEMENT",  "ua": "ЗАЯВА" },
-      "sectionPosts":    { "en": "POSTS",   "ua": "ПОСТИ" },
-      "sectionStories":  { "en": "STORIES", "ua": "СТОРІС" },
-      "sectionAds":      { "en": "ADS",     "ua": "РЕКЛАМА" },
-      "outroCta":        { "en": "FOR COLLABORATIONS", "ua": "ДЛЯ КОЛАБОРАЦІЙ" }
+      "heroPosts": {
+        "en": "POSTS",
+        "ua": "ПОСТИ"
+      },
+      "heroStories": {
+        "en": "STORIES",
+        "ua": "СТОРІС"
+      },
+      "heroCarousels": {
+        "en": "CAROUSELS",
+        "ua": "КАРУСЕЛІ"
+      },
+      "heroAds": {
+        "en": "ADS",
+        "ua": "РЕКЛАМА"
+      },
+      "statementLine1": {
+        "en": "EVERY POST",
+        "ua": "КОЖЕН ПОСТ"
+      },
+      "statementLine2": {
+        "en": "IS A",
+        "ua": "ЦЕ"
+      },
+      "statementLine3": {
+        "en": "STATEMENT",
+        "ua": "ЗАЯВА"
+      },
+      "sectionPosts": {
+        "en": "POSTS",
+        "ua": "ПОСТИ"
+      },
+      "sectionStories": {
+        "en": "STORIES",
+        "ua": "СТОРІС"
+      },
+      "sectionAds": {
+        "en": "ADS",
+        "ua": "РЕКЛАМА"
+      },
+      "outroCta": {
+        "en": "FOR COLLABORATIONS",
+        "ua": "ДЛЯ КОЛАБОРАЦІЙ"
+      }
     },
     "contactPage": {
-      "emailLabel":     { "en": "EMAIL",     "ua": "ПОШТА" },
-      "telegramLabel":  { "en": "TELEGRAM",  "ua": "TELEGRAM" },
-      "instagramLabel": { "en": "INSTAGRAM", "ua": "INSTAGRAM" },
-      "tiktokLabel":    { "en": "TIKTOK",    "ua": "TIKTOK" },
-      "locationLabel":  { "en": "LOCATION",  "ua": "ЛОКАЦІЯ" }
+      "emailLabel": {
+        "en": "EMAIL",
+        "ua": "ПОШТА"
+      },
+      "telegramLabel": {
+        "en": "TELEGRAM",
+        "ua": "TELEGRAM"
+      },
+      "instagramLabel": {
+        "en": "INSTAGRAM",
+        "ua": "INSTAGRAM"
+      },
+      "tiktokLabel": {
+        "en": "TIKTOK",
+        "ua": "TIKTOK"
+      },
+      "locationLabel": {
+        "en": "LOCATION",
+        "ua": "ЛОКАЦІЯ"
+      }
     }
   },
   "about": {
@@ -273,7 +417,8 @@
       "id": "01",
       "year": "2024 — 2025",
       "category": "ANIMATION",
-      "prose": "A long-arc creature animation gig. I keyframed by hand on twos, working from rough director's storyboards and finishing into clean line. The crystal scenes — fragmented, refractive — were the most challenging. We treated each facet as its own animation rig."
+      "prose": "A long-arc creature animation gig. I keyframed by hand on twos, working from rough director's storyboards and finishing into clean line. The crystal scenes — fragmented, refractive — were the most challenging. We treated each facet as its own animation rig.",
+      "coverImage": null
     },
     {
       "works": [
@@ -328,7 +473,8 @@
       "id": "02",
       "year": "2024",
       "category": "ILLUSTRATION",
-      "prose": "Twelve pieces, A3, all from the same week in October. I started each one with a black square cut from cardstock — the shape was the rule. Everything else (pencil, paint, collage) responded to that anchor."
+      "prose": "Twelve pieces, A3, all from the same week in October. I started each one with a black square cut from cardstock — the shape was the rule. Everything else (pencil, paint, collage) responded to that anchor.",
+      "coverImage": null
     },
     {
       "works": [
@@ -377,7 +523,8 @@
       "id": "03",
       "year": "2024",
       "category": "POSTERS",
-      "prose": "The brief asked for restraint. Black ink on warm paper, one photograph treated as halftone, big type. We avoided the season's typical illustrative direction entirely."
+      "prose": "The brief asked for restraint. Black ink on warm paper, one photograph treated as halftone, big type. We avoided the season's typical illustrative direction entirely.",
+      "coverImage": null
     },
     {
       "works": [
@@ -432,7 +579,8 @@
       "id": "04",
       "year": "2023 — Present",
       "category": "CANVAS",
-      "prose": "I work alla-prima, building tone in two or three sessions, then collaging textured paper over the top. The canvas works are the slowest part of the practice — usually one finished piece every two weeks."
+      "prose": "I work alla-prima, building tone in two or three sessions, then collaging textured paper over the top. The canvas works are the slowest part of the practice — usually one finished piece every two weeks.",
+      "coverImage": null
     },
     {
       "works": [
@@ -487,7 +635,8 @@
       "id": "05",
       "year": "2024",
       "category": "BOOKS",
-      "prose": "Three projects in this folder. The Exposure zine started as a poster series; the publishers asked to turn it into a perfect-bound 24-page book. Hand-bound the first run myself."
+      "prose": "Three projects in this folder. The Exposure zine started as a poster series; the publishers asked to turn it into a perfect-bound 24-page book. Hand-bound the first run myself.",
+      "coverImage": null
     },
     {
       "works": [
@@ -542,7 +691,8 @@
       "id": "06",
       "year": "2023 — Present",
       "category": "PHOTOS",
-      "prose": "Always one camera, mostly Olympus mju. I scan and treat everything to 1-bit halftone before publishing — the texture matters more than the literal photograph."
+      "prose": "Always one camera, mostly Olympus mju. I scan and treat everything to 1-bit halftone before publishing — the texture matters more than the literal photograph.",
+      "coverImage": null
     },
     {
       "works": [
@@ -597,7 +747,8 @@
       "id": "07",
       "year": "2024",
       "category": "SOCIAL MEDIA",
-      "prose": "Quick turnaround social work. Two-frame loops in Photoshop, output at 1080×1920 / 1080×1080 / 1080×1350. Same brand voice held across all three."
+      "prose": "Quick turnaround social work. Two-frame loops in Photoshop, output at 1080×1920 / 1080×1080 / 1080×1350. Same brand voice held across all three.",
+      "coverImage": null
     }
   ],
   "canvas": {
