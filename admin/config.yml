@@ -88,6 +88,12 @@ collections:
                   { name: price, label: "Price (any format — e.g. \"200 €\")", widget: string, required: false }
               ]}
           ]}
+          - { name: animations, label: Animations, widget: list, fields: [
+              { name: id, widget: string },
+              { name: title, widget: string },
+              { name: date, widget: string, required: false },
+              { name: desc, widget: text, required: false }
+          ]}
           - { name: canvas, label: "Canvas (shop)", widget: object, fields: [
               { name: items, widget: list, fields: [
                   { name: id, widget: string },

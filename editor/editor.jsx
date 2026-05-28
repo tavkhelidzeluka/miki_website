@@ -30,6 +30,12 @@ window.__editor = window.__editor || {};
     skill: [
       { key: 'label', label: 'label', type: 'i18n', required: true },
     ],
+    animation: [
+      { key: 'id',    label: 'id',          type: 'string', required: true,  placeholder: 'e.g. A09' },
+      { key: 'title', label: 'title',       type: 'string', required: true },
+      { key: 'date',  label: 'date',        type: 'string', required: false, placeholder: 'e.g. 28.05.2026' },
+      { key: 'desc',  label: 'description', type: 'text',   required: false },
+    ],
   };
 
   // Modal for adding a new work (or any work-shaped item: name + desc + image

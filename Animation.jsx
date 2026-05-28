@@ -2,28 +2,23 @@
 // Horizontal scrolling strip of 16:9 video thumbnails. Click → fullscreen player
 // with title/description on the left. Click the text to toggle its visibility.
 
-const ANIMATION_WORKS = [
-  { id: "A01", title: "through the magic crystal", date: "10.04.2025", desc: "Character animation for Studio SHAR's feature. Crystal facets rigged separately." },
-  { id: "A02", title: "nyaono spot",                date: "22.02.2025", desc: "Animated 30-second commercial, two-frame loops in Photoshop." },
-  { id: "A03", title: "polukhutenko",               date: "08.01.2025", desc: "Frame-by-frame rotoscoped music video, 3:42 total runtime." },
-  { id: "A04", title: "studio test reel",            date: "15.12.2024", desc: "Bench reel from 2024 — eight clips, no sound." },
-  { id: "A05", title: "creature studies",           date: "30.10.2024", desc: "Daily walk-cycle studies. Sketchbook origin, finished line." },
-  { id: "A06", title: "berlin loop set",            date: "12.09.2024", desc: "Three-week residency. Twelve loops at 12fps." },
-  { id: "A07", title: "crystal facet rig",          date: "04.08.2024", desc: "Test rig for refractive faceted-glass character system." },
-  { id: "A08", title: "field test / ii",            date: "18.06.2024", desc: "Second field test — full storyboard timing on twos." },
-];
-
 function AnimationStrip({ tweaks }) {
+  // Read at render time (window.CONTENT may not exist at module-eval time
+  // due to the async content fetch).
+  const ANIMATION_WORKS = window.CONTENT.animations;
   const { t, lang } = useLang();
   const [playing, setPlaying] = React.useState(null);
   const scrollRef = React.useRef(null);
   const thumbsRef = React.useRef([]);
 
-  // Render the works list 3× for seamless infinite loop.
-  const looped = React.useMemo(
-    () => [...ANIMATION_WORKS, ...ANIMATION_WORKS, ...ANIMATION_WORKS],
-    []
-  );
+  // Render the works list 3× for seamless infinite loop. Each looped item
+  // carries _srcIdx so we can wire data-content-path back to the SOURCE
+  // array index in content.json (the three copies otherwise share the same
+  // visible content but different DOM nodes).
+  const looped = React.useMemo(() => {
+    const withSrc = ANIMATION_WORKS.map((w, srcIdx) => ({ ...w, _srcIdx: srcIdx }));
+    return [...withSrc, ...withSrc, ...withSrc];
+  }, [ANIMATION_WORKS]);
   const baseLen = ANIMATION_WORKS.length;
 
   // Convert vertical wheel to horizontal scroll on the strip.
@@ -114,14 +109,32 @@ function AnimationStrip({ tweaks }) {
               <div className="anim-thumb-img" />
               <div className="anim-thumb-play">▶</div>
               <div className="anim-thumb-meta">
-                <span>{w.title.toUpperCase()}</span>
-                <span>{w.date}</span>
+                <span data-content-path={`animations.${w._srcIdx}.title`}>{w.title.toUpperCase()}</span>
+                <span data-content-path={`animations.${w._srcIdx}.date`}>{w.date}</span>
               </div>
+              <span
+                className="editor-delete-action editor-delete-action--corner"
+                data-editor-action="delete-item"
+                data-editor-list-path="animations"
+                data-editor-list-index={w._srcIdx}
+                data-editor-item-label={w.title}
+              >×</span>
             </button>
           ))}
         </div>
       </div>
       <div className="anim-center-line" aria-hidden="true" />
+
+      <div style={{ textAlign: 'center', marginTop: 12 }}>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new animation"
+          data-editor-add-schema="animation"
+          data-editor-list-path="animations"
+        >+ add animation</button>
+      </div>
 
       {playing && (
         <AnimationPlayer work={playing} onClose={() => setPlaying(null)} />
@@ -155,9 +168,9 @@ function AnimationPlayer({ work, onClose }) {
         onClick={() => setHideText((x) => !x)}
         aria-label="toggle title visibility"
       >
-        <div className="anim-player-id">[ 01 ] {t({ en: "ANIMATION", ua: "АНІМАЦІЯ" })} / {work.id}</div>
-        <h2 className="anim-player-title">{work.title}</h2>
-        <p className="anim-player-desc">{work.desc}</p>
+        <div className="anim-player-id">[ 01 ] {t({ en: "ANIMATION", ua: "АНІМАЦІЯ" })} / <span data-content-path={work._srcIdx !== undefined ? `animations.${work._srcIdx}.id` : undefined}>{work.id}</span></div>
+        <h2 className="anim-player-title" data-content-path={work._srcIdx !== undefined ? `animations.${work._srcIdx}.title` : undefined}>{work.title}</h2>
+        <p className="anim-player-desc" data-content-path={work._srcIdx !== undefined ? `animations.${work._srcIdx}.desc` : undefined}>{work.desc}</p>
         <div className="anim-player-hint">[ {t({ en: "click to hide", ua: "натисніть, щоб сховати" })} ]</div>
       </button>
 
