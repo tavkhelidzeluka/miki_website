@@ -109,15 +109,12 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
     <div className="page page--canvas">
       <div className="canvas-headline">
         <span className="bk-bracket">[</span>
-        <span className="bk-word">{t({ en: "CANVAS", ua: "КАНВАС" })}</span>
+        <span className="bk-word" data-content-path="ui.headers.canvas">{t(window.CONTENT.ui.headers.canvas)}</span>
         <span className="bk-bracket">]</span>
       </div>
 
       <div className="canvas-sub">
-        <span>{t({
-          en: "Order in any currency —",
-          ua: "Замовлення у будь-якій валюті —",
-        })}</span>
+        <span data-content-path="ui.canvasPage.tagline">{t(window.CONTENT.ui.canvasPage.tagline)}</span>
         <div className="canvas-curswitch">
           {CURRENCIES.map((c) => (
             <button
@@ -145,7 +142,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                   className={tilePrefix + (it.img ? " prod-img--photo prod-img--zoomable" : "")}
                   style={it.img ? { backgroundImage: `url("${it.img}")` } : undefined}
                   onClick={() => it.img && setZoom(it)}
-                  aria-label={it.img ? t({ en: "zoom image", ua: "збільшити" }) : undefined}
+                  aria-label={it.img ? t(window.CONTENT.ui.canvasPage.zoomImage) : undefined}
                   data-content-path={`canvas.items.${idx}.img`}
                   data-editor-kind="image"
                   data-asset-folder="assets"
@@ -166,10 +163,10 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                     onClick={() => handleOrder(it)}
                   >
                     {pulse === it.id
-                      ? t({ en: "ДОБАВЛЕНО ✓", ua: "ДОДАНО ✓" })
+                      ? <span data-content-path="ui.canvasPage.buttonAdded">{t(window.CONTENT.ui.canvasPage.buttonAdded)}</span>
                       : (added
-                          ? t({ en: "В КОРЗИНЕ", ua: "У КОШИКУ" })
-                          : t({ en: "ЗАКАЗАТЬ →", ua: "ЗАМОВИТИ →" }))}
+                          ? <span data-content-path="ui.canvasPage.buttonInCart">{t(window.CONTENT.ui.canvasPage.buttonInCart)}</span>
+                          : <span data-content-path="ui.canvasPage.buttonOrder">{t(window.CONTENT.ui.canvasPage.buttonOrder)}</span>)}
                   </button>
                 </div>
               </article>
@@ -180,7 +177,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
 
       {zoom && (
         <div className="canvas-zoom" onClick={() => setZoom(null)}>
-          <button className="canvas-zoom-close" onClick={() => setZoom(null)}>[ {t({ en: "close", ua: "закрити" })} × ]</button>
+          <button className="canvas-zoom-close" onClick={() => setZoom(null)}>[ <span data-content-path="ui.canvasPage.close">{t(window.CONTENT.ui.canvasPage.close)}</span> × ]</button>
           <img
             className="canvas-zoom-img"
             src={zoom.img}
@@ -195,21 +192,21 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
 
       {cartOpen && (
         <div className="cart-drawer">
-          <button className="cart-close" onClick={() => setCartOpen(false)}>[ {t({ en: "close", ua: "закрити" })} × ]</button>
-          <h2 className="cart-head">[ {t({ en: "CART", ua: "КОШИК" })} ]</h2>
+          <button className="cart-close" onClick={() => setCartOpen(false)}>[ <span data-content-path="ui.canvasPage.close">{t(window.CONTENT.ui.canvasPage.close)}</span> × ]</button>
+          <h2 className="cart-head">[ <span data-content-path="ui.canvasPage.cartHeader">{t(window.CONTENT.ui.canvasPage.cartHeader)}</span> ]</h2>
           <div className="cart-sub">
-            <span>{cart.length === 0
-              ? t({ en: "Empty. Add a piece from the grid →", ua: "Порожньо. Додайте роботу з сітки →" })
-              : (lang === "UA"
+            {cart.length === 0
+              ? <span data-content-path="ui.canvasPage.cartEmpty">{t(window.CONTENT.ui.canvasPage.cartEmpty)}</span>
+              : <span>{lang === "UA"
                   ? `${cart.length} ${cart.length === 1 ? "робота" : (cart.length < 5 ? "роботи" : "робіт")}`
-                  : `${cart.length} item${cart.length === 1 ? "" : "s"}`)}</span>
+                  : `${cart.length} item${cart.length === 1 ? "" : "s"}`}</span>}
             {cart.length > 0 && (
-              <button className="cart-clear" onClick={clearCart}>[ {t({ en: "clear all", ua: "очистити" })} × ]</button>
+              <button className="cart-clear" onClick={clearCart}>[ <span data-content-path="ui.canvasPage.cartClearAll">{t(window.CONTENT.ui.canvasPage.cartClearAll)}</span> × ]</button>
             )}
           </div>
           <div className="cart-items">
             {cart.length === 0 ? (
-              <div className="cart-empty">{t({ en: "(nothing here yet)", ua: "(тут поки порожньо)" })}</div>
+              <div className="cart-empty" data-content-path="ui.canvasPage.cartNothing">{t(window.CONTENT.ui.canvasPage.cartNothing)}</div>
             ) : cart.map((c, idx) => {
               const medium = lang === "UA" ? (c.mediumUa || c.medium) : c.medium;
               return (
@@ -219,7 +216,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                     <div className="cart-item-title">[ {c.id} ]</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <button className="cart-item-rm" onClick={() => removeFromCart(idx)} title={t({ en: "remove", ua: "видалити" })}>×</button>
+                    <button className="cart-item-rm" onClick={() => removeFromCart(idx)} title={t(window.CONTENT.ui.canvasPage.cartRemove)}>×</button>
                   </div>
                 </div>
               );
@@ -228,16 +225,16 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
           {cart.length > 0 && (
             <div className="cart-foot">
               <div className="cart-total">
-                <span>{t({ en: "Total", ua: "Разом" })}</span>
-                <span>{(() => {
+                <span data-content-path="ui.canvasPage.cartTotal">{t(window.CONTENT.ui.canvasPage.cartTotal)}</span>
+                {(() => {
                   const sumUsd = cart.reduce((acc, c) => acc + (typeof c.price === 'number' ? c.price : 0), 0);
                   if (sumUsd === 0) {
-                    return t({ en: 'price on request', ua: 'ціна на запит' });
+                    return <span data-content-path="ui.canvasPage.priceOnRequest">{t(window.CONTENT.ui.canvasPage.priceOnRequest)}</span>;
                   }
-                  return formatPrice(sumUsd);
-                })()}</span>
+                  return <span>{formatPrice(sumUsd)}</span>;
+                })()}
               </div>
-              <button className="cart-checkout" onClick={handleCheckout}>[ {t({ en: "checkout", ua: "оформити" })} → ]</button>
+              <button className="cart-checkout" onClick={handleCheckout}>[ <span data-content-path="ui.canvasPage.cartCheckout">{t(window.CONTENT.ui.canvasPage.cartCheckout)}</span> → ]</button>
             </div>
           )}
         </div>
