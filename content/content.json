@@ -214,13 +214,13 @@
         {
           "name": "body of vision — i",
           "desc": "Mixed media on A3 paper, October 2024.",
-          "thumb": null,
+          "thumb": "assets/images/projects/illustration/body-of-vision-i.jpeg",
           "price": null
         },
         {
           "name": "body of vision — ii",
           "desc": "Black-square cardstock anchor + pencil + acrylic.",
-          "thumb": null,
+          "thumb": "assets/images/projects/illustration/body-of-vision-ii.jpeg",
           "price": null
         },
         {
@@ -250,7 +250,7 @@
         {
           "name": "studio notes",
           "desc": "Process pages from the week of work.",
-          "thumb": null,
+          "thumb": "assets/images/projects/illustration/studio-notes.jpeg",
           "price": null
         }
       ],
