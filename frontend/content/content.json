@@ -202,16 +202,16 @@
   ],
   "canvas": {
     "items": [
-      { "id": "00", "title": "recovery", "medium": "(oil, 100×80, 2025)", "mediumUa": "(олія, 100×80, 2025)", "price": null },
-      { "id": "01", "title": "с котом", "medium": "(colored paper A3, acrylic, pencils)", "mediumUa": "(кольоровий папір А3, акрил, олівці)", "price": null },
-      { "id": "02", "title": "яновна", "medium": "(linen canvas A4)", "mediumUa": "(лляне полотно А4)", "price": null },
-      { "id": "03", "title": "в пиджаке", "medium": "(collage A3)", "mediumUa": "(колаж А3)", "price": null },
-      { "id": "04", "title": "ночной", "medium": "(riso print, edition of 25)", "mediumUa": "(різо-друк, тираж 25)", "price": null },
-      { "id": "05", "title": "LUHANSK", "medium": "(offset poster 600×900mm)", "mediumUa": "(офсетний постер 600×900мм)", "price": null },
-      { "id": "06", "title": "сестра", "medium": "(charcoal on A2)", "mediumUa": "(вугілля на А2)", "price": null },
-      { "id": "07", "title": "берлин", "medium": "(acrylic on coloured paper A3)", "mediumUa": "(акрил на кольоровому папері А3)", "price": null },
-      { "id": "08", "title": "холст / 08", "medium": "(linen canvas A2, oil)", "mediumUa": "(лляне полотно А2, олія)", "price": null },
-      { "id": "09", "title": "exposure", "medium": "(riso poster, edition of 50)", "mediumUa": "(різо-постер, тираж 50)", "price": null }
+      { "id": "00", "title": "recovery",   "medium": "(oil, 100×80, 2025)",                  "mediumUa": "(олія, 100×80, 2025)",                "img": "assets/painting-01.png", "price": 100 },
+      { "id": "01", "title": "с котом",    "medium": "(colored paper A3, acrylic, pencils)", "mediumUa": "(кольоровий папір А3, акрил, олівці)", "img": null, "price": null },
+      { "id": "02", "title": "яновна",     "medium": "(linen canvas A4)",                    "mediumUa": "(лляне полотно А4)",                   "img": null, "price": null },
+      { "id": "03", "title": "в пиджаке",  "medium": "(collage A3)",                         "mediumUa": "(колаж А3)",                           "img": null, "price": null },
+      { "id": "04", "title": "ночной",     "medium": "(riso print, edition of 25)",          "mediumUa": "(різо-друк, тираж 25)",                "img": null, "price": null },
+      { "id": "05", "title": "LUHANSK",    "medium": "(offset poster 600×900mm)",            "mediumUa": "(офсетний постер 600×900мм)",          "img": null, "price": null },
+      { "id": "06", "title": "сестра",     "medium": "(charcoal on A2)",                     "mediumUa": "(вугілля на А2)",                      "img": null, "price": null },
+      { "id": "07", "title": "берлин",     "medium": "(acrylic on coloured paper A3)",       "mediumUa": "(акрил на кольоровому папері А3)",     "img": null, "price": null },
+      { "id": "08", "title": "холст / 08", "medium": "(linen canvas A2, oil)",               "mediumUa": "(лляне полотно А2, олія)",             "img": null, "price": null },
+      { "id": "09", "title": "exposure",   "medium": "(riso poster, edition of 50)",         "mediumUa": "(різо-постер, тираж 50)",              "img": null, "price": null }
     ]
   },
   "social": {

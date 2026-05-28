@@ -612,69 +612,74 @@ Each task in this phase modifies one `.jsx` file to read from `window.CONTENT` i
   git commit -m "feat: About.jsx reads from window.CONTENT.about"
   ```
 
-### Task 5.5: Wire `Canvas.jsx` (and surface prices)
+### Task 5.5: Wire `Canvas.jsx` (and un-stub prices + cart total)
 
 **Files:**
 - Modify: `frontend/Canvas.jsx`.
 
-- [ ] **Step 1:** Replace lines 2–12 (the `const ITEMS = [ … ];` block) with:
+**Context for this task:** Canvas.jsx already has a sophisticated multi-currency system: 5 currencies (USD/EUR/RUB/UAH/GEL), live FX-rate fetching from open.er-api.com (with frankfurter fallback and a static fallback table), and a `formatPrice(usd)` helper that converts a flat USD price into the active currency. Prices are stored as **flat USD numbers** (e.g., `100`), not as `{amount, currency}` objects. Items may also have an optional `img` field for a real photograph (rendered as zoomable). Currently `handleOrder` stubs `price: 0` and the cart total displays the placeholder string `"000"` — these two stubs are what this task replaces with real logic.
+
+- [ ] **Step 1:** Replace the `ITEMS` constant at the top of `frontend/Canvas.jsx` (lines 2–13). Find:
+  ```js
+  const ITEMS = [
+    { id: "00", title: "recovery", ... },
+    ...
+    { id: "09", title: "exposure", ... },
+  ];
+  ```
+  Replace with:
   ```js
   const ITEMS = window.CONTENT.canvas.items;
   ```
+  Leave the `CURRENCIES` and `FALLBACK_RATES` constants (lines 15–24) untouched — they're config, not content.
 
-- [ ] **Step 2:** Update `handleOrder` (currently line 21–30) to read price from the item instead of hardcoding `0`:
+- [ ] **Step 2:** Update `handleOrder` (around line 94) so it preserves the item's real `price` instead of stubbing `price: 0`. Find:
   ```js
-  const handleOrder = (it) => {
-    if (inCart(it.id)) {
-      const idx = cart.findIndex((c) => c.id === it.id);
-      if (idx >= 0) removeFromCart(idx);
-      return;
-    }
-    addToCart({ ...it });  // keeps it.price as-is (null or {amount, currency})
-    setPulse(it.id);
-    setTimeout(() => setPulse(null), 800);
-  };
+  addToCart({ ...it, price: 0 });
   ```
+  Replace with:
+  ```js
+  addToCart({ ...it });
+  ```
+  The spread carries `it.price` through unchanged — a USD number for priced items, `null` otherwise.
 
-- [ ] **Step 3:** Update the cart total row (currently shows `<span>000</span>` at line 123). Replace:
+- [ ] **Step 3:** Replace the stubbed cart total. Find (around line 236–239):
   ```jsx
   <div className="cart-total">
     <span>{t({ en: "Total", ua: "Разом" })}</span>
     <span>000</span>
   </div>
   ```
-  With:
+  Replace with:
   ```jsx
   <div className="cart-total">
     <span>{t({ en: "Total", ua: "Разом" })}</span>
     <span>{(() => {
-      const priced = cart.filter(c => c.price && typeof c.price.amount === 'number');
-      if (priced.length === 0) {
+      const sumUsd = cart.reduce((acc, c) => acc + (typeof c.price === 'number' ? c.price : 0), 0);
+      if (sumUsd === 0) {
         return t({ en: 'price on request', ua: 'ціна на запит' });
       }
-      const byCurrency = priced.reduce((acc, c) => {
-        acc[c.price.currency] = (acc[c.price.currency] || 0) + c.price.amount;
-        return acc;
-      }, {});
-      return Object.entries(byCurrency)
-        .map(([cur, amt]) => `${amt} ${cur}`)
-        .join(' + ');
+      return formatPrice(sumUsd);
     })()}</span>
   </div>
   ```
-  This sums priced items per currency and shows "price on request" if no items have a price.
+  This sums all cart items' USD prices and runs the result through the existing `formatPrice` helper so the total respects the selected currency and live FX rate. If no items have prices (all `null`), shows "price on request" instead of `0`.
 
-- [ ] **Step 4:** Reload, go to Canvas. Verify:
-  - All 9 items render.
-  - Click "Order" → button changes to "Added", cart-count in nav increments.
-  - Open cart drawer → items listed, total shows "price on request" (since every `price` is `null` in v1).
-  - Click "checkout" → checkout overlay opens.
-  - Switch language → totals/labels translate.
+- [ ] **Step 4:** Restart the static server if not running, reload `http://localhost:8000/`, navigate to Canvas. Verify:
+  - All 10 items render.
+  - Item `00` (`recovery`) shows its painting image and a price label (e.g., `100 $`).
+  - Other items have no image (plain placeholder tile) and no price label.
+  - Click the currency switcher (USD/EUR/RUB/UAH/GEL) — recovery's price label changes.
+  - Click "Order" on recovery → it appears in cart; cart total shows the same converted price.
+  - Add an unpriced item → cart total now sums recovery + 0 = recovery's price.
+  - Clear cart, add only unpriced items → cart total shows "price on request" / "ціна на запит".
+  - Open the zoom modal by clicking the recovery image → image displays full-screen; ESC closes.
+  - Switch language EN ⇄ UA → labels translate; currency formatting locale changes (e.g., comma grouping in UA).
 
 - [ ] **Step 5:** Commit.
   ```bash
   git add frontend/Canvas.jsx
-  git commit -m "feat: Canvas.jsx reads items and prices from window.CONTENT.canvas"
+  git commit -m "feat: Canvas.jsx reads items from window.CONTENT and computes real cart total"
   ```
 
 ### Task 5.6: Rewrite `Checkout.jsx` (drop card, wire Web3Forms)
@@ -1199,10 +1204,8 @@ The Decap CMS script is loaded from a CDN. Pin to a specific version and use Sub
                     { name: title, widget: string },
                     { name: medium, widget: string },
                     { name: mediumUa, widget: string },
-                    { name: price, widget: object, required: false, fields: [
-                        { name: amount, widget: number, value_type: int },
-                        { name: currency, widget: select, options: [EUR, USD, GEL] }
-                    ]}
+                    { name: img, widget: image, required: false },
+                    { name: price, label: "Price (USD)", widget: number, required: false, value_type: int }
                 ]}
             ]}
             - { name: social, label: Social, widget: object, fields: [

@@ -180,9 +180,10 @@ Single file: `content/content.json`. Loaded once at app boot and exposed as `win
 ```
 
 **Field semantics:**
-- `price: null` means "price on request" (current default; Canvas page surfaces it as such).
-- `price: { amount: number, currency: "EUR" | "USD" | "GEL" }` when set — Canvas / Checkout reads `amount` and `currency`.
-- `thumb` is a path relative to the repo root. The Decap image widget uploads new files to `assets/images/...` and writes the relative path here.
+- `canvas.items[].price` is a **flat USD number** (e.g., `100`) or `null` for "price on request". Canvas.jsx has a built-in currency picker (USD / EUR / RUB / UAH / GEL) and a live FX-rate fetcher (open.er-api.com with frankfurter fallback) that converts on the fly. The base price is always USD.
+- `canvas.items[].img` is an optional path string for the artwork photo, or `null`. When present, the tile renders the image and is zoomable; when null, the tile is a plain placeholder.
+- `projects[].works[].price` is reserved for future use (Decap can expose it, Projects.jsx does not currently render it); always `null` in v1.
+- `thumb` (on `projects[].works[]`) is a path relative to the repo root, or `null`. The Decap image widget uploads new files to `assets/images/...` and writes the relative path here.
 - `location` and `bio` are i18n objects (`{ en, ua }`) — match the pattern the existing `t()` helper consumes.
 - `category` is a string matching the EN keys in `Projects.jsx`'s `CAT_UA` map (`"ANIMATION"`, `"ILLUSTRATION"`, ...). UA translation continues to come from `CAT_UA`; not duplicated in JSON.
 
