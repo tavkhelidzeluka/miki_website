@@ -2464,3 +2464,11 @@ html, body {
   }
   .sm-outro-mail { font-size: 34px; word-break: break-all; }
 }
+
+/* Editor affordances — hidden by default for everyone. The editor.css
+   (loaded only when logged in) re-shows them via body.editor-mode-on. */
+.editor-add-tile,
+.editor-delete-action,
+.editor-delete-action--corner {
+  display: none;
+}
