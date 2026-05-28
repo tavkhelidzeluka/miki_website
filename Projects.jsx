@@ -192,10 +192,10 @@ function CategoryStrip({ category, tweaks, openDetail }) {
       <div className="cat-meta" key={cur.name}>
         <div className="cat-meta-row">
           <span className="cat-bracket">[</span>
-          <span className="cat-name">{cur.name}</span>
+          <span className="cat-name" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.works.${i}.name`}>{cur.name}</span>
           <span className="cat-bracket">]</span>
         </div>
-        <div className="cat-desc">{cur.desc}</div>
+        <div className="cat-desc" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.works.${i}.desc`}>{cur.desc}</div>
       </div>
     </div>
   );
@@ -231,24 +231,32 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
           <div className="detail-image-label">[ {project.id} ] · {project.medium}</div>
         </div>
         <div>
-          <div className="detail-id">[ {project.id} ] / {tCat(project.category, lang)} / {project.year}</div>
-          <h1 className="detail-title">{project.name}</h1>
-          {project.desc && <p className="detail-desc">{project.desc}</p>}
-          <dl style={{ margin: 0 }}>
-            <div className="detail-row">
-              <dt>{t({ en: "Client", ua: "Клієнт" })}</dt>
-              <dd>{project.client}</dd>
-            </div>
-            <div className="detail-row">
-              <dt>{t({ en: "Role", ua: "Роль" })}</dt>
-              <dd>{project.role}</dd>
-            </div>
-            <div className="detail-row">
-              <dt>{t({ en: "Medium", ua: "Техніка" })}</dt>
-              <dd>{project.medium}</dd>
-            </div>
-          </dl>
-          <p className="detail-prose">{project.prose}</p>
+          {(() => {
+            const pIdx = (window.CONTENT.projects || []).findIndex(p => p.id === project.id);
+            const base = `projects.${pIdx}`;
+            return (
+              <React.Fragment>
+                <div className="detail-id">[ {project.id} ] / {tCat(project.category, lang)} / {project.year}</div>
+                <h1 className="detail-title" data-content-path={`${base}.name`}>{project.name}</h1>
+                {project.desc && <p className="detail-desc" data-content-path={`${base}.desc`}>{project.desc}</p>}
+                <dl style={{ margin: 0 }}>
+                  <div className="detail-row">
+                    <dt>{t({ en: "Client", ua: "Клієнт" })}</dt>
+                    <dd data-content-path={`${base}.client`}>{project.client}</dd>
+                  </div>
+                  <div className="detail-row">
+                    <dt>{t({ en: "Role", ua: "Роль" })}</dt>
+                    <dd data-content-path={`${base}.role`}>{project.role}</dd>
+                  </div>
+                  <div className="detail-row">
+                    <dt>{t({ en: "Medium", ua: "Техніка" })}</dt>
+                    <dd data-content-path={`${base}.medium`}>{project.medium}</dd>
+                  </div>
+                </dl>
+                <p className="detail-prose" data-content-path={`${base}.prose`}>{project.prose}</p>
+              </React.Fragment>
+            );
+          })()}
         </div>
       </div>
 
