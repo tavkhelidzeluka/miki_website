@@ -6,14 +6,14 @@ function Nav({ route, setRoute, cartCount, onCartClick, onBack }) {
   // Close menu on route change
   React.useEffect(() => { setOpen(false); }, [route]);
 
-  const link = (id, label) => (
+  const link = (id, label, path) => (
     <a
       href="#"
       onClick={(e) => { e.preventDefault(); setRoute(id); setOpen(false); }}
       className="nav-link"
       data-active={route === id ? "true" : "false"}
     >
-      [ {label} ]
+      [ {path ? <span data-content-path={path}>{label}</span> : label} ]
     </a>
   );
 
@@ -25,7 +25,7 @@ function Nav({ route, setRoute, cartCount, onCartClick, onBack }) {
           onClick={(e) => { e.preventDefault(); onBack ? onBack() : setRoute("home"); }}
           className="nav-link"
         >
-          [ {t({ en: "Back", ua: "Назад" })} ]
+          [ <span data-content-path="ui.nav.back">{t(window.CONTENT.ui.nav.back)}</span> ]
         </a>
       ) : (
         <span className="nav-link" style={{ opacity: 0 }} aria-hidden="true">[ ]</span>
@@ -36,7 +36,7 @@ function Nav({ route, setRoute, cartCount, onCartClick, onBack }) {
         className="nav-link nav-center"
         data-active={route === "home" ? "true" : "false"}
       >
-        [ GTXHI ]
+        [ <span data-content-path="ui.brand">{t(window.CONTENT.ui.brand)}</span> ]
       </a>
       <button
         type="button"
@@ -48,18 +48,18 @@ function Nav({ route, setRoute, cartCount, onCartClick, onBack }) {
         [ {open ? t({ en: "close", ua: "закрити" }) : t({ en: "menu", ua: "меню" })} ]
       </button>
       <div className="nav-cluster">
-        {link("projects", t({ en: "PROJECTS", ua: "ПРОЄКТИ" }))}
-        {link("about",    t({ en: "ABOUT",    ua: "ПРО"     }))}
-        {link("canvas",   t({ en: "CANVAS",   ua: "КАНВАС"  }))}
+        {link("projects", t(window.CONTENT.ui.nav.projects), "ui.nav.projects")}
+        {link("about",    t(window.CONTENT.ui.nav.about),    "ui.nav.about")}
+        {link("canvas",   t(window.CONTENT.ui.nav.canvas),   "ui.nav.canvas")}
         <a
           href="#"
           onClick={(e) => { e.preventDefault(); onCartClick && onCartClick(); }}
           className="nav-link nav-cart"
           title={t({ en: "cart", ua: "кошик" })}
         >
-          [ {t({ en: "CART", ua: "КОШИК" })} <span className="nav-cart-count">{String(cartCount).padStart(2, "0")}</span> ]
+          [ <span data-content-path="ui.nav.cart">{t(window.CONTENT.ui.nav.cart)}</span> <span className="nav-cart-count">{String(cartCount).padStart(2, "0")}</span> ]
         </a>
-        {link("contact", t({ en: "CONTACT", ua: "КОНТАКТ" }))}
+        {link("contact", t(window.CONTENT.ui.nav.contact), "ui.nav.contact")}
         <span className="nav-link nav-lang" aria-label="language">
           {"[ "}
           <button
