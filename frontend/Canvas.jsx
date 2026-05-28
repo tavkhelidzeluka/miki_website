@@ -1,16 +1,5 @@
 // Canvas.jsx — Shop. Vertically scrollable grid of originals/prints.
-const ITEMS = [
-  { id: "00", title: "recovery", medium: "(oil, 100×80, 2025)", mediumUa: "(олія, 100×80, 2025)", img: "assets/painting-01.png", price: 100 },
-  { id: "01", title: "с котом",   medium: "(colored paper A3, acrylic, pencils)", mediumUa: "(кольоровий папір А3, акрил, олівці)" },
-  { id: "02", title: "яновна",    medium: "(linen canvas A4)",                    mediumUa: "(лляне полотно А4)" },
-  { id: "03", title: "в пиджаке", medium: "(collage A3)",                         mediumUa: "(колаж А3)" },
-  { id: "04", title: "ночной",    medium: "(riso print, edition of 25)",          mediumUa: "(різо-друк, тираж 25)" },
-  { id: "05", title: "LUHANSK",   medium: "(offset poster 600×900mm)",            mediumUa: "(офсетний постер 600×900мм)" },
-  { id: "06", title: "сестра",    medium: "(charcoal on A2)",                     mediumUa: "(вугілля на А2)" },
-  { id: "07", title: "берлин",    medium: "(acrylic on coloured paper A3)",       mediumUa: "(акрил на кольоровому папері А3)" },
-  { id: "08", title: "холст / 08", medium: "(linen canvas A2, oil)",              mediumUa: "(лляне полотно А2, олія)" },
-  { id: "09", title: "exposure",  medium: "(riso poster, edition of 50)",         mediumUa: "(різо-постер, тираж 50)" },
-];
+const ITEMS = window.CONTENT.canvas.items;
 
 // Currency conversion. Base prices are USD; rates apply on top.
 // Fallback rates approximate late-2025 values; live rates fetched on mount.
@@ -97,7 +86,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
       if (idx >= 0) removeFromCart(idx);
       return;
     }
-    addToCart({ ...it, price: 0 });
+    addToCart({ ...it });
     setPulse(it.id);
     setTimeout(() => setPulse(null), 800);
   };
@@ -235,7 +224,13 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
             <div className="cart-foot">
               <div className="cart-total">
                 <span>{t({ en: "Total", ua: "Разом" })}</span>
-                <span>000</span>
+                <span>{(() => {
+                  const sumUsd = cart.reduce((acc, c) => acc + (typeof c.price === 'number' ? c.price : 0), 0);
+                  if (sumUsd === 0) {
+                    return t({ en: 'price on request', ua: 'ціна на запит' });
+                  }
+                  return formatPrice(sumUsd);
+                })()}</span>
               </div>
               <button className="cart-checkout" onClick={handleCheckout}>[ {t({ en: "checkout", ua: "оформити" })} → ]</button>
             </div>
