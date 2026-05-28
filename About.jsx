@@ -23,12 +23,15 @@ function About({ tweaks }) {
           ua: "Візуальний митець / Аніматор / Ілюстратор",
         })}</div>
         <div className="about-prose">
-          {(t({ en: a.bio.en, ua: a.bio.ua }) || []).map((line, i, arr) => (
-            <React.Fragment key={i}>
-              {line}
-              {i < arr.length - 1 && <br />}
-            </React.Fragment>
-          ))}
+          {(t({ en: a.bio.en, ua: a.bio.ua }) || []).map((line, i, arr) => {
+            const lang = window.getLang ? window.getLang().toLowerCase() : 'en';
+            return (
+              <React.Fragment key={i}>
+                <span data-content-path={`about.bio.${lang}.${i}`}>{line}</span>
+                {i < arr.length - 1 && <br />}
+              </React.Fragment>
+            );
+          })}
         </div>
         <a
           className="about-cv-btn"
@@ -46,10 +49,10 @@ function About({ tweaks }) {
         <hr className="hairline" />
         {a.experience.map((e, i) => (
           <div className="exp-item" key={i}>
-            <div className="exp-title">{t(e.title)}</div>
-            <div className="exp-role">{t(e.role)}</div>
-            {e.subRole && <div className="exp-role">{t(e.subRole)}</div>}
-            <div className="exp-date">{t(e.date)}</div>
+            <div className="exp-title" data-content-path={`about.experience.${i}.title`}>{t(e.title)}</div>
+            <div className="exp-role" data-content-path={`about.experience.${i}.role`}>{t(e.role)}</div>
+            {e.subRole && <div className="exp-role" data-content-path={`about.experience.${i}.subRole`}>{t(e.subRole)}</div>}
+            <div className="exp-date" data-content-path={`about.experience.${i}.date`}>{t(e.date)}</div>
           </div>
         ))}
       </div>
@@ -59,7 +62,7 @@ function About({ tweaks }) {
         <hr className="hairline" />
         <div className="projects-grid">
           {a.exhibitions.map((x, i) => (
-            <span key={i}>{t(x.label)}</span>
+            <span key={i} data-content-path={`about.exhibitions.${i}.label`}>{t(x.label)}</span>
           ))}
         </div>
       </div>
@@ -68,7 +71,7 @@ function About({ tweaks }) {
         <div className="about-col-head"><b>[ 03 ]</b> {t({ en: "SKILLS", ua: "НАВИЧКИ" })}</div>
         <hr className="hairline" />
         {a.skills.map((s, i) => (
-          <div className="skill" key={i}>{t(s.label)}</div>
+          <div className="skill" key={i} data-content-path={`about.skills.${i}.label`}>{t(s.label)}</div>
         ))}
       </div>
     </div>
