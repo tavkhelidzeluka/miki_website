@@ -15,6 +15,72 @@
   "orderForm": {
     "web3formsKey": "9311b89b-4e55-4630-b984-99366614da81"
   },
+  "ui": {
+    "brand": { "en": "MIKI / GTXHI", "ua": "MIKI / GTXHI" },
+    "nav": {
+      "projects": { "en": "PROJECTS", "ua": "ПРОЄКТИ" },
+      "about":    { "en": "ABOUT",    "ua": "ПРО МЕНЕ" },
+      "canvas":   { "en": "CANVAS",   "ua": "КАНВАС" },
+      "contact":  { "en": "CONTACT",  "ua": "КОНТАКТ" },
+      "cart":     { "en": "CART",     "ua": "КОШИК" },
+      "back":     { "en": "Back",     "ua": "Назад" }
+    },
+    "home": {
+      "thumbLabel": { "en": "LATEST", "ua": "ОСТАННЄ" }
+    },
+    "headers": {
+      "projects": { "en": "PROJECTS",  "ua": "ПРОЄКТИ" },
+      "about":    { "en": "ABOUT ME",  "ua": "ПРО МЕНЕ" },
+      "canvas":   { "en": "CANVAS",    "ua": "КАНВАС" },
+      "contact":  { "en": "CONTACT",   "ua": "КОНТАКТ" },
+      "checkout": { "en": "CHECKOUT",  "ua": "ОФОРМЛЕННЯ" }
+    },
+    "projectsPage": {
+      "openHover": { "en": "open →", "ua": "відкрити →" }
+    },
+    "aboutPage": {
+      "role":               { "en": "Visual artist / Animator / Illustrator", "ua": "Візуальний митець / Аніматор / Ілюстратор" },
+      "experienceHeader":   { "en": "EXPERIENCE",            "ua": "ДОСВІД" },
+      "exhibitionsHeader":  { "en": "EXHIBITIONS & PROJECTS","ua": "ВИСТАВКИ ТА ПРОЄКТИ" },
+      "skillsHeader":       { "en": "SKILLS",                "ua": "НАВИЧКИ" }
+    },
+    "canvasPage": {
+      "tagline":         { "en": "Order in any currency —",                       "ua": "Замовлення у будь-якій валюті —" },
+      "buttonOrder":     { "en": "ЗАКАЗАТЬ →",                                    "ua": "ЗАМОВИТИ →" },
+      "buttonInCart":    { "en": "В КОРЗИНЕ",                                     "ua": "У КОШИКУ" },
+      "buttonAdded":     { "en": "ДОБАВЛЕНО ✓",                                   "ua": "ДОДАНО ✓" },
+      "cartHeader":      { "en": "CART",                                          "ua": "КОШИК" },
+      "cartEmpty":       { "en": "Empty. Add a piece from the grid →",            "ua": "Порожньо. Додайте роботу з сітки →" },
+      "cartClearAll":    { "en": "clear all",                                     "ua": "очистити" },
+      "cartTotal":       { "en": "Total",                                         "ua": "Разом" },
+      "cartCheckout":    { "en": "checkout",                                      "ua": "оформити" },
+      "cartNothing":     { "en": "(nothing here yet)",                            "ua": "(тут поки порожньо)" },
+      "cartRemove":      { "en": "remove",                                        "ua": "видалити" },
+      "priceOnRequest":  { "en": "price on request",                              "ua": "ціна на запит" },
+      "zoomImage":       { "en": "zoom image",                                    "ua": "збільшити" },
+      "close":           { "en": "close",                                         "ua": "закрити" }
+    },
+    "socialPage": {
+      "heroPosts":       { "en": "POSTS",     "ua": "ПОСТИ" },
+      "heroStories":     { "en": "STORIES",   "ua": "СТОРІС" },
+      "heroCarousels":   { "en": "CAROUSELS", "ua": "КАРУСЕЛІ" },
+      "heroAds":         { "en": "ADS",       "ua": "РЕКЛАМА" },
+      "statementLine1":  { "en": "EVERY POST", "ua": "КОЖЕН ПОСТ" },
+      "statementLine2":  { "en": "IS A",       "ua": "ЦЕ" },
+      "statementLine3":  { "en": "STATEMENT",  "ua": "ЗАЯВА" },
+      "sectionPosts":    { "en": "POSTS",   "ua": "ПОСТИ" },
+      "sectionStories":  { "en": "STORIES", "ua": "СТОРІС" },
+      "sectionAds":      { "en": "ADS",     "ua": "РЕКЛАМА" },
+      "outroCta":        { "en": "FOR COLLABORATIONS", "ua": "ДЛЯ КОЛАБОРАЦІЙ" }
+    },
+    "contactPage": {
+      "emailLabel":     { "en": "EMAIL",     "ua": "ПОШТА" },
+      "telegramLabel":  { "en": "TELEGRAM",  "ua": "TELEGRAM" },
+      "instagramLabel": { "en": "INSTAGRAM", "ua": "INSTAGRAM" },
+      "tiktokLabel":    { "en": "TIKTOK",    "ua": "TIKTOK" },
+      "locationLabel":  { "en": "LOCATION",  "ua": "ЛОКАЦІЯ" }
+    }
+  },
   "about": {
     "bio": {
       "en": [
