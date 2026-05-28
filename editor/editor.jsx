@@ -31,10 +31,19 @@ window.__editor = window.__editor || {};
       { key: 'label', label: 'label', type: 'i18n', required: true },
     ],
     animation: [
-      { key: 'id',    label: 'id',          type: 'string', required: true,  placeholder: 'e.g. A09' },
-      { key: 'title', label: 'title',       type: 'string', required: true },
-      { key: 'date',  label: 'date',        type: 'string', required: false, placeholder: 'e.g. 28.05.2026' },
-      { key: 'desc',  label: 'description', type: 'text',   required: false },
+      { key: 'id',       label: 'id',                  type: 'string', required: true,  placeholder: 'e.g. A09' },
+      { key: 'title',    label: 'title',               type: 'string', required: true },
+      { key: 'date',     label: 'date',                type: 'string', required: false, placeholder: 'e.g. 28.05.2026' },
+      { key: 'desc',     label: 'description',         type: 'text',   required: false },
+      { key: 'thumb',    label: 'thumbnail image',     type: 'image',  required: false },
+      { key: 'videoUrl', label: 'video URL (YouTube/Vimeo/.mp4)', type: 'string', required: false, placeholder: 'https://…' },
+    ],
+    carousel: [
+      { key: 'id',      label: 'id',                  type: 'string', required: true,  placeholder: 'e.g. C03' },
+      { key: 'brand',   label: 'brand',               type: 'string', required: true },
+      { key: 'titleEn', label: 'title (en)',          type: 'string', required: true },
+      { key: 'title',   label: 'title (native/ru)',   type: 'string', required: true },
+      { key: 'cover',   label: 'cover image',         type: 'image',  required: true },
     ],
   };
 
@@ -332,12 +341,18 @@ window.__editor = window.__editor || {};
           return;
         }
         if (el.dataset.editorAction === 'add-generic') {
+          let defaults = {};
+          if (el.dataset.editorAddDefaults) {
+            try { defaults = JSON.parse(el.dataset.editorAddDefaults); }
+            catch (_) { /* ignore malformed */ }
+          }
           setAddModal({
             kind: 'generic',
             title: el.dataset.editorAddTitle || 'add new item',
             listPath: el.dataset.editorListPath,
             assetFolder: el.dataset.editorAssetFolder,
             schemaName: el.dataset.editorAddSchema,
+            defaults,
           });
           return;
         }
@@ -637,7 +652,8 @@ window.__editor = window.__editor || {};
             fields={SCHEMAS[addModal.schemaName] || []}
             assetFolder={addModal.assetFolder}
             onSave={(item, file, imagePath) => {
-              applyAddChange(addModal.listPath, item, file, imagePath);
+              const merged = { ...(addModal.defaults || {}), ...item };
+              applyAddChange(addModal.listPath, merged, file, imagePath);
               setAddModal(null);
             }}
             onCancel={() => setAddModal(null)}

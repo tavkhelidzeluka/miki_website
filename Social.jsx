@@ -253,7 +253,7 @@ function WorkSection({ lang }) {
         sectionLabel={t(window.CONTENT.ui.socialPage.sectionPosts)}
         variant="work"
       />
-      <div style={{ textAlign: 'center', marginTop: 12 }}>
+      <div style={{ textAlign: 'center', marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
         <button
           type="button"
           className="editor-add-tile"
@@ -263,6 +263,16 @@ function WorkSection({ lang }) {
           data-editor-list-path="social.posts"
           data-editor-asset-folder="assets/images/social"
         >+ add post</button>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new carousel"
+          data-editor-add-schema="carousel"
+          data-editor-list-path="social.carousels"
+          data-editor-asset-folder="assets/images/social"
+          data-editor-add-defaults='{"slides":[]}'
+        >+ add carousel</button>
       </div>
     </React.Fragment>
   );

@@ -95,6 +95,14 @@ function AnimationStrip({ tweaks }) {
       <div className="anim-label">
         <div className="anim-label-id">[ 01 ]</div>
         <div className="anim-label-cat">{t({ en: "ANIMATION", ua: "АНІМАЦІЯ" })}</div>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-generic"
+          data-editor-add-title="add new animation"
+          data-editor-add-schema="animation"
+          data-editor-list-path="animations"
+        >+ add animation</button>
       </div>
 
       <div className="anim-strip-wrap">
@@ -106,7 +114,14 @@ function AnimationStrip({ tweaks }) {
               className="anim-thumb"
               onClick={() => setPlaying(w)}
             >
-              <div className="anim-thumb-img" />
+              <div
+                className="anim-thumb-img"
+                style={w.thumb ? { backgroundImage: `url("${w.thumb}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+                data-content-path={`animations.${w._srcIdx}.thumb`}
+                data-editor-kind="image"
+                data-asset-folder="assets/images/animations"
+                data-content-name={w.title}
+              />
               <div className="anim-thumb-play">▶</div>
               <div className="anim-thumb-meta">
                 <span data-content-path={`animations.${w._srcIdx}.title`}>{w.title.toUpperCase()}</span>
@@ -124,17 +139,6 @@ function AnimationStrip({ tweaks }) {
         </div>
       </div>
       <div className="anim-center-line" aria-hidden="true" />
-
-      <div style={{ textAlign: 'center', marginTop: 12 }}>
-        <button
-          type="button"
-          className="editor-add-tile"
-          data-editor-action="add-generic"
-          data-editor-add-title="add new animation"
-          data-editor-add-schema="animation"
-          data-editor-list-path="animations"
-        >+ add animation</button>
-      </div>
 
       {playing && (
         <AnimationPlayer work={playing} onClose={() => setPlaying(null)} />
@@ -155,12 +159,50 @@ function AnimationPlayer({ work, onClose }) {
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
+  // Detect YouTube / Vimeo / direct file URLs.
+  const renderVideo = () => {
+    const url = work.videoUrl;
+    if (!url) {
+      return (
+        <React.Fragment>
+          <div className="anim-player-vignette" />
+          <div className="anim-player-play">▶</div>
+        </React.Fragment>
+      );
+    }
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+    if (ytMatch) {
+      return (
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=1`}
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ width: "100%", height: "100%", border: 0 }}
+        />
+      );
+    }
+    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) {
+      return (
+        <iframe
+          src={`https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          style={{ width: "100%", height: "100%", border: 0 }}
+        />
+      );
+    }
+    // Direct file (mp4/webm/mov)
+    return (
+      <video src={url} controls autoPlay style={{ width: "100%", height: "100%" }} />
+    );
+  };
+
   return (
     <div className="anim-player">
-      {/* fullscreen "video" surface — black placeholder w/ subtle animation */}
+      {/* fullscreen video surface — placeholder or real video */}
       <div className="anim-player-video">
-        <div className="anim-player-vignette" />
-        <div className="anim-player-play">▶</div>
+        {renderVideo()}
       </div>
 
       <button
@@ -171,6 +213,12 @@ function AnimationPlayer({ work, onClose }) {
         <div className="anim-player-id">[ 01 ] {t({ en: "ANIMATION", ua: "АНІМАЦІЯ" })} / <span data-content-path={work._srcIdx !== undefined ? `animations.${work._srcIdx}.id` : undefined}>{work.id}</span></div>
         <h2 className="anim-player-title" data-content-path={work._srcIdx !== undefined ? `animations.${work._srcIdx}.title` : undefined}>{work.title}</h2>
         <p className="anim-player-desc" data-content-path={work._srcIdx !== undefined ? `animations.${work._srcIdx}.desc` : undefined}>{work.desc}</p>
+        {work._srcIdx !== undefined && (
+          <div
+            style={{ marginTop: 8, fontSize: 11, opacity: 0.65, fontFamily: 'monospace', wordBreak: 'break-all' }}
+            data-content-path={`animations.${work._srcIdx}.videoUrl`}
+          >video: {work.videoUrl || "(click to set URL — YouTube, Vimeo, or .mp4)"}</div>
+        )}
         <div className="anim-player-hint">[ {t({ en: "click to hide", ua: "натисніть, щоб сховати" })} ]</div>
       </button>
 

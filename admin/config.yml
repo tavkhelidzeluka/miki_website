@@ -92,7 +92,9 @@ collections:
               { name: id, widget: string },
               { name: title, widget: string },
               { name: date, widget: string, required: false },
-              { name: desc, widget: text, required: false }
+              { name: desc, widget: text, required: false },
+              { name: thumb, widget: image, required: false },
+              { name: videoUrl, label: "Video URL (YouTube / Vimeo / .mp4)", widget: string, required: false }
           ]}
           - { name: canvas, label: "Canvas (shop)", widget: object, fields: [
               { name: items, widget: list, fields: [
