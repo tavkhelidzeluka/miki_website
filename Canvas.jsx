@@ -134,11 +134,12 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
 
       <div className="canvas-scroll">
         <div className="canvas-grid">
-          {ITEMS.map((it) => {
+          {ITEMS.map((it, idx) => {
             const added = inCart(it.id) || pulse === it.id;
             const medium = lang === "UA" ? (it.mediumUa || it.medium) : it.medium;
+            const mediumPath = lang === "UA" ? `canvas.items.${idx}.mediumUa` : `canvas.items.${idx}.medium`;
             return (
-              <article key={it.id} className="prod">
+              <article key={it.id} className="prod" data-content-name={it.title}>
                 <button
                   type="button"
                   className={tilePrefix + (it.img ? " prod-img--photo prod-img--zoomable" : "")}
@@ -146,17 +147,20 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                   onClick={() => it.img && setZoom(it)}
                   aria-label={it.img ? t({ en: "zoom image", ua: "збільшити" }) : undefined}
                   disabled={!it.img}
+                  data-content-path={`canvas.items.${idx}.img`}
+                  data-editor-kind="image"
+                  data-asset-folder="assets"
                 />
                 <hr className="prod-rule" />
                 <div className="prod-foot">
                   <div className="prod-info">
                     <div className="prod-line">
-                      <span className="prod-title">[ {it.title} ]</span>
+                      <span className="prod-title" data-content-path={`canvas.items.${idx}.title`}>[ {it.title} ]</span>
                       {it.price && (
-                        <span className="prod-price">{formatPrice(it.price)}</span>
+                        <span className="prod-price" data-content-path={`canvas.items.${idx}.price`}>{formatPrice(it.price)}</span>
                       )}
                     </div>
-                    <div className="prod-medium">{medium}</div>
+                    <div className="prod-medium" data-content-path={mediumPath}>{medium}</div>
                   </div>
                   <button
                     className={"btn" + (added ? " btn--added" : "")}
