@@ -22,26 +22,26 @@ function Contact({ tweaks }) {
         <dl className="social-rows">
           <div className="social-row">
             <dt>{t({ en: "EMAIL", ua: "ПОШТА" })}</dt>
-            <dd>{c.email}</dd>
+            <dd data-content-path="contact.email">{c.email}</dd>
           </div>
           <div className="social-row">
             <dt>TELEGRAM</dt>
-            <dd>{c.telegram}</dd>
+            <dd data-content-path="contact.telegram">{c.telegram}</dd>
           </div>
           <div className="social-row">
             <dt>INSTAGRAM</dt>
             <dd>
-              <span>{c.instagram[0]}</span>
-              {c.instagram[1] && <span className="social-row-secondary">{c.instagram[1]}</span>}
+              <span data-content-path="contact.instagram.0">{c.instagram[0]}</span>
+              {c.instagram[1] && <span className="social-row-secondary" data-content-path="contact.instagram.1">{c.instagram[1]}</span>}
             </dd>
           </div>
           <div className="social-row">
             <dt>TIKTOK</dt>
-            <dd>{c.tiktok}</dd>
+            <dd data-content-path="contact.tiktok">{c.tiktok}</dd>
           </div>
           <div className="social-row">
             <dt>{t({ en: "LOCATION", ua: "ЛОКАЦІЯ" })}</dt>
-            <dd>{t(c.location)}</dd>
+            <dd data-content-path="contact.location">{t(c.location)}</dd>
           </div>
         </dl>
       </div>
