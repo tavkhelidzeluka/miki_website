@@ -12,16 +12,13 @@ function About({ tweaks }) {
 
       <div className="about-headline">
         <span className="bk-bracket">[</span>
-        <span className="bk-word">{t({ en: "ABOUT ME", ua: "ПРО МЕНЕ" })}</span>
+        <span className="bk-word" data-content-path="ui.headers.about">{t(window.CONTENT.ui.headers.about)}</span>
         <span className="bk-bracket">]</span>
       </div>
 
       <div className="about-bio">
-        <h1 className="about-name">MIKI / GTXHI</h1>
-        <div className="about-role">{t({
-          en: "Visual artist / Animator / Illustrator",
-          ua: "Візуальний митець / Аніматор / Ілюстратор",
-        })}</div>
+        <h1 className="about-name" data-content-path="ui.brand">{t(window.CONTENT.ui.brand)}</h1>
+        <div className="about-role" data-content-path="ui.aboutPage.role">{t(window.CONTENT.ui.aboutPage.role)}</div>
         <div className="about-prose">
           {(t({ en: a.bio.en, ua: a.bio.ua }) || []).map((line, i, arr) => {
             const lang = window.getLang ? window.getLang().toLowerCase() : 'en';
@@ -45,7 +42,7 @@ function About({ tweaks }) {
       </div>
 
       <div className="about-col about-col--exp">
-        <div className="about-col-head"><b>[ 01 ]</b> {t({ en: "EXPERIENCE", ua: "ДОСВІД" })}</div>
+        <div className="about-col-head"><b>[ 01 ]</b> <span data-content-path="ui.aboutPage.experienceHeader">{t(window.CONTENT.ui.aboutPage.experienceHeader)}</span></div>
         <hr className="hairline" />
         {a.experience.map((e, i) => (
           <div className="exp-item" key={i}>
@@ -58,7 +55,7 @@ function About({ tweaks }) {
       </div>
 
       <div className="about-projects">
-        <div className="about-col-head"><b>[ 02 ]</b> {t({ en: "EXHIBITIONS & PROJECTS", ua: "ВИСТАВКИ ТА ПРОЄКТИ" })}</div>
+        <div className="about-col-head"><b>[ 02 ]</b> <span data-content-path="ui.aboutPage.exhibitionsHeader">{t(window.CONTENT.ui.aboutPage.exhibitionsHeader)}</span></div>
         <hr className="hairline" />
         <div className="projects-grid">
           {a.exhibitions.map((x, i) => (
@@ -68,7 +65,7 @@ function About({ tweaks }) {
       </div>
 
       <div className="about-col about-col--skills">
-        <div className="about-col-head"><b>[ 03 ]</b> {t({ en: "SKILLS", ua: "НАВИЧКИ" })}</div>
+        <div className="about-col-head"><b>[ 03 ]</b> <span data-content-path="ui.aboutPage.skillsHeader">{t(window.CONTENT.ui.aboutPage.skillsHeader)}</span></div>
         <hr className="hairline" />
         {a.skills.map((s, i) => (
           <div className="skill" key={i} data-content-path={`about.skills.${i}.label`}>{t(s.label)}</div>
