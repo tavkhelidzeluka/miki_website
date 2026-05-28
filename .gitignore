@@ -1,0 +1,17 @@
+# Python / Django leftovers
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+
+# IDE / OS
+.idea/
+.DS_Store
+.playwright-mcp/
+
+# Raw working files — not part of the deployed site
+uploads/
+
+# OAuth proxy local dev artifacts
+oauth-proxy/node_modules/
+oauth-proxy/.wrangler/

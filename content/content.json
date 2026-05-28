@@ -1,0 +1,305 @@
+{
+  "contact": {
+    "email": "seriton3@gmail.com",
+    "telegram": "@gtxhi",
+    "instagram": ["@gtxhi", "@mykyta.lg"],
+    "tiktok": "@gtxhi",
+    "location": {
+      "en": "Tbilisi, GE",
+      "ua": "Тбілісі, Грузія"
+    }
+  },
+  "orderForm": {
+    "web3formsKey": "PASTE_WEB3FORMS_KEY_BEFORE_DEPLOY"
+  },
+  "about": {
+    "bio": {
+      "en": [
+        "Working with animation, illustration, posters, and collage.",
+        "Mix classical art with modern digital design — every piece begins with a black square."
+      ],
+      "ua": [
+        "Працюю з анімацією, ілюстрацією, постерами та колажами.",
+        "Поєдную класичне мистецтво з сучасним цифровим дизайном — кожна робота починається з чорного квадрата."
+      ]
+    },
+    "experience": [
+      {
+        "title": { "en": "Studio \"SHAR\"", "ua": "Студія «ШАР»" },
+        "role": { "en": "Character Animator", "ua": "Аніматор персонажів" },
+        "subRole": { "en": "\"Through the Magic Crystal\"", "ua": "«Крізь магічний кристал»" },
+        "date": { "en": "2024 – 2025", "ua": "2024 – 2025" }
+      },
+      {
+        "title": { "en": "Freelance", "ua": "Фріланс" },
+        "role": { "en": "Illustrator / Animator", "ua": "Ілюстратор / Аніматор" },
+        "subRole": null,
+        "date": { "en": "2023 – Present", "ua": "2023 – дотепер" }
+      },
+      {
+        "title": { "en": "Bolshoi Theatre", "ua": "Большой театр" },
+        "role": { "en": "Poster Designer (contract)", "ua": "Постер-дизайнер (контракт)" },
+        "subRole": null,
+        "date": { "en": "2024 season", "ua": "сезон 2024" }
+      }
+    ],
+    "exhibitions": [
+      { "label": { "en": "Music Video — Grigory Polukhutenko", "ua": "Музичне відео — Григорій Полухутенко" } },
+      { "label": { "en": "Animated Ad — Nyaono", "ua": "Анімаційна реклама — Nyaono" } },
+      { "label": { "en": "\"Body of Vision\" — exhibition", "ua": "«Body of Vision» — виставка" } },
+      { "label": { "en": "FOREST / VÉM ÀRXÎV — group show", "ua": "FOREST / VÉM ÀRXÎV — групова виставка" } },
+      { "label": { "en": "Live Show Posters", "ua": "Постери до live-шоу" } },
+      { "label": { "en": "Bolshoi Theatre — posters", "ua": "Большой театр — постери" } }
+    ],
+    "skills": [
+      { "label": { "en": "Animation · Storyboarding", "ua": "Анімація · Сторібординг" } },
+      { "label": { "en": "Concept Art · Color & Light", "ua": "Концепт-арт · Колір і світло" } },
+      { "label": { "en": "Visual Style & Composition", "ua": "Візуальний стиль і композиція" } },
+      { "label": { "en": "Poster Design · Art Direction", "ua": "Постер-дизайн · Арт-дирекція" } },
+      { "label": { "en": "Illustration · Collage", "ua": "Ілюстрація · Колаж" } }
+    ]
+  },
+  "projects": [
+    {
+      "id": "01",
+      "category": "ANIMATION",
+      "year": "2024 — 2025",
+      "name": "through the magic crystal",
+      "client": "Studio SHAR",
+      "role": "Character Animator",
+      "medium": "2D digital animation, 12fps",
+      "desc": "Character animation for the Russian-language animated feature. Worked across 14 scenes — creature walk-cycles, crowd shots, key-frames on twos.",
+      "prose": "A long-arc creature animation gig. I keyframed by hand on twos, working from rough director's storyboards and finishing into clean line. The crystal scenes — fragmented, refractive — were the most challenging. We treated each facet as its own animation rig.",
+      "works": [
+        { "name": "through the magic crystal", "desc": "Character animation — Studio SHAR feature. 2024–2025.", "thumb": null, "price": null },
+        { "name": "nyaono spot", "desc": "30-second animated commercial, two-frame loops.", "thumb": null, "price": null },
+        { "name": "polukhutenko video", "desc": "Frame-by-frame rotoscoped music video, 3:42.", "thumb": null, "price": null },
+        { "name": "studio test reel", "desc": "Bench reel from 2024 — eight clips, no sound.", "thumb": null, "price": null },
+        { "name": "creature studies", "desc": "Daily walk-cycle studies, sketchbook origin.", "thumb": null, "price": null },
+        { "name": "loop set / berlin", "desc": "Three-week residency, 12 loops at 12fps.", "thumb": null, "price": null },
+        { "name": "crystal facet rig", "desc": "Test rig — refractive faceted-glass character system.", "thumb": null, "price": null }
+      ]
+    },
+    {
+      "id": "02",
+      "category": "ILLUSTRATION",
+      "year": "2024",
+      "name": "body of vision",
+      "client": "Group exhibition",
+      "role": "Illustrator",
+      "medium": "Mixed media on A3 paper",
+      "desc": "Twelve mixed-media pieces exploring perception, distortion, and the body. Every piece begins with a cut-cardstock black square.",
+      "prose": "Twelve pieces, A3, all from the same week in October. I started each one with a black square cut from cardstock — the shape was the rule. Everything else (pencil, paint, collage) responded to that anchor.",
+      "works": [
+        { "name": "body of vision — i", "desc": "Mixed media on A3 paper, October 2024.", "thumb": null, "price": null },
+        { "name": "body of vision — ii", "desc": "Black-square cardstock anchor + pencil + acrylic.", "thumb": null, "price": null },
+        { "name": "body of vision — iii", "desc": "Cut paper layered with charcoal underdrawing.", "thumb": null, "price": null },
+        { "name": "body of vision — iv", "desc": "Series of twelve, fourth piece — figure study.", "thumb": null, "price": null },
+        { "name": "body of vision — v", "desc": "Mixed media; the only piece with red ink.", "thumb": null, "price": null },
+        { "name": "body of vision — vi", "desc": "Final piece — closing the loop on the series.", "thumb": null, "price": null },
+        { "name": "studio notes", "desc": "Process pages from the week of work.", "thumb": null, "price": null }
+      ]
+    },
+    {
+      "id": "03",
+      "category": "POSTERS",
+      "year": "2024",
+      "name": "bolshoi theatre",
+      "client": "Bolshoi Theatre",
+      "role": "Poster designer",
+      "medium": "Offset, 600×900mm",
+      "desc": "Poster series for the 2024 season. Six titles. One halftone portrait, one block of condensed display per piece.",
+      "prose": "The brief asked for restraint. Black ink on warm paper, one photograph treated as halftone, big type. We avoided the season's typical illustrative direction entirely.",
+      "works": [
+        { "name": "home", "desc": "Offset poster, 600×900mm. Halftone portrait, condensed display.", "thumb": "assets/images/projects/posters/home.jpg", "price": null },
+        { "name": "bones", "desc": "Bone-white riso poster on warm paper, edition of 80.", "thumb": "assets/images/projects/posters/bones.jpg", "price": null },
+        { "name": "forever", "desc": "Two-colour offset poster, 600×900mm. All-type, hand-set leading.", "thumb": "assets/images/projects/posters/forever.jpg", "price": null },
+        { "name": "blue grid", "desc": "Screenprint, 50×70cm. Cyan grid over a halftone interior.", "thumb": "assets/images/projects/posters/blue-grid.jpg", "price": null },
+        { "name": "serofarm", "desc": "Concert poster, A2. Two passes through the riso, hand-trimmed.", "thumb": "assets/images/projects/posters/serofarm.jpg", "price": null },
+        { "name": "war is hell", "desc": "Offset poster, 600×900mm. Bracket headline, single-image composition.", "thumb": "assets/images/projects/posters/war-is-hell.jpg", "price": null }
+      ]
+    },
+    {
+      "id": "04",
+      "category": "CANVAS",
+      "year": "2023 — Present",
+      "name": "originals on canvas",
+      "client": "Personal / commissions",
+      "role": "Painter",
+      "medium": "Acrylic / oil / collage",
+      "desc": "Originals on linen and coloured paper. A3 — A1. Sold through the Canvas page; some commissioned.",
+      "prose": "I work alla-prima, building tone in two or three sessions, then collaging textured paper over the top. The canvas works are the slowest part of the practice — usually one finished piece every two weeks.",
+      "works": [
+        { "name": "с котом", "desc": "Coloured paper A3, acrylic + pencils.", "thumb": null, "price": null },
+        { "name": "яновна", "desc": "Linen canvas A4, oil.", "thumb": null, "price": null },
+        { "name": "в пиджаке", "desc": "Collage A3, mixed media.", "thumb": null, "price": null },
+        { "name": "ночной", "desc": "A2 linen canvas, alla-prima oil sketch.", "thumb": null, "price": null },
+        { "name": "сестра", "desc": "Charcoal on A2, finished in single sitting.", "thumb": null, "price": null },
+        { "name": "берлин", "desc": "Acrylic on coloured paper, A3 — 2025.", "thumb": null, "price": null },
+        { "name": "холст / 07", "desc": "Untitled canvas, in-progress.", "thumb": null, "price": null }
+      ]
+    },
+    {
+      "id": "05",
+      "category": "BOOKS",
+      "year": "2024",
+      "name": "exposure / book series",
+      "client": "Independent publishers",
+      "role": "Cover designer · illustrator",
+      "medium": "Hardcover, 130×200mm",
+      "desc": "Two book covers and a 24-page zine. All-typographic spines, halftone interiors.",
+      "prose": "Three projects in this folder. The Exposure zine started as a poster series; the publishers asked to turn it into a perfect-bound 24-page book. Hand-bound the first run myself.",
+      "works": [
+        { "name": "exposure — zine", "desc": "24 pages, perfect-bound, halftone interiors.", "thumb": null, "price": null },
+        { "name": "exposure — cover", "desc": "Hardcover concept, typographic spine.", "thumb": null, "price": null },
+        { "name": "vém àrxîv — anthology", "desc": "Group anthology cover + 4 inserts.", "thumb": null, "price": null },
+        { "name": "studio / book i", "desc": "Independent publisher, monograph.", "thumb": null, "price": null },
+        { "name": "studio / book ii", "desc": "Companion volume — softcover, riso.", "thumb": null, "price": null },
+        { "name": "zine — quarterly", "desc": "Ongoing quarterly zine, 16 pages.", "thumb": null, "price": null },
+        { "name": "book — endpapers", "desc": "Endpaper-only commission, six titles.", "thumb": null, "price": null }
+      ]
+    },
+    {
+      "id": "06",
+      "category": "PHOTOS",
+      "year": "2023 — Present",
+      "name": "field notes",
+      "client": "Personal",
+      "role": "Photographer",
+      "medium": "35mm + medium format film",
+      "desc": "Ongoing 35mm and 120 film series. Mostly Kyiv, sometimes Berlin. Halftoned for the brand voice.",
+      "prose": "Always one camera, mostly Olympus mju. I scan and treat everything to 1-bit halftone before publishing — the texture matters more than the literal photograph.",
+      "works": [
+        { "name": "field notes — kyiv", "desc": "Mostly Olympus mju, 35mm Portra.", "thumb": null, "price": null },
+        { "name": "field notes — berlin", "desc": "Three weeks, two rolls of HP5.", "thumb": null, "price": null },
+        { "name": "studio portraits", "desc": "Mamiya RB67, all natural light.", "thumb": null, "price": null },
+        { "name": "halftone studies", "desc": "1-bit halftone treatment tests.", "thumb": null, "price": null },
+        { "name": "kyiv at night", "desc": "Long-exposure 35mm series.", "thumb": null, "price": null },
+        { "name": "subjects / index", "desc": "Compiled portrait index, 2023–25.", "thumb": null, "price": null },
+        { "name": "self — 07", "desc": "Self portrait series, ongoing.", "thumb": null, "price": null }
+      ]
+    },
+    {
+      "id": "07",
+      "category": "SOCIAL MEDIA",
+      "year": "2024",
+      "name": "social campaign — nyaono",
+      "client": "Nyaono",
+      "role": "Animator · designer",
+      "medium": "Animated story sets",
+      "desc": "Animated story sets and grid posts for a brand launch. Two-frame loops in Photoshop, output at three aspect ratios.",
+      "prose": "Quick turnaround social work. Two-frame loops in Photoshop, output at 1080×1920 / 1080×1080 / 1080×1350. Same brand voice held across all three.",
+      "works": [
+        { "name": "nyaono — launch", "desc": "Brand launch grid + stories.", "thumb": null, "price": null },
+        { "name": "nyaono — story set", "desc": "Animated story set, 8 frames.", "thumb": null, "price": null },
+        { "name": "campaign / spring", "desc": "Spring lookbook social rollout.", "thumb": null, "price": null },
+        { "name": "ig grid / april", "desc": "Single-month feed plan, 12 tiles.", "thumb": null, "price": null },
+        { "name": "story templates", "desc": "Template set, 6 layouts.", "thumb": null, "price": null },
+        { "name": "reel — exposure", "desc": "Reel cutdown of Exposure zine launch.", "thumb": null, "price": null },
+        { "name": "stickers / 07", "desc": "Custom sticker set for paid promotion.", "thumb": null, "price": null }
+      ]
+    }
+  ],
+  "canvas": {
+    "items": [
+      { "id": "00", "title": "recovery",   "medium": "(oil, 100×80, 2025)",                  "mediumUa": "(олія, 100×80, 2025)",                "img": "assets/painting-01.png", "price": 100 },
+      { "id": "01", "title": "с котом",    "medium": "(colored paper A3, acrylic, pencils)", "mediumUa": "(кольоровий папір А3, акрил, олівці)", "img": null, "price": null },
+      { "id": "02", "title": "яновна",     "medium": "(linen canvas A4)",                    "mediumUa": "(лляне полотно А4)",                   "img": null, "price": null },
+      { "id": "03", "title": "в пиджаке",  "medium": "(collage A3)",                         "mediumUa": "(колаж А3)",                           "img": null, "price": null },
+      { "id": "04", "title": "ночной",     "medium": "(riso print, edition of 25)",          "mediumUa": "(різо-друк, тираж 25)",                "img": null, "price": null },
+      { "id": "05", "title": "LUHANSK",    "medium": "(offset poster 600×900mm)",            "mediumUa": "(офсетний постер 600×900мм)",          "img": null, "price": null },
+      { "id": "06", "title": "сестра",     "medium": "(charcoal on A2)",                     "mediumUa": "(вугілля на А2)",                      "img": null, "price": null },
+      { "id": "07", "title": "берлин",     "medium": "(acrylic on coloured paper A3)",       "mediumUa": "(акрил на кольоровому папері А3)",     "img": null, "price": null },
+      { "id": "08", "title": "холст / 08", "medium": "(linen canvas A2, oil)",               "mediumUa": "(лляне полотно А2, олія)",             "img": null, "price": null },
+      { "id": "09", "title": "exposure",   "medium": "(riso poster, edition of 50)",         "mediumUa": "(різо-постер, тираж 50)",              "img": null, "price": null }
+    ]
+  },
+  "social": {
+    "posts": [
+      { "src": "assets/images/social/legnacat/post-1.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-2.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-3.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-4.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-5.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-6.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-7.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-8.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-9.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-10.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-11.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/legnacat/post-12.webp", "brand": "@legnacat" },
+      { "src": "assets/images/social/khedi/post-1.webp", "brand": "KHEDI" },
+      { "src": "assets/images/social/khedi/post-2.webp", "brand": "KHEDI" },
+      { "src": "assets/images/social/khedi/post-3.webp", "brand": "KHEDI" },
+      { "src": "assets/images/social/khedi/post-4.webp", "brand": "KHEDI" }
+    ],
+    "carousels": [
+      {
+        "id": "01",
+        "brand": "@legnacat",
+        "title": "Кризис четверти жизни",
+        "titleEn": "Quarter-life crisis",
+        "cover": "assets/images/social/legnacat/crisis-cover.webp",
+        "slides": [
+          "assets/images/social/legnacat/crisis-1.webp",
+          "assets/images/social/legnacat/crisis-2.webp",
+          "assets/images/social/legnacat/crisis-3.webp",
+          "assets/images/social/legnacat/crisis-5.webp",
+          "assets/images/social/legnacat/crisis-6.webp",
+          "assets/images/social/legnacat/crisis-7.webp"
+        ]
+      },
+      {
+        "id": "02",
+        "brand": "@legnacat",
+        "title": "Starbucks в Грузии",
+        "titleEn": "Starbucks in Georgia",
+        "cover": "assets/images/social/legnacat/starbucks-cover.webp",
+        "slides": [
+          "assets/images/social/legnacat/starbucks-1.webp",
+          "assets/images/social/legnacat/starbucks-2.webp",
+          "assets/images/social/legnacat/starbucks-3.webp",
+          "assets/images/social/legnacat/starbucks-4.webp",
+          "assets/images/social/legnacat/starbucks-5.webp",
+          "assets/images/social/legnacat/starbucks-6.webp"
+        ]
+      }
+    ],
+    "stories": [
+      { "src": "assets/images/social/yang/story-1.webp", "brand": "YANG" },
+      { "src": "assets/images/social/yang/story-2.webp", "brand": "YANG" },
+      { "src": "assets/images/social/yang/story-3.webp", "brand": "YANG" },
+      { "src": "assets/images/social/yang/story-4.webp", "brand": "YANG" },
+      { "src": "assets/images/social/realty/story-1.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-2.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-3.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-4.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-5.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-6.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-7.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-8.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/realty/story-9.webp", "brand": "REALTY" },
+      { "src": "assets/images/social/dental/story-1.webp", "brand": "DENTAL" },
+      { "src": "assets/images/social/dental/story-2.webp", "brand": "DENTAL" },
+      { "src": "assets/images/social/dental/story-3.webp", "brand": "DENTAL" },
+      { "src": "assets/images/social/dental/story-4.webp", "brand": "DENTAL" },
+      { "src": "assets/images/social/dental/story-5.webp", "brand": "DENTAL" },
+      { "src": "assets/images/social/dental/story-6.webp", "brand": "DENTAL" },
+      { "src": "assets/images/social/dental/story-7.webp", "brand": "DENTAL" },
+      { "src": "assets/images/social/dental/story-8.webp", "brand": "DENTAL" }
+    ],
+    "ads": [
+      { "src": "assets/images/social/scratch/ad-1.webp", "aspect": "1 / 1", "brand": "SCRATCH SCHOOL" },
+      { "src": "assets/images/social/scratch/ad-2.webp", "aspect": "1 / 1", "brand": "SCRATCH SCHOOL" },
+      { "src": "assets/images/social/scratch/ad-3.webp", "aspect": "1 / 1", "brand": "SCRATCH SCHOOL" },
+      { "src": "assets/images/social/scratch/ad-4.webp", "aspect": "16 / 9", "brand": "SCRATCH SCHOOL" }
+    ],
+    "services": [
+      { "id": "01", "title": "BRAND AUDIT", "sub": "Visual identity + content review, competitor scan.", "subUa": "Аудит ідентичності та контенту, конкурентний скан." },
+      { "id": "02", "title": "STRATEGY & CALENDAR", "sub": "Pillars, posting cadence, 2-week launch plans.", "subUa": "Контент-стовпи, ритм публікацій, дводижневі лонч-плани." },
+      { "id": "03", "title": "STATIC + MOTION", "sub": "Feed posts, stories, reels — print-room rules.", "subUa": "Пости, сторіс, рілси — за правилами друкарні." },
+      { "id": "04", "title": "CHANNEL DESIGN", "sub": "Telegram covers, sticker packs, post templates.", "subUa": "Обкладинки Telegram, стікер-паки, шаблони постів." },
+      { "id": "05", "title": "BRAND ANALYSIS", "sub": "Voice & tone, narrative guidelines, case studies.", "subUa": "Голос і тон, наративний гайд, кейс-студії." }
+    ]
+  }
+}
