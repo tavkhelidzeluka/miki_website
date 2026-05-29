@@ -76,3 +76,22 @@ html[data-mobile="true"] .site {
     padding: 24px 16px 40px;
   }
 }
+
+/* ── Task 4: Projects grid ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .proj-headline {
+    position: static;
+    font-size: clamp(40px, 12vw, 72px);
+    padding: 16px 16px 0;
+    text-align: left;
+  }
+  .proj-gridv2 {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 16px;
+    inset: auto;
+  }
+  .proj-tile { width: 100%; }   /* keep aspect-ratio: 4/3 */
+}
