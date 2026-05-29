@@ -64,26 +64,15 @@ html[data-mobile="true"] .site {
   .nav-lang { margin-top: 4px; }
 }
 
-/* ── Task 3: Home ───────────────────────────────────────────────────── */
+/* ── Task 3: Home ───────────────────────────────────────────────────────
+   Home's photo-over-text overlay is already handled by the existing inlined
+   mobile rule (.home-mark / .home-bg). Here we just add the dvh upgrade.
+   (Home.jsx renders only .home-mark* and .home-bg — no status/meta/clock/thumb
+   elements exist, so no footer reflow is needed.) */
 @media (max-width: 768px) {
   .page--home {
     min-height: calc(100vh - 60px);
     min-height: calc(100dvh - 60px);
     padding: 24px 16px 40px;
   }
-  /* Reflow the absolute corner chrome into a static, centered footer column */
-  .home-corner--tr,
-  .home-mini-thumb { display: none; }            /* drop non-essential overlays */
-  .home-status,
-  .home-meta,
-  .home-corner--bl-time {
-    position: static !important;
-    left: auto !important; right: auto !important;
-    top: auto !important; bottom: auto !important;
-    width: 100% !important;
-    max-width: none !important;
-    margin: 14px auto 0 !important;
-    text-align: center;
-  }
-  .home-status { display: flex; justify-content: center; gap: 10px; }
 }
