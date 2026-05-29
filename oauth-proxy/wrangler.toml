@@ -7,4 +7,4 @@ compatibility_date = "2024-12-01"
 # is only sent to origins on this allowlist.
 # Replace with your actual GitHub Pages origin (and add localhost for dev).
 [vars]
-ADMIN_ORIGINS = "https://tavkhelidzeluka.github.io,http://localhost:8000"
+ADMIN_ORIGINS = "https://gtxhi.art,https://tavkhelidzeluka.github.io,http://localhost:8000"
