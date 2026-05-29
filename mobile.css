@@ -95,3 +95,41 @@ html[data-mobile="true"] .site {
   }
   .proj-tile { width: 100%; }   /* keep aspect-ratio: 4/3 */
 }
+
+/* ── Task 5: Category strip → vertical stack ────────────────────────── */
+@media (max-width: 768px) {
+  .cat-label {
+    position: sticky;
+    top: 52px;                 /* below the sticky nav */
+    left: auto;
+    z-index: 10;
+    background: var(--paper);
+    padding: 12px 16px;
+  }
+  .site[data-invert="true"] .cat-label { background: #0A0A0A; }
+  .cat-arrow { display: none; }
+  .cat-strip {
+    position: static;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 8px 16px 24px;
+  }
+  /* Every thumb becomes a full-width row at a readable size */
+  .cat-thumb,
+  .cat-thumb--active {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 3;
+    opacity: 1 !important;
+    transform: none !important;
+    flex: 0 0 auto;
+  }
+  .cat-meta {
+    position: static;
+    bottom: auto; left: auto;
+    padding: 0 16px 24px;
+  }
+  .cat-meta .cat-name { font-size: clamp(22px, 7vw, 40px); }
+}
