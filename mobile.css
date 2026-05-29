@@ -182,3 +182,31 @@ html[data-mobile="true"] .site {
   .projects-grid { grid-template-columns: 1fr; }
   .about-contact { display: flex; flex-direction: column; gap: 12px; }
 }
+
+/* ── Task 8: Contact ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page--contact {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 16px;
+    inset: auto;
+    height: auto;
+  }
+  .social-portrait,
+  .social-headline,
+  .contact-card {
+    position: static !important;
+    inset: auto !important;
+    left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
+    width: 100% !important;
+  }
+  .social-portrait { max-width: 300px; height: auto; }
+  .social-headline { font-size: clamp(40px, 12vw, 84px); }
+  .social-row {
+    grid-template-columns: 1fr;   /* label stacks above value */
+    gap: 4px;
+    padding: 14px 0;
+  }
+}
