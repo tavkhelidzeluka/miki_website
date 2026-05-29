@@ -210,3 +210,25 @@ html[data-mobile="true"] .site {
     padding: 14px 0;
   }
 }
+
+/* ── Task 9: Canvas / shop ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .canvas-headline { position: static; font-size: clamp(48px, 14vw, 120px); padding: 12px 16px 0; }
+  .canvas-sub { position: static; padding: 0 16px; }
+  .canvas-curswitch { position: static; padding: 8px 16px; gap: 10px; }
+  .canvas-curbtn { padding: 8px 10px; min-height: 44px; }
+  .canvas-scroll {
+    position: static;
+    overflow: visible;
+    inset: auto;
+    padding: 0 16px 32px;
+  }
+  .canvas-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .prod-img { width: 100%; }     /* keep aspect-ratio: 280/340 */
+  .prod-foot { flex-wrap: wrap; gap: 8px; }
+  .prod-foot .btn { min-height: 40px; padding: 10px 14px; }
+  /* Cart drawer: full-width slide-in */
+  .cart-drawer { width: 100%; left: 0; right: 0; }
+  /* Zoom modal: constrain image to viewport */
+  .canvas-zoom img { max-width: 92vw; max-height: 80dvh; height: auto; }
+}
