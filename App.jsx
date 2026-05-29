@@ -40,13 +40,25 @@ function App() {
   // Detail nav helpers
   const openDetail = (p) => setDetailProject(p);
   const closeDetail = () => setDetailProject(null);
+  // When detail was opened from a category strip (workIndex set), iterate the
+  // works inside that category; otherwise iterate top-level categories.
+  const stepWithinWorks = (delta) => {
+    const category = window.ALL_PROJECTS.find((p) => p.id === detailProject.id);
+    const works = (category && category.works) || [];
+    if (!works.length) return;
+    const nextIdx = (detailProject.workIndex + delta + works.length) % works.length;
+    const w = works[nextIdx];
+    setDetailProject({ ...category, name: w.name, desc: w.desc, thumb: w.thumb, prose: category.prose, workIndex: nextIdx });
+  };
   const detailNext = () => {
     if (!detailProject) return;
+    if (detailProject.workIndex !== undefined) { stepWithinWorks(1); return; }
     const i = window.ALL_PROJECTS.findIndex((p) => p.id === detailProject.id);
     setDetailProject(window.ALL_PROJECTS[(i + 1) % window.ALL_PROJECTS.length]);
   };
   const detailPrev = () => {
     if (!detailProject) return;
+    if (detailProject.workIndex !== undefined) { stepWithinWorks(-1); return; }
     const len = window.ALL_PROJECTS.length;
     const i = window.ALL_PROJECTS.findIndex((p) => p.id === detailProject.id);
     setDetailProject(window.ALL_PROJECTS[(i - 1 + len) % len]);
