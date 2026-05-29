@@ -142,6 +142,17 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
   const N = items.length;
   const [i, setI] = React.useState(0);
   const [zoom, setZoom] = React.useState(false);
+  // Mobile: the horizontal carousel becomes a vertical 2-col grid of ALL items
+  // (see mobile.css Task 11); track viewport to render/behave accordingly.
+  const [isMobile, setIsMobile] = React.useState(
+    () => window.matchMedia("(max-width: 768px)").matches
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
   const at = (off) => items[((i + off) % N + N) % N];
   const offsets = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
 
@@ -157,11 +168,14 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
         <button className="sm2-gal-arrow sm2-gal-arrow--prev" onClick={prev} aria-label="prev">←</button>
 
         <div className="sm2-gal-strip">
-          {offsets.map((off) => {
-            const item = at(off);
-            const slot = off < 0 ? "n" + (-off) : "" + off;
-            const active = off === 0;
-            const tileIdx = ((i + off) % N + N) % N;
+          {(isMobile
+            ? items.map((_, idx) => ({ idx, off: null }))            // mobile: all items, natural order
+            : offsets.map((off) => ({ idx: ((i + off) % N + N) % N, off }))
+          ).map(({ idx, off }) => {
+            const item = items[idx];
+            const slot = off === null ? "" : (off < 0 ? "n" + (-off) : "" + off);
+            const active = !isMobile && off === 0;
+            const tileIdx = idx;
             // Prefer per-item metadata (work strip), fall back to pathBase
             // (stories / ads).
             const editPath = item._editPath || (pathBase ? `${pathBase}.${tileIdx}.src` : null);
@@ -178,10 +192,11 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
               : {};
             return (
               <button
-                key={"g-" + i + "-" + off}
-                className={"sm2-gal-tile sm2-gal-tile--o" + slot + (active ? " sm2-gal-tile--active" : "")}
+                key={isMobile ? "g-m-" + idx : "g-" + i + "-" + off}
+                className={"sm2-gal-tile" + (isMobile ? "" : " sm2-gal-tile--o" + slot) + (active ? " sm2-gal-tile--active" : "")}
                 onClick={() => {
-                  if (active) setZoom(true);
+                  if (isMobile) { setI(idx); setZoom(true); }
+                  else if (active) setZoom(true);
                   else goTo(i + off);
                 }}
                 aria-label={item.brand}

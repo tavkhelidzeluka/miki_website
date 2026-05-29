@@ -112,6 +112,18 @@ function CategoryStrip({ category, tweaks, openDetail }) {
   const works = category.works || [];
   const [i, setI] = React.useState(0);
   const [pulse, setPulse] = React.useState(false);
+  // Mobile: the horizontal carousel is replaced by a vertical stack of ALL
+  // works (see mobile.css Task 5). Track viewport so we can render/behave
+  // accordingly. Matches the (max-width:768px) gate used by Scaled().
+  const [isMobile, setIsMobile] = React.useState(
+    () => window.matchMedia("(max-width: 768px)").matches
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
   const cur = works[i] || works[0];
 
   // Brief "pulse" class on transition — used to bump the new center thumb.
@@ -171,8 +183,11 @@ function CategoryStrip({ category, tweaks, openDetail }) {
       <button className="cat-arrow cat-arrow--prev" aria-label="prev" onClick={prev}>←</button>
 
       <div className="cat-strip">
-        {order.map((idx, j) => {
-          const isActive = j === 3;
+        {(isMobile
+          ? works.map((_, idx) => ({ idx, j: -1 }))   // mobile: every work, natural order
+          : order.map((idx, j) => ({ idx, j }))         // desktop: rotated 7-window carousel
+        ).map(({ idx, j }) => {
+          const isActive = !isMobile && j === 3;
           const w = works[idx];
           const hasImg = !!(w && w.thumb);
           const cls = baseClass
@@ -185,7 +200,7 @@ function CategoryStrip({ category, tweaks, openDetail }) {
           const assetFolder = `assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`;
           return (
             <div
-              key={"slot-" + j}
+              key={isMobile ? "work-" + idx : "slot-" + j}
               className={cls}
               style={style}
               data-content-path={`projects.${catIdx}.works.${idx}.thumb`}
@@ -193,7 +208,9 @@ function CategoryStrip({ category, tweaks, openDetail }) {
               data-asset-folder={assetFolder}
               data-content-name={w && w.name}
               onClick={() => {
-                if (isActive) {
+                if (isMobile) {
+                  openDetail({ ...category, name: w.name, desc: w.desc, thumb: w.thumb, prose: category.prose, workIndex: idx });
+                } else if (isActive) {
                   openDetail({ ...category, name: cur.name, desc: cur.desc, thumb: cur.thumb, prose: category.prose, workIndex: i });
                 } else if (j < 3) {
                   for (let k = 0; k < 3 - j; k++) prev();
@@ -251,6 +268,32 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
+  }, [onClose, onNext, onPrev]);
+
+  // Touch swipe (mobile): horizontal → prev/next within category, vertical-down → close.
+  React.useEffect(() => {
+    const el = document.querySelector(".detail-scrim");
+    if (!el) return;
+    let x0 = null, y0 = null;
+    const onStart = (e) => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; };
+    const onEnd = (e) => {
+      if (x0 === null) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - x0, dy = t.clientY - y0;
+      const ax = Math.abs(dx), ay = Math.abs(dy);
+      const THRESH = 50;
+      if (ax > ay && ax > THRESH) { dx < 0 ? onNext() : onPrev(); }
+      // Close only on a downward pull from the TOP, so scrolling the (tall,
+      // scrollable) detail doesn't accidentally dismiss it.
+      else if (ay > ax && dy > THRESH * 1.6 && el.scrollTop <= 5) { onClose(); }
+      x0 = y0 = null;
+    };
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchend", onEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchend", onEnd);
+    };
   }, [onClose, onNext, onPrev]);
 
   const hasImg = !!project.thumb;
