@@ -131,3 +131,24 @@ html[data-mobile="true"] .site {
   .cat-meta { display: none; }
   .cat-meta .cat-name { font-size: clamp(22px, 7vw, 40px); }
 }
+
+/* ── Task 6: Work detail overlay ────────────────────────────────────── */
+@media (max-width: 768px) {
+  .detail-scrim { overflow-y: auto; }
+  .detail-grid {
+    position: static;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    inset: auto;
+    padding: 56px 16px 32px;   /* clear the .detail-close button */
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  .detail-image,
+  .detail-image--img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 5;
+  }
+  .detail-close { top: 12px; right: 16px; font-size: 15px; }
+}

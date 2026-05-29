@@ -270,6 +270,30 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
     return () => window.removeEventListener("keydown", handler);
   }, [onClose, onNext, onPrev]);
 
+  // Touch swipe (mobile): horizontal → prev/next within category, vertical-down → close.
+  React.useEffect(() => {
+    let x0 = null, y0 = null;
+    const onStart = (e) => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; };
+    const onEnd = (e) => {
+      if (x0 === null) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - x0, dy = t.clientY - y0;
+      const ax = Math.abs(dx), ay = Math.abs(dy);
+      const THRESH = 50;
+      if (ax > ay && ax > THRESH) { dx < 0 ? onNext() : onPrev(); }
+      else if (ay > ax && dy > THRESH * 1.6) { onClose(); }
+      x0 = y0 = null;
+    };
+    const el = document.querySelector(".detail-scrim");
+    if (!el) return;
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchend", onEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchend", onEnd);
+    };
+  }, [onClose, onNext, onPrev]);
+
   const hasImg = !!project.thumb;
   const baseImgClass = hasImg ? "detail-image detail-image--img" : "detail-image";
   const imgClass = tweaks.tileStyle === "halftone"
