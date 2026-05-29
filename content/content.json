@@ -483,7 +483,7 @@
       "year": "2024",
       "category": "ILLUSTRATION",
       "prose": "Twelve pieces, A3, all from the same week in October. I started each one with a black square cut from cardstock — the shape was the rule. Everything else (pencil, paint, collage) responded to that anchor.",
-      "coverImage": "assets/images/projects/covers/illustration-cover.jpeg",
+      "coverImage": null,
       "categoryLabel": {
         "en": "ILLUSTRATION",
         "ua": "ІЛЮСТРАЦІЯ"
@@ -597,7 +597,7 @@
       "year": "2023 — Present",
       "category": "CANVAS",
       "prose": "I work alla-prima, building tone in two or three sessions, then collaging textured paper over the top. The canvas works are the slowest part of the practice — usually one finished piece every two weeks.",
-      "coverImage": null,
+      "coverImage": "assets/images/projects/covers/canvas-cover.jpeg",
       "categoryLabel": {
         "en": "CANVAS",
         "ua": "ПОЛОТНА"
