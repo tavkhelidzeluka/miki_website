@@ -37,6 +37,16 @@ html[data-mobile="true"] .site {
   min-height: 100dvh;     /* dodges iOS address-bar jump */
   overflow: visible;
 }
+/* Route containers (.page) are `position:absolute; inset:0` on desktop, which
+   pins them to one viewport height. On mobile they must flow so the document
+   scrolls and tall pages (shop, category strips, social, animation) aren't
+   clipped. This single reset covers every route; per-page blocks below only
+   handle their internal reflow. */
+html[data-mobile="true"] .page {
+  position: static;
+  inset: auto;
+  height: auto;
+}
 
 /* ── Task 2: Nav hamburger drawer ───────────────────────────────────── */
 @media (max-width: 768px) {
@@ -113,6 +123,9 @@ html[data-mobile="true"] .site {
     transform: none;
     display: flex;
     flex-direction: column;
+    align-items: stretch;        /* desktop centers; we want full-width rows */
+    justify-content: flex-start; /* stack from the top, not centered */
+    height: auto;                /* desktop pins 420px; let it grow with content */
     gap: 20px;
     padding: 8px 16px 24px;
   }
@@ -227,8 +240,10 @@ html[data-mobile="true"] .site {
   .prod-img { width: 100%; }     /* keep aspect-ratio: 280/340 */
   .prod-foot { flex-wrap: wrap; gap: 8px; }
   .prod-foot .btn { min-height: 40px; padding: 10px 14px; }
-  /* Cart drawer: full-width slide-in */
-  .cart-drawer { width: 100%; left: 0; right: 0; }
+  /* Cart drawer: full-width, fixed to the viewport (the page is now static-
+     flow, so an absolute drawer would anchor to the document top and scroll
+     away). Fixed keeps it overlaying the screen. */
+  .cart-drawer { position: fixed; top: 0; bottom: 0; left: 0; right: auto; width: 100%; }
   /* Zoom modal: constrain image to viewport */
   .canvas-zoom img { max-width: 92vw; max-height: 80dvh; height: auto; }
 }
