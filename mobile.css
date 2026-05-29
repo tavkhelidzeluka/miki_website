@@ -311,3 +311,15 @@ html[data-mobile="true"] .page {
   .sm-outro { flex-direction: column; align-items: flex-start; gap: 12px; padding: 32px 16px; }
   .sm-outro-mail { font-size: clamp(20px, 8vw, 40px); word-break: break-word; }
 }
+
+/* ── Task 12: Cross-cutting hardening ───────────────────────────────── */
+html[data-mobile="true"] .bracket-cursor { display: none !important; }
+html[data-mobile="true"] .twk-panel { display: none !important; }
+html[data-mobile="true"] .editor-add-tile,
+html[data-mobile="true"] .editor-delete-action,
+html[data-mobile="true"] .editor-delete-action--corner { display: none !important; }
+
+@media (hover: none) {
+  * { -webkit-tap-highlight-color: transparent; }
+  .nav-link:active, .btn:active, .cat-thumb:active { opacity: 0.6; }
+}

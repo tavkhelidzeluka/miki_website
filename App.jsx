@@ -59,6 +59,7 @@ function BracketCursor({ on }) {
   const ref = React.useRef(null);
   React.useEffect(() => {
     if (!on) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
     const el = ref.current;
     const move = (e) => {
       if (!el) return;
