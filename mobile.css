@@ -12,6 +12,12 @@ html[data-mobile="true"] body {
   overflow-y: auto;
   height: auto;
 }
+html[data-mobile="true"] #root {
+  width: 100%;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
 html[data-mobile="true"] .scaler-wrap {
   position: static;
   overflow: visible;

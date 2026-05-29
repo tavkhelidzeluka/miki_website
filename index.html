@@ -4163,7 +4163,7 @@ window.__CV = {
 
 <script type="text/babel">
   function Scaled() {
-    const mq = window.matchMedia("(max-width: 768px)");
+    const mq = React.useMemo(() => window.matchMedia("(max-width: 768px)"), []);
     const [scale, setScale] = React.useState(1);
     const [isMobile, setIsMobile] = React.useState(() => mq.matches);
     React.useEffect(() => {
