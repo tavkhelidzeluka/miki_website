@@ -112,6 +112,18 @@ function CategoryStrip({ category, tweaks, openDetail }) {
   const works = category.works || [];
   const [i, setI] = React.useState(0);
   const [pulse, setPulse] = React.useState(false);
+  // Mobile: the horizontal carousel is replaced by a vertical stack of ALL
+  // works (see mobile.css Task 5). Track viewport so we can render/behave
+  // accordingly. Matches the (max-width:768px) gate used by Scaled().
+  const [isMobile, setIsMobile] = React.useState(
+    () => window.matchMedia("(max-width: 768px)").matches
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
   const cur = works[i] || works[0];
 
   // Brief "pulse" class on transition — used to bump the new center thumb.
@@ -171,8 +183,11 @@ function CategoryStrip({ category, tweaks, openDetail }) {
       <button className="cat-arrow cat-arrow--prev" aria-label="prev" onClick={prev}>←</button>
 
       <div className="cat-strip">
-        {order.map((idx, j) => {
-          const isActive = j === 3;
+        {(isMobile
+          ? works.map((_, idx) => ({ idx, j: -1 }))   // mobile: every work, natural order
+          : order.map((idx, j) => ({ idx, j }))         // desktop: rotated 7-window carousel
+        ).map(({ idx, j }) => {
+          const isActive = !isMobile && j === 3;
           const w = works[idx];
           const hasImg = !!(w && w.thumb);
           const cls = baseClass
@@ -185,7 +200,7 @@ function CategoryStrip({ category, tweaks, openDetail }) {
           const assetFolder = `assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`;
           return (
             <div
-              key={"slot-" + j}
+              key={isMobile ? "work-" + idx : "slot-" + j}
               className={cls}
               style={style}
               data-content-path={`projects.${catIdx}.works.${idx}.thumb`}
@@ -193,7 +208,9 @@ function CategoryStrip({ category, tweaks, openDetail }) {
               data-asset-folder={assetFolder}
               data-content-name={w && w.name}
               onClick={() => {
-                if (isActive) {
+                if (isMobile) {
+                  openDetail({ ...category, name: w.name, desc: w.desc, thumb: w.thumb, prose: category.prose, workIndex: idx });
+                } else if (isActive) {
                   openDetail({ ...category, name: cur.name, desc: cur.desc, thumb: cur.thumb, prose: category.prose, workIndex: i });
                 } else if (j < 3) {
                   for (let k = 0; k < 3 - j; k++) prev();
