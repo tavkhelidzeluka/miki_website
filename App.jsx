@@ -9,6 +9,52 @@ const DEFAULT_TWEAKS = /*EDITMODE-BEGIN*/{
   "bracketCursor": false
 }/*EDITMODE-END*/;
 
+// ─── URL ↔ state ───
+// Hash routing (works on plain GitHub Pages — no server fallback needed):
+//   #/              → home
+//   #/projects      → category grid
+//   #/projects/02   → strip for category 02 (or BOOKS detail for non-strip cats)
+//   #/projects/02/3 → detail of work index 3 within category 02
+//   #/about | #/contact | #/canvas → those routes
+const URL_STRIP_CATS = new Set(["01", "02", "03", "04", "06", "07"]); // strip-style cats (anim, illus, posters, canvas, photos, social); "05" BOOKS opens detail directly
+const URL_TOP_ROUTES = new Set(["home", "projects", "about", "contact", "canvas"]);
+
+function buildHash({ route, categoryId, detailProject }) {
+  if (detailProject) {
+    if (detailProject.workIndex !== undefined) return `/projects/${detailProject.id}/${detailProject.workIndex}`;
+    return `/projects/${detailProject.id}`;
+  }
+  if (route === "projects" && categoryId) return `/projects/${categoryId}`;
+  if (route === "home") return "/";
+  return `/${route}`;
+}
+
+function parseHash(rawHash, allProjects) {
+  const parts = String(rawHash || "").replace(/^#/, "").replace(/^\//, "").split("/").filter(Boolean);
+  const home = { route: "home", categoryId: null, detailProject: null };
+  if (parts.length === 0) return home;
+  if (parts[0] !== "projects") return URL_TOP_ROUTES.has(parts[0]) ? { ...home, route: parts[0] } : home;
+  if (parts.length === 1) return { route: "projects", categoryId: null, detailProject: null };
+  const cat = allProjects.find((p) => p.id === parts[1]);
+  if (!cat) return { route: "projects", categoryId: null, detailProject: null };
+  const isStrip = URL_STRIP_CATS.has(cat.id);
+  if (parts.length === 2) {
+    return isStrip
+      ? { route: "projects", categoryId: cat.id, detailProject: null }
+      : { route: "projects", categoryId: null, detailProject: cat };
+  }
+  const wIdx = parseInt(parts[2], 10);
+  const works = cat.works || [];
+  if (Number.isNaN(wIdx) || wIdx < 0 || wIdx >= works.length) {
+    return isStrip
+      ? { route: "projects", categoryId: cat.id, detailProject: null }
+      : { route: "projects", categoryId: null, detailProject: cat };
+  }
+  const w = works[wIdx];
+  const detail = { ...cat, name: w.name, desc: w.desc, thumb: w.thumb, prose: cat.prose, workIndex: wIdx };
+  return { route: "projects", categoryId: isStrip ? cat.id : null, detailProject: detail };
+}
+
 function BracketCursor({ on }) {
   const ref = React.useRef(null);
   React.useEffect(() => {
@@ -27,11 +73,40 @@ function BracketCursor({ on }) {
 
 function App() {
   const [tweaks, setTweak] = useTweaks(DEFAULT_TWEAKS);
-  const [route, setRoute] = React.useState("home");
-  const [categoryId, setCategoryId] = React.useState(null);
-  const [detailProject, setDetailProject] = React.useState(null);
+  // Initial route/category/detail come from the URL hash so deep-links are
+  // shareable. window.CONTENT is guaranteed loaded by the time App mounts
+  // (see index.html __contentReady gate).
+  const initial = React.useMemo(
+    () => parseHash(window.location.hash, (window.CONTENT && window.CONTENT.projects) || []),
+    []
+  );
+  const [route, setRoute] = React.useState(initial.route);
+  const [categoryId, setCategoryId] = React.useState(initial.categoryId);
+  const [detailProject, setDetailProject] = React.useState(initial.detailProject);
   const [cart, setCart] = React.useState([]);
   const [cartOpen, setCartOpen] = React.useState(false);
+
+  // Sync state → URL hash. replaceState (not push) so browser-back exits the
+  // site rather than retracing every in-app transition.
+  React.useEffect(() => {
+    const newHash = buildHash({ route, categoryId, detailProject });
+    const curHash = window.location.hash.replace(/^#/, "");
+    if (curHash === newHash) return;
+    const base = window.location.pathname + window.location.search;
+    history.replaceState(null, "", newHash === "/" ? base : base + "#" + newHash);
+  }, [route, categoryId, detailProject]);
+
+  // Sync URL hash → state (handles back/forward + user editing the URL bar).
+  React.useEffect(() => {
+    const handler = () => {
+      const next = parseHash(window.location.hash, (window.CONTENT && window.CONTENT.projects) || []);
+      setRoute(next.route);
+      setCategoryId(next.categoryId);
+      setDetailProject(next.detailProject);
+    };
+    window.addEventListener("hashchange", handler);
+    return () => window.removeEventListener("hashchange", handler);
+  }, []);
 
   const addToCart = (it) => setCart((c) => [...c, it]);
   const removeFromCart = (idx) => setCart((c) => c.filter((_, i) => i !== idx));
