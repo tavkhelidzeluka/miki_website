@@ -301,8 +301,12 @@ html[data-mobile="true"] .page {
   .sm-statement-text { font-size: clamp(48px, 16vw, 120px); }
   .sm-statement-text span:nth-child(2) { padding-left: 0; }
   .sm-statement-text span:nth-child(3) { padding-left: 0; }
-  /* Zoom modal */
-  .sm2-zoom img { max-width: 92vw; max-height: 80dvh; height: auto; }
+  /* Zoom modal — the image is a background-div; constrain it to the viewport.
+     Desktop sizes it height-driven (height:100%), which overflows a narrow
+     phone, so switch to width-driven here. */
+  .sm2-zoom-inner { padding: 56px 12px; }
+  .sm2-zoom-frame { width: 100%; height: auto; }
+  .sm2-zoom-img { width: 100% !important; height: auto !important; max-height: 78dvh; }
   /* Outro */
   .sm-outro { flex-direction: column; align-items: flex-start; gap: 12px; padding: 32px 16px; }
   .sm-outro-mail { font-size: clamp(20px, 8vw, 40px); word-break: break-word; }
