@@ -37,3 +37,29 @@ html[data-mobile="true"] .site {
   min-height: 100dvh;     /* dodges iOS address-bar jump */
   overflow: visible;
 }
+
+/* ── Task 2: Nav hamburger drawer ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    z-index: 50;
+    padding: 12px 16px;
+  }
+  .site[data-invert="true"] .nav { background: #0A0A0A; }
+  .nav-toggle { display: inline-block; font-size: 15px; padding: 8px 0; }
+  /* Drawer: full-width column, generous tap targets */
+  .nav--open .nav-cluster {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    width: 100%;
+    padding: 16px 0 8px;
+    font-size: 18px;
+  }
+  .nav--open .nav-cluster .nav-link { font-size: 18px; padding: 6px 0; }
+  .nav-cart { display: inline-flex; align-items: center; gap: 8px; }
+  .nav-lang { margin-top: 4px; }
+}
