@@ -1,0 +1,33 @@
+/* mobile.css — all mobile (≤768px) rules for the GTXHI/MIKI portfolio.
+   Loaded via <link> AFTER the inlined <style> blocks in index.html, so it
+   wins specificity ties within its html[data-mobile] / @media scope.
+   styles.css is inlined with no build step — do NOT put mobile rules there. */
+
+/* ── Task 1: scaler bypass ──────────────────────────────────────────────
+   On phones, Scaled() sets html[data-mobile="true"] and stops applying the
+   transform. These rules turn the fixed 1440×900 canvas into fluid flow. */
+html[data-mobile="true"],
+html[data-mobile="true"] body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+}
+html[data-mobile="true"] .scaler-wrap {
+  position: static;
+  overflow: visible;
+}
+html[data-mobile="true"] .scaler-inner {
+  position: static;
+  width: 100%;
+  height: auto;
+  top: auto;
+  left: auto;
+  transform: none !important;
+}
+html[data-mobile="true"] .site {
+  width: 100%;
+  height: auto;
+  min-height: 100vh;      /* fallback for old browsers */
+  min-height: 100dvh;     /* dodges iOS address-bar jump */
+  overflow: visible;
+}
