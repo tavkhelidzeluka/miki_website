@@ -272,6 +272,8 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
 
   // Touch swipe (mobile): horizontal → prev/next within category, vertical-down → close.
   React.useEffect(() => {
+    const el = document.querySelector(".detail-scrim");
+    if (!el) return;
     let x0 = null, y0 = null;
     const onStart = (e) => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; };
     const onEnd = (e) => {
@@ -286,8 +288,6 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
       else if (ay > ax && dy > THRESH * 1.6 && el.scrollTop <= 5) { onClose(); }
       x0 = y0 = null;
     };
-    const el = document.querySelector(".detail-scrim");
-    if (!el) return;
     el.addEventListener("touchstart", onStart, { passive: true });
     el.addEventListener("touchend", onEnd, { passive: true });
     return () => {

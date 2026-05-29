@@ -142,20 +142,20 @@ html[data-mobile="true"] .page {
   /* Each work is its own tappable row now; the single-active-work meta block
      is redundant on mobile (tapping a row opens full detail). */
   .cat-meta { display: none; }
-  .cat-meta .cat-name { font-size: clamp(22px, 7vw, 40px); }
 }
 
 /* ── Task 6: Work detail overlay ────────────────────────────────────── */
 @media (max-width: 768px) {
-  .detail-scrim { overflow-y: auto; }
+  /* Fixed, self-scrolling overlay: makes it a real scroll container so the
+     swipe-to-close scrollTop guard works and the prev/next footer sits right
+     after the content (no big empty gap from an absolute-stretched scrim). */
+  .detail-scrim { position: fixed; inset: 0; overflow-y: auto; }
   .detail-grid {
     position: static;
     grid-template-columns: 1fr;
     gap: 20px;
     inset: auto;
-    padding: 56px 16px 32px;   /* clear the .detail-close button */
-    min-height: 100vh;
-    min-height: 100dvh;
+    padding: 56px 16px 24px;   /* clear the .detail-close button */
   }
   .detail-image,
   .detail-image--img {
@@ -164,6 +164,15 @@ html[data-mobile="true"] .page {
     aspect-ratio: 4 / 5;
   }
   .detail-close { top: 12px; right: 16px; font-size: 15px; }
+  /* Prev/next become a static footer (desktop pins them absolute bottom-right,
+     which floats far below the content on a tall mobile overlay). */
+  .detail-nav {
+    position: static;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 16px 32px;
+  }
+  .detail-nav button { font-size: 15px; padding: 8px 0; }
 }
 
 /* ── Task 7: About ──────────────────────────────────────────────────── */
@@ -183,8 +192,7 @@ html[data-mobile="true"] .page {
   .about-col,
   .about-col--exp,
   .about-col--skills,
-  .about-projects,
-  .about-contact {
+  .about-projects {
     position: static !important;
     inset: auto !important;
     left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
@@ -193,7 +201,6 @@ html[data-mobile="true"] .page {
   .about-portrait { max-width: 320px; height: auto; }
   .about-headline { font-size: clamp(48px, 16vw, 120px); }
   .projects-grid { grid-template-columns: 1fr; }
-  .about-contact { display: flex; flex-direction: column; gap: 12px; }
 }
 
 /* ── Task 8: Contact ────────────────────────────────────────────────── */
@@ -321,5 +328,5 @@ html[data-mobile="true"] .editor-delete-action--corner { display: none !importan
 
 @media (hover: none) {
   * { -webkit-tap-highlight-color: transparent; }
-  .nav-link:active, .btn:active, .cat-thumb:active { opacity: 0.6; }
+  .nav-link:active, .btn:active, .cat-thumb:active, .sm2-gal-tile:active { opacity: 0.6; }
 }
