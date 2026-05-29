@@ -172,7 +172,7 @@ fits; reduce per-row `padding:22px 0` → ~`14px 0`. Hairline borders kept.
 ### Canvas / shop (`Canvas.jsx`; no existing mobile CSS)
 `.canvas-scroll` (absolute, internal `overflow-y:auto`) → `position:static;
 overflow:visible` (native page scroll). `.canvas-grid` `repeat(3,1fr) gap:56px` →
-`1fr` or `repeat(2,1fr)`, `gap:20px`, `padding:0 16px`. `.canvas-headline` 180px →
+`repeat(2,1fr)` (denser shop feel), `gap:20px`, `padding:0 16px`. `.canvas-headline` 180px →
 `clamp(48px,14vw,120px)`. Currency switches and `.btn` order buttons → ≥44px tap
 targets. `.prod-img` keeps `aspect-ratio:280/340; width:100%`; `.prod-foot` allowed to
 wrap/stack. **Cart drawer** `width:380px` → `width:100%` (or `min(380px,90vw)`),
