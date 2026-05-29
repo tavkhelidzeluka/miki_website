@@ -281,7 +281,9 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
       const ax = Math.abs(dx), ay = Math.abs(dy);
       const THRESH = 50;
       if (ax > ay && ax > THRESH) { dx < 0 ? onNext() : onPrev(); }
-      else if (ay > ax && dy > THRESH * 1.6) { onClose(); }
+      // Close only on a downward pull from the TOP, so scrolling the (tall,
+      // scrollable) detail doesn't accidentally dismiss it.
+      else if (ay > ax && dy > THRESH * 1.6 && el.scrollTop <= 5) { onClose(); }
       x0 = y0 = null;
     };
     const el = document.querySelector(".detail-scrim");
