@@ -152,3 +152,33 @@ html[data-mobile="true"] .site {
   }
   .detail-close { top: 12px; right: 16px; font-size: 15px; }
 }
+
+/* ── Task 7: About ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page--about {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 16px;
+    inset: auto;
+    height: auto;
+  }
+  .about-portrait,
+  .about-headline,
+  .about-bio,
+  .about-col,
+  .about-col--exp,
+  .about-col--skills,
+  .about-projects,
+  .about-contact {
+    position: static !important;
+    inset: auto !important;
+    left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
+    width: 100% !important;
+  }
+  .about-portrait { max-width: 320px; height: auto; }
+  .about-headline { font-size: clamp(48px, 16vw, 120px); }
+  .projects-grid { grid-template-columns: 1fr; }
+  .about-contact { display: flex; flex-direction: column; gap: 12px; }
+}
