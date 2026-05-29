@@ -247,3 +247,30 @@ html[data-mobile="true"] .page {
   /* Zoom modal: constrain image to viewport */
   .canvas-zoom img { max-width: 92vw; max-height: 80dvh; height: auto; }
 }
+
+/* ── Task 10: Checkout ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .checkout {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    padding: 16px;
+  }
+  .checkout-headline { font-size: clamp(40px, 12vw, 84px); }
+  .checkout-steps { flex-wrap: wrap; gap: 12px; }
+  .checkout-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .checkout-summary {
+    order: 2;             /* summary below the form */
+    position: static;
+    width: 100%;
+  }
+  .checkout-form { order: 1; }
+  .checkout-grid { grid-template-columns: 1fr; }
+  .checkout-field input,
+  .checkout-field textarea,
+  .checkout-textarea { font-size: 16px; }   /* prevents iOS focus-zoom */
+}
