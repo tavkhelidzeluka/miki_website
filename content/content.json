@@ -706,24 +706,6 @@
           "desc": "1-bit halftone treatment tests.",
           "thumb": "assets/images/projects/photos/me4.jpeg",
           "price": null
-        },
-        {
-          "name": "kyiv at night",
-          "desc": "Long-exposure 35mm series.",
-          "thumb": "assets/images/projects/photos/kyiv-at-night.jpeg",
-          "price": null
-        },
-        {
-          "name": "subjects / index",
-          "desc": "Compiled portrait index, 2023–25.",
-          "thumb": null,
-          "price": null
-        },
-        {
-          "name": "self — 07",
-          "desc": "Self portrait series, ongoing.",
-          "thumb": null,
-          "price": null
         }
       ],
       "name": "field notes",
