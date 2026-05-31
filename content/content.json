@@ -434,19 +434,19 @@
         {
           "name": "body of vision — i",
           "desc": "Mixed media on A3 paper, October 2024.",
-          "thumb": "assets/images/projects/illustration/body-of-vision-i.jpeg",
+          "thumb": "assets/images/projects/illustration/flowers",
           "price": null
         },
         {
           "name": "body of vision — ii",
           "desc": "Black-square cardstock anchor + pencil + acrylic.",
-          "thumb": "assets/images/projects/illustration/body-of-vision-ii.jpeg",
+          "thumb": "assets/images/projects/illustration/love.jpeg",
           "price": null
         },
         {
           "name": "body of vision — iii",
           "desc": "Cut paper layered with charcoal underdrawing.",
-          "thumb": null,
+          "thumb": "assets/images/projects/illustration/Tarkovsky-and-Parajanov.jpeg",
           "price": null
         },
         {
@@ -470,7 +470,7 @@
         {
           "name": "studio notes",
           "desc": "Process pages from the week of work.",
-          "thumb": "assets/images/projects/illustration/studio-notes.jpeg",
+          "thumb": "assets/images/projects/illustration/sensitive",
           "price": null
         }
       ],
