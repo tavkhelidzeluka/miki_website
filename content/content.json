@@ -434,43 +434,43 @@
         {
           "name": "body of vision — i",
           "desc": "Mixed media on A3 paper, October 2024.",
-          "thumb": "assets/images/projects/illustration/flowers",
+          "thumb": "assets/images/projects/illustration/body-of-vision-i.jpeg",
           "price": null
         },
         {
           "name": "body of vision — ii",
           "desc": "Black-square cardstock anchor + pencil + acrylic.",
-          "thumb": "assets/images/projects/illustration/love.jpeg",
+          "thumb": "assets/images/projects/illustration/body-of-vision-ii.jpeg",
           "price": null
         },
         {
           "name": "body of vision — iii",
           "desc": "Cut paper layered with charcoal underdrawing.",
-          "thumb": "assets/images/projects/illustration/Tarkovsky-and-Parajanov.jpeg",
+          "thumb": null,
           "price": null
         },
         {
           "name": "body of vision — iv",
           "desc": "Series of twelve, fourth piece — figure study.",
-          "thumb": "assets/images/projects/illustration/ME",
+          "thumb": null,
           "price": null
         },
         {
           "name": "body of vision — v",
           "desc": "Mixed media; the only piece with red ink.",
-          "thumb": "assets/images/projects/illustration/MANjpeg",
+          "thumb": null,
           "price": null
         },
         {
           "name": "body of vision — vi",
           "desc": "Final piece — closing the loop on the series.",
-          "thumb": "assets/images/projects/illustration/smoke-break.jpeg",
+          "thumb": null,
           "price": null
         },
         {
           "name": "studio notes",
           "desc": "Process pages from the week of work.",
-          "thumb": "assets/images/projects/illustration/sensitive",
+          "thumb": "assets/images/projects/illustration/studio-notes.jpeg",
           "price": null
         }
       ],
@@ -668,43 +668,25 @@
         {
           "name": "field notes — kyiv",
           "desc": "Mostly Olympus mju, 35mm Portra.",
-          "thumb": null,
+          "thumb": "assets/images/projects/photos/ME5.jpeg",
           "price": null
         },
         {
           "name": "field notes — berlin",
           "desc": "Three weeks, two rolls of HP5.",
-          "thumb": null,
+          "thumb": "assets/images/projects/photos/ME2",
           "price": null
         },
         {
           "name": "studio portraits",
           "desc": "Mamiya RB67, all natural light.",
-          "thumb": null,
+          "thumb": "assets/images/projects/photos/ME3jpeg",
           "price": null
         },
         {
           "name": "halftone studies",
           "desc": "1-bit halftone treatment tests.",
-          "thumb": null,
-          "price": null
-        },
-        {
-          "name": "kyiv at night",
-          "desc": "Long-exposure 35mm series.",
-          "thumb": null,
-          "price": null
-        },
-        {
-          "name": "subjects / index",
-          "desc": "Compiled portrait index, 2023–25.",
-          "thumb": null,
-          "price": null
-        },
-        {
-          "name": "self — 07",
-          "desc": "Self portrait series, ongoing.",
-          "thumb": null,
+          "thumb": "assets/images/projects/photos/ME4",
           "price": null
         }
       ],
