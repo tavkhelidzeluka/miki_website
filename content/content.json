@@ -568,6 +568,12 @@
           "desc": "Untitled canvas, in-progress.",
           "thumb": "assets/images/projects/canvas/no-title.jpeg",
           "price": null
+        },
+        {
+          "name": "no title",
+          "desc": "",
+          "thumb": "assets/images/projects/canvas/.jpeg",
+          "price": null
         }
       ],
       "name": "originals on canvas",
