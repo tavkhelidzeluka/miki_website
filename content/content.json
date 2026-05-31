@@ -516,7 +516,7 @@
           "price": null
         },
         {
-          "name": "serofarm",
+          "name": "gerofarm",
           "desc": "Concert poster, A2. Two passes through the riso, hand-trimmed.",
           "thumb": "assets/images/projects/posters/serofarm.jpg",
           "price": null
@@ -525,6 +525,42 @@
           "name": "war is hell",
           "desc": "Offset poster, 600×900mm. Bracket headline, single-image composition.",
           "thumb": "assets/images/projects/posters/war-is-hell.jpg",
+          "price": null
+        },
+        {
+          "name": "flowers",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/flowers.jpeg",
+          "price": null
+        },
+        {
+          "name": "love",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/love.jpeg",
+          "price": null
+        },
+        {
+          "name": "delulu night fest",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/delulu-night-fest.jpeg",
+          "price": null
+        },
+        {
+          "name": "massages for people",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/massages-for-people.jpeg",
+          "price": null
+        },
+        {
+          "name": "flowers2",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/flowers2.jpeg",
+          "price": null
+        },
+        {
+          "name": "collage",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/collage.jpeg",
           "price": null
         }
       ],
@@ -567,12 +603,6 @@
           "name": "холст / 07",
           "desc": "Untitled canvas, in-progress.",
           "thumb": "assets/images/projects/canvas/no-title.jpeg",
-          "price": null
-        },
-        {
-          "name": "no title",
-          "desc": "",
-          "thumb": "assets/images/projects/canvas/.jpeg",
           "price": null
         }
       ],
