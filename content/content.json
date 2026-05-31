@@ -684,26 +684,26 @@
     {
       "works": [
         {
-          "name": "me1",
-          "desc": "Mostly Olympus mju, 35mm Portra.",
+          "name": "field notes — kyiv",
+          "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me1.jpeg",
           "price": null
         },
         {
-          "name": "me2",
-          "desc": "Three weeks, two rolls of HP5.",
+          "name": "field notes — berlin",
+          "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me2.jpeg",
           "price": null
         },
         {
-          "name": "me3",
-          "desc": "Mamiya RB67, all natural light.",
+          "name": "studio portraits",
+          "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me5jpeg",
           "price": null
         },
         {
-          "name": "me4",
-          "desc": "1-bit halftone treatment tests.",
+          "name": "halftone studies",
+          "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me4.jpeg",
           "price": null
         }
