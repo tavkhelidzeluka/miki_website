@@ -475,14 +475,14 @@
         }
       ],
       "name": "body of vision",
-      "client": "Group exhibition",
+      "client": "",
       "desc": "Twelve mixed-media pieces exploring perception, distortion, and the body. Every piece begins with a cut-cardstock black square.",
-      "medium": "Mixed media on A3 paper",
+      "medium": "",
       "role": "Illustrator",
       "id": "02",
       "year": "2024",
       "category": "ILLUSTRATION",
-      "prose": "Twelve pieces, A3, all from the same week in October. I started each one with a black square cut from cardstock — the shape was the rule. Everything else (pencil, paint, collage) responded to that anchor.",
+      "prose": "",
       "coverImage": "assets/images/projects/covers/illustration-cover.jpeg",
       "categoryLabel": {
         "en": "ILLUSTRATION",
