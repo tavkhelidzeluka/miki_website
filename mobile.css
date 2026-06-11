@@ -1,0 +1,332 @@
+/* mobile.css — all mobile (≤768px) rules for the GTXHI/MIKI portfolio.
+   Loaded via <link> AFTER the inlined <style> blocks in index.html, so it
+   wins specificity ties within its html[data-mobile] / @media scope.
+   styles.css is inlined with no build step — do NOT put mobile rules there. */
+
+/* ── Task 1: scaler bypass ──────────────────────────────────────────────
+   On phones, Scaled() sets html[data-mobile="true"] and stops applying the
+   transform. These rules turn the fixed 1440×900 canvas into fluid flow. */
+html[data-mobile="true"],
+html[data-mobile="true"] body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+}
+html[data-mobile="true"] #root {
+  width: 100%;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+html[data-mobile="true"] .scaler-wrap {
+  position: static;
+  overflow: visible;
+}
+html[data-mobile="true"] .scaler-inner {
+  position: static;
+  width: 100%;
+  height: auto;
+  top: auto;
+  left: auto;
+  transform: none !important;
+}
+html[data-mobile="true"] .site {
+  width: 100%;
+  height: auto;
+  min-height: 100vh;      /* fallback for old browsers */
+  min-height: 100dvh;     /* dodges iOS address-bar jump */
+  overflow: visible;
+}
+/* Route containers (.page) are `position:absolute; inset:0` on desktop, which
+   pins them to one viewport height. On mobile they must flow so the document
+   scrolls and tall pages (shop, category strips, social, animation) aren't
+   clipped. This single reset covers every route; per-page blocks below only
+   handle their internal reflow. */
+html[data-mobile="true"] .page {
+  position: static;
+  inset: auto;
+  height: auto;
+}
+
+/* ── Task 2: Nav hamburger drawer ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    z-index: 50;
+    padding: 12px 16px;
+  }
+  .site[data-invert="true"] .nav { background: #0A0A0A; }
+  .nav-toggle { display: inline-block; font-size: 15px; padding: 8px 0; }
+  /* Drawer: full-width column, generous tap targets */
+  .nav--open .nav-cluster {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    width: 100%;
+    padding: 16px 0 8px;
+    font-size: 18px;
+  }
+  .nav--open .nav-cluster .nav-link { font-size: 18px; padding: 6px 0; }
+  .nav-cart { display: inline-flex; align-items: center; gap: 8px; }
+  .nav-lang { margin-top: 4px; }
+}
+
+/* ── Task 3: Home ───────────────────────────────────────────────────────
+   Home's photo-over-text overlay is already handled by the existing inlined
+   mobile rule (.home-mark / .home-bg). Here we just add the dvh upgrade.
+   (Home.jsx renders only .home-mark* and .home-bg — no status/meta/clock/thumb
+   elements exist, so no footer reflow is needed.) */
+@media (max-width: 768px) {
+  .page--home {
+    min-height: calc(100vh - 60px);
+    min-height: calc(100dvh - 60px);
+    padding: 24px 16px 40px;
+  }
+}
+
+/* ── Task 4: Projects grid ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .proj-headline {
+    position: static;
+    font-size: clamp(40px, 12vw, 72px);
+    padding: 16px 16px 0;
+    text-align: left;
+  }
+  .proj-gridv2 {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 16px;
+    inset: auto;
+  }
+  .proj-tile { width: 100%; }   /* keep aspect-ratio: 4/3 */
+}
+
+/* ── Task 5: Category strip → vertical stack ────────────────────────── */
+@media (max-width: 768px) {
+  .cat-label {
+    position: sticky;
+    top: 52px;                 /* below the sticky nav */
+    left: auto;
+    z-index: 10;
+    background: var(--paper);
+    padding: 12px 16px;
+  }
+  .site[data-invert="true"] .cat-label { background: #0A0A0A; }
+  .cat-arrow { display: none; }
+  .cat-strip {
+    position: static;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;        /* desktop centers; we want full-width rows */
+    justify-content: flex-start; /* stack from the top, not centered */
+    height: auto;                /* desktop pins 420px; let it grow with content */
+    gap: 20px;
+    padding: 8px 16px 24px;
+  }
+  /* Every thumb becomes a full-width row at a readable size */
+  .cat-thumb,
+  .cat-thumb--active {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 3;
+    opacity: 1 !important;
+    transform: none !important;
+    flex: 0 0 auto;
+  }
+  /* Each work is its own tappable row now; the single-active-work meta block
+     is redundant on mobile (tapping a row opens full detail). */
+  .cat-meta { display: none; }
+}
+
+/* ── Task 6: Work detail overlay ────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Fixed, self-scrolling overlay: makes it a real scroll container so the
+     swipe-to-close scrollTop guard works and the prev/next footer sits right
+     after the content (no big empty gap from an absolute-stretched scrim). */
+  .detail-scrim { position: fixed; inset: 0; overflow-y: auto; }
+  .detail-grid {
+    position: static;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    inset: auto;
+    padding: 56px 16px 24px;   /* clear the .detail-close button */
+  }
+  .detail-image,
+  .detail-image--img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 5;
+  }
+  .detail-close { top: 12px; right: 16px; font-size: 15px; }
+  /* Prev/next become a static footer (desktop pins them absolute bottom-right,
+     which floats far below the content on a tall mobile overlay). */
+  .detail-nav {
+    position: static;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 16px 32px;
+  }
+  .detail-nav button { font-size: 15px; padding: 8px 0; }
+}
+
+/* ── Task 7: About ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page--about {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 16px;
+    inset: auto;
+    height: auto;
+  }
+  .about-portrait,
+  .about-headline,
+  .about-bio,
+  .about-col,
+  .about-col--exp,
+  .about-col--skills,
+  .about-projects {
+    position: static !important;
+    inset: auto !important;
+    left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
+    width: 100% !important;
+  }
+  .about-portrait { max-width: 320px; height: auto; }
+  .about-headline { font-size: clamp(48px, 16vw, 120px); }
+  .projects-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Task 8: Contact ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page--contact {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 16px;
+    inset: auto;
+    height: auto;
+  }
+  .social-portrait,
+  .social-headline,
+  .contact-card {
+    position: static !important;
+    inset: auto !important;
+    left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
+    width: 100% !important;
+  }
+  .social-portrait { max-width: 300px; height: auto; }
+  .social-headline { font-size: clamp(40px, 12vw, 84px); }
+  .social-row {
+    grid-template-columns: 1fr;   /* label stacks above value */
+    gap: 4px;
+    padding: 14px 0;
+  }
+}
+
+/* ── Task 9: Canvas / shop ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .canvas-headline { position: static; font-size: clamp(48px, 14vw, 120px); padding: 12px 16px 0; }
+  .canvas-sub { position: static; padding: 0 16px; }
+  .canvas-curswitch { position: static; padding: 8px 16px; gap: 10px; }
+  .canvas-curbtn { padding: 8px 10px; min-height: 44px; }
+  .canvas-scroll {
+    position: static;
+    overflow: visible;
+    inset: auto;
+    padding: 0 16px 32px;
+  }
+  .canvas-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .prod-img { width: 100%; }     /* keep aspect-ratio: 280/340 */
+  .prod-foot { flex-wrap: wrap; gap: 8px; }
+  .prod-foot .btn { min-height: 40px; padding: 10px 14px; }
+  /* Cart drawer: full-width, fixed to the viewport (the page is now static-
+     flow, so an absolute drawer would anchor to the document top and scroll
+     away). Fixed keeps it overlaying the screen. */
+  .cart-drawer { position: fixed; top: 0; bottom: 0; left: 0; right: auto; width: 100%; }
+  /* Zoom modal: constrain image to viewport */
+  .canvas-zoom img { max-width: 92vw; max-height: 80dvh; height: auto; }
+}
+
+/* ── Task 10: Checkout ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .checkout {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    padding: 16px;
+  }
+  .checkout-headline { font-size: clamp(40px, 12vw, 84px); }
+  .checkout-steps { flex-wrap: wrap; gap: 12px; }
+  .checkout-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .checkout-summary {
+    order: 2;             /* summary below the form */
+    position: static;
+    width: 100%;
+  }
+  .checkout-form { order: 1; }
+  .checkout-grid { grid-template-columns: 1fr; }
+  .checkout-field input,
+  .checkout-field textarea,
+  .checkout-textarea { font-size: 16px; }   /* prevents iOS focus-zoom */
+}
+
+/* ── Task 11: Social ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sm-scroll { position: static; inset: auto; overflow: visible; }
+  /* Gallery: stop the horizontal offset carousel, lay tiles out as a 2-col grid */
+  .sm2-gal-arrow { display: none; }
+  .sm2-gal-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    transform: none !important;
+    padding: 0 16px;
+    height: auto;
+  }
+  .sm2-gal-tile,
+  .sm2-gal-tile--active {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  /* Statement band */
+  .sm-statement { padding: 48px 16px; }
+  .sm-statement-text { font-size: clamp(48px, 16vw, 120px); }
+  .sm-statement-text span:nth-child(2) { padding-left: 0; }
+  .sm-statement-text span:nth-child(3) { padding-left: 0; }
+  /* Zoom modal — the image is a background-div; constrain it to the viewport.
+     Desktop sizes it height-driven (height:100%), which overflows a narrow
+     phone, so switch to width-driven here. */
+  .sm2-zoom-inner { padding: 56px 12px; }
+  .sm2-zoom-frame { width: 100%; height: auto; }
+  .sm2-zoom-img { width: 100% !important; height: auto !important; max-height: 78dvh; }
+  /* Outro */
+  .sm-outro { flex-direction: column; align-items: flex-start; gap: 12px; padding: 32px 16px; }
+  .sm-outro-mail { font-size: clamp(20px, 8vw, 40px); word-break: break-word; }
+}
+
+/* ── Task 12: Cross-cutting hardening ───────────────────────────────── */
+html[data-mobile="true"] .bracket-cursor { display: none !important; }
+html[data-mobile="true"] .twk-panel { display: none !important; }
+html[data-mobile="true"] .editor-add-tile,
+html[data-mobile="true"] .editor-delete-action,
+html[data-mobile="true"] .editor-delete-action--corner { display: none !important; }
+
+@media (hover: none) {
+  * { -webkit-tap-highlight-color: transparent; }
+  .nav-link:active, .btn:active, .cat-thumb:active, .sm2-gal-tile:active { opacity: 0.6; }
+}
