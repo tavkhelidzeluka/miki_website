@@ -731,12 +731,6 @@
       "desc": "Frame-by-frame rotoscoped music video, 3:42 total runtime."
     },
     {
-      "id": "A04",
-      "title": "studio test reel",
-      "date": "15.12.2024",
-      "desc": "Bench reel from 2024 — eight clips, no sound."
-    },
-    {
       "id": "A05",
       "title": "creature studies",
       "date": "30.10.2024",
@@ -747,6 +741,14 @@
       "title": "field test / ii",
       "date": "18.06.2024",
       "desc": "Second field test — full storyboard timing on twos."
+    },
+    {
+      "id": "POLUKHUTENKO",
+      "title": "POLUKHUTENKO",
+      "date": "20.08.2024",
+      "desc": "",
+      "thumb": null,
+      "videoUrl": "https://youtu.be/gCHC-XNIi9o"
     }
   ],
   "canvas": {
