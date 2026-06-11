@@ -130,13 +130,20 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
       </div>
 
       <div className="canvas-scroll">
+        {ITEMS.length === 0 && <EmptyState />}
         <div className="canvas-grid">
           {ITEMS.map((it, idx) => {
             const added = inCart(it.id) || pulse === it.id;
             const medium = lang === "UA" ? (it.mediumUa || it.medium) : it.medium;
             const mediumPath = lang === "UA" ? `canvas.items.${idx}.mediumUa` : `canvas.items.${idx}.medium`;
             return (
-              <article key={it.id} className="prod" data-content-name={it.title}>
+              <article
+                key={it.id}
+                className="prod"
+                data-content-name={it.title}
+                data-editor-reorder-path="canvas.items"
+                data-editor-reorder-index={idx}
+              >
                 <button
                   type="button"
                   className="editor-delete-action editor-delete-action--corner"
@@ -161,7 +168,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                   <div className="prod-info">
                     <div className="prod-line">
                       <span className="prod-title" data-content-path={`canvas.items.${idx}.title`}>[ {it.title} ]</span>
-                      {it.price && (
+                      {!!it.price && (
                         <span className="prod-price" data-content-path={`canvas.items.${idx}.price`}>{formatPrice(it.price)}</span>
                       )}
                     </div>
@@ -181,6 +188,17 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
               </article>
             );
           })}
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 12 }}>
+          <button
+            type="button"
+            className="editor-add-tile"
+            data-editor-action="add-generic"
+            data-editor-add-title="add new canvas item"
+            data-editor-add-schema="canvasItem"
+            data-editor-list-path="canvas.items"
+            data-editor-asset-folder="assets"
+          >+ add item</button>
         </div>
       </div>
 

@@ -86,6 +86,15 @@ function App() {
   const [cart, setCart] = React.useState([]);
   const [cartOpen, setCartOpen] = React.useState(false);
 
+  // The inline editor replaces window.CONTENT (e.g. after a drag-to-reorder)
+  // and fires this event; re-render so every view re-reads the new content.
+  const [, forceContentRefresh] = React.useReducer((x) => x + 1, 0);
+  React.useEffect(() => {
+    const handler = () => forceContentRefresh();
+    window.addEventListener("miki-content-changed", handler);
+    return () => window.removeEventListener("miki-content-changed", handler);
+  }, []);
+
   // Sync state → URL hash. replaceState (not push) so browser-back exits the
   // site rather than retracing every in-app transition.
   React.useEffect(() => {

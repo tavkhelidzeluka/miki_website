@@ -110,6 +110,8 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, lang, aspect, kindLa
     return () => window.removeEventListener("keydown", h);
   }, [onClose, onNext, onPrev]);
 
+  if (!cur) return null;
+
   return (
     <div className="sm2-zoom" onClick={onClose}>
       <div className="sm2-zoom-inner" onClick={(e) => e.stopPropagation()}>
@@ -145,9 +147,21 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
   const at = (off) => items[((i + off) % N + N) % N];
   const offsets = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
 
-  const goTo = (target) => setI(((target % N) + N) % N);
+  const goTo = (target) => { if (N > 0) setI(((target % N) + N) % N); };
   const next = () => goTo(i + 1);
   const prev = () => goTo(i - 1);
+
+  // Every item deleted — show the section header + placeholder instead of
+  // indexing into an empty pool (items[NaN]). The parent section keeps its
+  // "+ add" buttons below, so new items can still be created.
+  if (N === 0) {
+    return (
+      <section className={"sm2-section sm2-section--gal sm2-section--" + variant}>
+        <SectionHead idx={sectionIdx} label={sectionLabel} count={0} />
+        <EmptyState />
+      </section>
+    );
+  }
 
   return (
     <section className={"sm2-section sm2-section--gal sm2-section--" + variant}>
@@ -187,6 +201,10 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                 aria-label={item.brand}
                 style={{ aspectRatio: aspect || item.aspect || "4 / 5" }}
                 {...tileProps}
+                {...(listPath ? {
+                  'data-editor-reorder-path': listPath,
+                  'data-editor-reorder-index': listIdx,
+                } : {})}
               >
                 <div className="sm2-gal-img" style={smBg(item.src, editPath)} />
                 {listPath && (

@@ -284,3 +284,16 @@ body.editor-mode-on .prod {
 body.editor-mode-on .sm2-gal-tile {
   position: relative;
 }
+
+/* Drag-to-reorder affordances. Items advertise themselves via
+   data-editor-reorder-path; dragging one onto a sibling moves it there. */
+body.editor-mode-on [data-editor-reorder-path] {
+  cursor: grab;
+}
+body.editor-mode-on .editor-dragging {
+  opacity: 0.35;
+}
+body.editor-mode-on .editor-drop-target {
+  outline: 2px dashed #0066cc !important;
+  outline-offset: 2px;
+}

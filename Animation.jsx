@@ -105,6 +105,8 @@ function AnimationStrip({ tweaks }) {
         >+ add animation</button>
       </div>
 
+      {ANIMATION_WORKS.length === 0 && <EmptyState />}
+
       <div className="anim-strip-wrap">
         <div className="anim-strip" ref={scrollRef}>
           {looped.map((w, idx) => (
@@ -113,6 +115,8 @@ function AnimationStrip({ tweaks }) {
               ref={(el) => (thumbsRef.current[idx] = el)}
               className="anim-thumb"
               onClick={() => setPlaying(w)}
+              data-editor-reorder-path="animations"
+              data-editor-reorder-index={w._srcIdx}
             >
               <div
                 className="anim-thumb-img"

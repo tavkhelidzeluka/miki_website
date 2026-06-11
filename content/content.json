@@ -25,6 +25,14 @@
       "en": "MIKI / GTXHI",
       "ua": "MIKI / GTXHI"
     },
+    "emptyState": {
+      "en": "nothing here yet",
+      "ua": "тут поки порожньо"
+    },
+    "emptyStateHint": {
+      "en": "use the + add button to create the first item",
+      "ua": "натисніть + щоб додати перший елемент"
+    },
     "nav": {
       "projects": {
         "en": "PROJECTS",

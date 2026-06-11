@@ -44,5 +44,24 @@
   }
 
   window.useLang = useLang;
+
+  // Shared empty-list placeholder. Rendered by any list view whose backing
+  // array in content.json has no items, so the page never goes blank. The
+  // hint line is CSS-gated to edit mode (body.editor-mode-on).
+  function EmptyState() {
+    const { t } = useLang();
+    const ui = (window.CONTENT && window.CONTENT.ui) || {};
+    return (
+      <div className="empty-state">
+        <div className="empty-state-msg">
+          [ {t(ui.emptyState || { en: "nothing here yet", ua: "тут поки порожньо" })} ]
+        </div>
+        <div className="empty-state-hint">
+          {t(ui.emptyStateHint || { en: "use the + add button to create the first item", ua: "натисніть + щоб додати перший елемент" })}
+        </div>
+      </div>
+    );
+  }
+  window.EmptyState = EmptyState;
 })();
 

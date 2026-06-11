@@ -45,7 +45,25 @@ window.__editor = window.__editor || {};
       { key: 'title',   label: 'title (native/ru)',   type: 'string', required: true },
       { key: 'cover',   label: 'cover image',         type: 'image',  required: true },
     ],
+    canvasItem: [
+      { key: 'id',       label: 'id',                  type: 'string', required: true,  placeholder: 'e.g. CV-11' },
+      { key: 'title',    label: 'title',               type: 'string', required: true },
+      { key: 'medium',   label: 'medium (en)',         type: 'string', required: false, placeholder: 'e.g. oil on canvas · 50×70' },
+      { key: 'mediumUa', label: 'medium (ua)',         type: 'string', required: false },
+      { key: 'img',      label: 'image',               type: 'image',  required: false },
+      { key: 'price',    label: 'price (USD, number)', type: 'number', required: false, placeholder: 'e.g. 350' },
+    ],
   };
+
+  // Index remap for moving one item within a list from `from` to `to` —
+  // every other index shifts by at most one.
+  function moveIndexMap(from, to) {
+    return (k) => {
+      if (k === from) return to;
+      if (from < to) return (k > from && k <= to) ? k - 1 : k;
+      return (k >= to && k < from) ? k + 1 : k;
+    };
+  }
 
   // Modal for adding a new work (or any work-shaped item: name + desc + image
   // + optional price). When image is provided, the editor uploads it next
@@ -220,6 +238,12 @@ window.__editor = window.__editor || {};
     const onSubmit = () => {
       // Required-field check
       for (const f of fields) {
+        if (f.type === 'number') {
+          const trimmed = String(values[f.key]).trim();
+          if (trimmed && Number.isNaN(Number(trimmed))) { setError(`${f.label} must be a number.`); return; }
+          if (f.required && !trimmed) { setError(`${f.label} is required.`); return; }
+          continue;
+        }
         if (!f.required) continue;
         const v = values[f.key];
         if (f.type === 'i18n') {
@@ -246,6 +270,9 @@ window.__editor = window.__editor || {};
           }
         } else if (f.type === 'i18n') {
           item[f.key] = { en: v.en.trim(), ua: v.ua.trim() };
+        } else if (f.type === 'number') {
+          const trimmed = String(v).trim();
+          item[f.key] = trimmed === '' ? null : Number(trimmed);
         } else {
           item[f.key] = v.trim();
         }
@@ -290,7 +317,7 @@ window.__editor = window.__editor || {};
                   )}
                 </React.Fragment>
               ) : (
-                <input type="text" value={values[f.key]} placeholder={f.placeholder || ''}
+                <input type={f.type === 'number' ? 'number' : 'text'} value={values[f.key]} placeholder={f.placeholder || ''}
                   onChange={(e) => updateField(f.key, e.target.value)}
                   autoFocus={fields[0] === f} />
               )}
@@ -464,6 +491,198 @@ window.__editor = window.__editor || {};
       });
     }, []);
 
+    // Re-paint the optimistic previews of still-pending text/image changes.
+    // Needed after a reorder: the app re-renders from window.CONTENT (which
+    // doesn't include pending edits yet), wiping the earlier DOM updates.
+    const reapplyOptimistic = React.useCallback((pendingMap) => {
+      const currentLang = (window.getLang && window.getLang()) || 'EN';
+      for (const [key, change] of pendingMap.entries()) {
+        if (change.type === 'text') {
+          document.querySelectorAll(`[data-content-path="${CSS.escape(key)}"]`).forEach((el) => {
+            const display = i18nDisplay(change.value, currentLang);
+            if (display !== undefined && display !== null) el.textContent = display;
+            el.dataset.editorDirty = 'true';
+          });
+        } else if (change.type === 'image' && change.file) {
+          const blobUrl = URL.createObjectURL(change.file);
+          document.querySelectorAll(`[data-content-path="${CSS.escape(key)}"]`).forEach((el) => {
+            if (el.tagName === 'IMG') el.src = blobUrl;
+            else if (el.style.backgroundImage !== undefined) el.style.backgroundImage = `url("${blobUrl}")`;
+            el.dataset.editorDirty = 'true';
+          });
+        }
+      }
+    }, []);
+
+    // Move one item within a list. Unlike text/image/add/delete, the move is
+    // applied to window.CONTENT immediately (and the app re-rendered via the
+    // miki-content-changed event) — index-addressed paths all over the DOM
+    // must agree with the new order, and a full re-render is the only way to
+    // keep them consistent. The queued 'reorder' entry enables Save and
+    // records the move in the commit message; at save time the content base
+    // (window.CONTENT) already reflects it.
+    const moveCounter = React.useRef(0);
+    const applyReorder = React.useCallback((listPath, from, to, label) => {
+      const list = getByPath(window.CONTENT, listPath);
+      if (!Array.isArray(list) || from === to) return;
+      if (from < 0 || from >= list.length || to < 0 || to >= list.length) return;
+
+      const mapIdx = moveIndexMap(from, to);
+      // Rewrites "listPath.<i>.rest" (or exactly "listPath.<i>") so
+      // index-keyed references follow the items they describe.
+      const remapPath = (path) => {
+        if (typeof path !== 'string' || !path.startsWith(listPath + '.')) return path;
+        const rest = path.slice(listPath.length + 1);
+        const m = rest.match(/^(\d+)(\..*)?$/);
+        if (!m) return path;
+        return `${listPath}.${mapIdx(Number(m[1]))}${m[2] || ''}`;
+      };
+
+      const newList = [...list];
+      const [moved] = newList.splice(from, 1);
+      newList.splice(to, 0, moved);
+      let nextContent = setByPath(window.CONTENT, listPath, newList);
+
+      // Per-image display settings are keyed by index path — keep them
+      // attached to their items.
+      if (nextContent.imageDisplay) {
+        const remapped = {};
+        for (const [k, v] of Object.entries(nextContent.imageDisplay)) {
+          remapped[remapPath(k)] = v;
+        }
+        nextContent = { ...nextContent, imageDisplay: remapped };
+      }
+      window.CONTENT = nextContent;
+
+      // Queued changes addressed by index follow their items too. Deletes in
+      // the reordered list itself keep their key but follow the moved item's
+      // index; deletes/adds/reorders whose listPath lives INSIDE a moved item
+      // (e.g. 'projects.1.works' while reordering 'projects') follow their
+      // parent via the listPath remap — remapPath leaves exact-equal and
+      // unrelated paths unchanged.
+      setPending((prev) => {
+        const next = new Map();
+        for (const [key, change] of prev.entries()) {
+          if (change.type === 'text' || change.type === 'image') {
+            next.set(remapPath(key), change);
+          } else if (change.type === 'delete') {
+            next.set(key, {
+              ...change,
+              listPath: remapPath(change.listPath),
+              index: change.listPath === listPath ? mapIdx(change.index) : change.index,
+            });
+          } else if (change.type === 'add' || change.type === 'reorder') {
+            next.set(key, { ...change, listPath: remapPath(change.listPath) });
+          } else {
+            next.set(key, change);
+          }
+        }
+        next.set(`__move:${listPath}:${moveCounter.current++}`, { type: 'reorder', listPath, from, to, label });
+        return next;
+      });
+
+      window.dispatchEvent(new Event('miki-content-changed'));
+      // After the app re-renders from the new content, restore the optimistic
+      // previews of pending edits (pendingRef is synced by then).
+      requestAnimationFrame(() => reapplyOptimistic(pendingRef.current));
+    }, [reapplyOptimistic]);
+
+    // ── Drag-to-reorder ───────────────────────────────────────────────
+    // Items opt in via data-editor-reorder-path (the content.json list they
+    // live in) + data-editor-reorder-index. Dropping item A onto item B of
+    // the SAME list moves A to B's index; cross-list drops are rejected.
+    const pendingRef = React.useRef(pending);
+    pendingRef.current = pending;
+    const dragRef = React.useRef(null); // { el, path, index }
+
+    React.useEffect(() => {
+      if (!editMode) return;
+
+      const itemAt = (target) =>
+        target && target.closest && target.closest('[data-editor-reorder-path]');
+      const clearDraggable = () => {
+        document
+          .querySelectorAll('[data-editor-reorder-path][draggable="true"]')
+          .forEach((n) => { n.draggable = false; });
+      };
+
+      // dragstart only fires on draggable elements — set the flag just-in-
+      // time on mousedown so the attribute never lingers in the page DOM.
+      const onMouseDown = (e) => {
+        if (e.target.closest && e.target.closest('.editor-delete-action')) return;
+        const el = itemAt(e.target);
+        if (el) el.draggable = true;
+      };
+      // During a real drag the browser swallows mouseup; this only fires for
+      // plain clicks, where it undoes the mousedown opt-in.
+      const onMouseUp = () => clearDraggable();
+      const onDragStart = (e) => {
+        const el = itemAt(e.target);
+        if (!el) return;
+        dragRef.current = {
+          el,
+          path: el.dataset.editorReorderPath,
+          index: parseInt(el.dataset.editorReorderIndex, 10),
+        };
+        el.classList.add('editor-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', 'reorder'); } catch (_) {} // Firefox
+      };
+      const onDragOver = (e) => {
+        const drag = dragRef.current;
+        if (!drag) return;
+        const el = itemAt(e.target);
+        if (!el || el.dataset.editorReorderPath !== drag.path) return;
+        e.preventDefault(); // allow drop
+        e.dataTransfer.dropEffect = 'move';
+        if (el !== drag.el) el.classList.add('editor-drop-target');
+      };
+      const onDragLeave = (e) => {
+        // Skip leaves into the tile's own children — only clear the highlight
+        // when the cursor actually exits the tile (contains(null) is false,
+        // so leaving the window still clears it).
+        const el = itemAt(e.target);
+        if (el && !el.contains(e.relatedTarget)) el.classList.remove('editor-drop-target');
+      };
+      const onDrop = (e) => {
+        const drag = dragRef.current;
+        if (!drag) return;
+        const el = itemAt(e.target);
+        if (!el || el.dataset.editorReorderPath !== drag.path) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const to = parseInt(el.dataset.editorReorderIndex, 10);
+        if (!Number.isNaN(drag.index) && !Number.isNaN(to)) {
+          applyReorder(drag.path, drag.index, to, drag.el.dataset.contentName);
+        }
+      };
+      const onDragEnd = () => {
+        dragRef.current = null;
+        document.querySelectorAll('.editor-drop-target, .editor-dragging').forEach((n) => {
+          n.classList.remove('editor-drop-target', 'editor-dragging');
+        });
+        clearDraggable();
+      };
+
+      document.addEventListener('mousedown', onMouseDown, true);
+      document.addEventListener('mouseup', onMouseUp, true);
+      document.addEventListener('dragstart', onDragStart, true);
+      document.addEventListener('dragover', onDragOver, true);
+      document.addEventListener('dragleave', onDragLeave, true);
+      document.addEventListener('drop', onDrop, true);
+      document.addEventListener('dragend', onDragEnd, true);
+      return () => {
+        document.removeEventListener('mousedown', onMouseDown, true);
+        document.removeEventListener('mouseup', onMouseUp, true);
+        document.removeEventListener('dragstart', onDragStart, true);
+        document.removeEventListener('dragover', onDragOver, true);
+        document.removeEventListener('dragleave', onDragLeave, true);
+        document.removeEventListener('drop', onDrop, true);
+        document.removeEventListener('dragend', onDragEnd, true);
+        clearDraggable();
+      };
+    }, [editMode, applyReorder]);
+
     const discardAll = React.useCallback(() => {
       if (
         pending.size === 0 ||
@@ -480,7 +699,7 @@ window.__editor = window.__editor || {};
       try {
         let nextContent = window.CONTENT;
         const images = [];
-        const counts = { text: 0, img: 0, add: 0, del: 0 };
+        const counts = { text: 0, img: 0, add: 0, del: 0, move: 0 };
         const lines = [];
 
         // Apply deletes first, grouped per list and sorted descending so
@@ -505,6 +724,13 @@ window.__editor = window.__editor || {};
 
         for (const [key, change] of pending.entries()) {
           if (change.type === 'delete') continue; // already handled
+          if (change.type === 'reorder') {
+            // Content already reflects the move (applied to window.CONTENT
+            // at drag time) — record it in the commit message only.
+            counts.move++;
+            lines.push(`- REORDER ${change.listPath}: ${change.from} → ${change.to}${change.label ? ` (${change.label})` : ''}`);
+            continue;
+          }
           if (change.type === 'add') {
             const existing = window.__editor.getByPath(nextContent, change.listPath) || [];
             const newList = [...existing, change.item];
@@ -542,7 +768,8 @@ window.__editor = window.__editor || {};
           }
         }
         const summary =
-          `edit(inline): ${counts.text} text, ${counts.img} image, ${counts.add} added, ${counts.del} deleted`;
+          `edit(inline): ${counts.text} text, ${counts.img} image, ${counts.add} added, ${counts.del} deleted` +
+          (counts.move ? `, ${counts.move} reordered` : '');
         const message = summary + '\n\n' + lines.join('\n');
         await github.saveAtomic(
           { contentJson: nextContent, images },

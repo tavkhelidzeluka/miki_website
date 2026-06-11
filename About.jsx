@@ -45,7 +45,13 @@ function About({ tweaks }) {
         <div className="about-col-head"><b>[ 01 ]</b> <span data-content-path="ui.aboutPage.experienceHeader">{t(window.CONTENT.ui.aboutPage.experienceHeader)}</span></div>
         <hr className="hairline" />
         {a.experience.map((e, i) => (
-          <div className="exp-item" key={i} style={{ position: 'relative' }}>
+          <div
+            className="exp-item"
+            key={i}
+            style={{ position: 'relative' }}
+            data-editor-reorder-path="about.experience"
+            data-editor-reorder-index={i}
+          >
             <button
               type="button"
               className="editor-delete-action editor-delete-action--corner"
@@ -75,7 +81,12 @@ function About({ tweaks }) {
         <hr className="hairline" />
         <div className="projects-grid">
           {a.exhibitions.map((x, i) => (
-            <div key={i} style={{ position: 'relative' }}>
+            <div
+              key={i}
+              style={{ position: 'relative' }}
+              data-editor-reorder-path="about.exhibitions"
+              data-editor-reorder-index={i}
+            >
               <button
                 type="button"
                 className="editor-delete-action editor-delete-action--corner"
@@ -102,7 +113,13 @@ function About({ tweaks }) {
         <div className="about-col-head"><b>[ 03 ]</b> <span data-content-path="ui.aboutPage.skillsHeader">{t(window.CONTENT.ui.aboutPage.skillsHeader)}</span></div>
         <hr className="hairline" />
         {a.skills.map((s, i) => (
-          <div className="skill" key={i} style={{ position: 'relative' }}>
+          <div
+            className="skill"
+            key={i}
+            style={{ position: 'relative' }}
+            data-editor-reorder-path="about.skills"
+            data-editor-reorder-index={i}
+          >
             <button
               type="button"
               className="editor-delete-action editor-delete-action--corner"

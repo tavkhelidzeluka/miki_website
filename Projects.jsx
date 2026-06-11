@@ -84,6 +84,8 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
             className="proj-card"
             onClick={() => handleTileClick(p)}
             style={{ animationDelay: `${80 + idx * 60}ms` }}
+            data-editor-reorder-path="projects"
+            data-editor-reorder-index={idx}
           >
             <div
               className={tileBg + (p.category === "ANIMATION" ? " proj-tile--cover proj-tile--anim" : p.category === "CANVAS" ? " proj-tile--cover proj-tile--canvas" : p.category === "ILLUSTRATION" ? " proj-tile--cover proj-tile--illustration" : p.category === "POSTERS" ? " proj-tile--cover proj-tile--posters" : p.category === "PHOTOS" ? " proj-tile--cover proj-tile--photos" : p.category === "SOCIAL MEDIA" ? " proj-tile--cover proj-tile--social" : "")}
@@ -121,10 +123,12 @@ function CategoryStrip({ category, tweaks, openDetail }) {
   };
 
   const next = React.useCallback(() => {
+    if (!works.length) return;
     setI((x) => (x + 1) % works.length);
     triggerPulse();
   }, [works.length]);
   const prev = React.useCallback(() => {
+    if (!works.length) return;
     setI((x) => (x - 1 + works.length) % works.length);
     triggerPulse();
   }, [works.length]);
@@ -134,11 +138,38 @@ function CategoryStrip({ category, tweaks, openDetail }) {
     const handler = (e) => {
       if (e.key === "ArrowRight") next();
       else if (e.key === "ArrowLeft") prev();
-      else if (e.key === "Enter") openDetail && openDetail({ ...category, name: cur.name, desc: cur.desc, prose: category.prose });
+      else if (e.key === "Enter") cur && openDetail && openDetail({ ...category, name: cur.name, desc: cur.desc, prose: category.prose });
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [next, prev, openDetail, cur, category]);
+
+  const catLabel = (
+    <div className="cat-label">
+      <div>
+        <div className="cat-label-id">[ {category.id} ]</div>
+        <div className="cat-label-cat" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.categoryLabel`}>{category.categoryLabel ? t(category.categoryLabel) : tCat(category.category, lang)}</div>
+        <button
+          type="button"
+          className="editor-add-tile"
+          data-editor-action="add-work"
+          data-editor-list-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.works`}
+          data-editor-asset-folder={`assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`}
+        >+ add work</button>
+      </div>
+    </div>
+  );
+
+  // All works deleted — keep the label + add affordance and say so instead
+  // of crashing on works[0].
+  if (works.length === 0) {
+    return (
+      <div className="page page--cat" data-fresh="true">
+        {catLabel}
+        <EmptyState />
+      </div>
+    );
+  }
 
   // Visible window — 3 thumbs on each side of active.
   const order = [];
@@ -154,19 +185,7 @@ function CategoryStrip({ category, tweaks, openDetail }) {
 
   return (
     <div className="page page--cat" data-fresh="true">
-      <div className="cat-label">
-        <div>
-          <div className="cat-label-id">[ {category.id} ]</div>
-          <div className="cat-label-cat" data-content-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.categoryLabel`}>{category.categoryLabel ? t(category.categoryLabel) : tCat(category.category, lang)}</div>
-          <button
-            type="button"
-            className="editor-add-tile"
-            data-editor-action="add-work"
-            data-editor-list-path={`projects.${(window.CONTENT.projects || []).findIndex(p => p.id === category.id)}.works`}
-            data-editor-asset-folder={`assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`}
-          >+ add work</button>
-        </div>
-      </div>
+      {catLabel}
 
       <button className="cat-arrow cat-arrow--prev" aria-label="prev" onClick={prev}>←</button>
 
@@ -192,6 +211,8 @@ function CategoryStrip({ category, tweaks, openDetail }) {
               data-editor-kind="image"
               data-asset-folder={assetFolder}
               data-content-name={w && w.name}
+              data-editor-reorder-path={`projects.${catIdx}.works`}
+              data-editor-reorder-index={idx}
               onClick={() => {
                 if (isActive) {
                   openDetail({ ...category, name: cur.name, desc: cur.desc, thumb: cur.thumb, prose: category.prose, workIndex: i });

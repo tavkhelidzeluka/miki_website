@@ -4064,6 +4064,64 @@ button.prod-img:disabled { cursor: default; }
   .sm2-work-tile--o3, .sm2-work-tile--on3 { display: none; }
 }
 
+/* ── Empty-state block — shown when a content list has no items ────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 180px;
+  text-align: center;
+  color: var(--ink);
+}
+.empty-state-msg {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+.empty-state-hint { display: none; }
+body.editor-mode-on .empty-state-hint {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  opacity: 0.5;
+}
+/* Strip pages lay children out absolutely — stretch the placeholder so its
+   flex centering puts the message mid-viewport. */
+.page--cat .empty-state,
+.page--anim .empty-state { position: absolute; inset: 0; }
+
+/* ── Error-boundary fallback — replaces the white page on render crash ── */
+.error-fallback {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-align: center;
+  padding: 24px;
+  z-index: 99999;
+}
+.error-fallback-title { font-size: 18px; letter-spacing: 0.04em; }
+.error-fallback-detail { font-size: 12px; opacity: 0.6; max-width: 640px; word-break: break-word; }
+.error-fallback button {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 </style>
 <style data-source="inline-bg">
 :root {
@@ -4161,6 +4219,30 @@ window.__CV = {
 <script src="editor/editor-bootstrap.js"></script>
 
 <script type="text/babel">
+  // Last line of defense: any render crash shows a readable fallback with a
+  // reload button instead of React unmounting the tree (blank white page).
+  class ErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { error: null };
+    }
+    static getDerivedStateFromError(error) {
+      return { error };
+    }
+    render() {
+      if (this.state.error) {
+        return (
+          <div className="error-fallback">
+            <div className="error-fallback-title">[ something went wrong ]</div>
+            <div className="error-fallback-detail">{String(this.state.error)}</div>
+            <button onClick={() => window.location.reload()}>[ reload ]</button>
+          </div>
+        );
+      }
+      return this.props.children;
+    }
+  }
+
   function Scaled() {
     const [scale, setScale] = React.useState(1);
     React.useEffect(() => {
@@ -4184,7 +4266,9 @@ window.__CV = {
     );
   }
   window.__contentReady.then(() => {
-    ReactDOM.createRoot(document.getElementById("root")).render(<Scaled />);
+    ReactDOM.createRoot(document.getElementById("root")).render(
+      <ErrorBoundary><Scaled /></ErrorBoundary>
+    );
   });
 </script>
 </body>
