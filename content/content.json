@@ -713,6 +713,12 @@
   ],
   "animations": [
     {
+      "id": "A01",
+      "title": "through the magic crystal",
+      "date": "10.04.2025",
+      "desc": "Character animation for Studio SHAR's feature. Crystal facets rigged separately."
+    },
+    {
       "id": "A02",
       "title": "nyaono spot",
       "date": "22.02.2025",
@@ -723,6 +729,24 @@
       "title": "polukhutenko",
       "date": "08.01.2025",
       "desc": "Frame-by-frame rotoscoped music video, 3:42 total runtime."
+    },
+    {
+      "id": "A04",
+      "title": "studio test reel",
+      "date": "15.12.2024",
+      "desc": "Bench reel from 2024 — eight clips, no sound."
+    },
+    {
+      "id": "A05",
+      "title": "creature studies",
+      "date": "30.10.2024",
+      "desc": "Daily walk-cycle studies. Sketchbook origin, finished line."
+    },
+    {
+      "id": "A08",
+      "title": "field test / ii",
+      "date": "18.06.2024",
+      "desc": "Second field test — full storyboard timing on twos."
     }
   ],
   "canvas": {
