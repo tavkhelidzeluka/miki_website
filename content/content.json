@@ -490,89 +490,16 @@
       }
     },
     {
-      "works": [
-        {
-          "name": "home",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/home.jpg",
-          "price": null
-        },
-        {
-          "name": "bones",
-          "desc": "Bone-white riso poster on warm paper, edition of 80.",
-          "thumb": "assets/images/projects/posters/bones.jpg",
-          "price": null
-        },
-        {
-          "name": "forever",
-          "desc": "Two-colour offset poster, 600×900mm. All-type, hand-set leading.",
-          "thumb": "assets/images/projects/posters/forever.jpg",
-          "price": null
-        },
-        {
-          "name": "blue grid",
-          "desc": "Screenprint, 50×70cm. Cyan grid over a halftone interior.",
-          "thumb": "assets/images/projects/posters/blue-grid.jpg",
-          "price": null
-        },
-        {
-          "name": "gerofarm",
-          "desc": "Concert poster, A2. Two passes through the riso, hand-trimmed.",
-          "thumb": "assets/images/projects/posters/serofarm.jpg",
-          "price": null
-        },
-        {
-          "name": "war is hell",
-          "desc": "Offset poster, 600×900mm. Bracket headline, single-image composition.",
-          "thumb": "assets/images/projects/posters/war-is-hell.jpg",
-          "price": null
-        },
-        {
-          "name": "flowers",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/flowers.jpeg",
-          "price": null
-        },
-        {
-          "name": "love",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/love.jpeg",
-          "price": null
-        },
-        {
-          "name": "delulu night fest",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/delulu-night-fest.jpeg",
-          "price": null
-        },
-        {
-          "name": "massages for people",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/massages-for-people.jpeg",
-          "price": null
-        },
-        {
-          "name": "flowers2",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/flowers2.jpeg",
-          "price": null
-        },
-        {
-          "name": "collage",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/collage.jpeg",
-          "price": null
-        }
-      ],
+      "works": [],
       "name": "bolshoi theatre",
-      "client": "",
+      "client": "Bolshoi Theatre",
       "desc": "Poster series for the 2024 season. Six titles. One halftone portrait, one block of condensed display per piece.",
-      "medium": "",
+      "medium": "Offset, 600×900mm",
       "role": "Poster designer",
       "id": "03",
       "year": "2024",
       "category": "POSTERS",
-      "prose": "",
+      "prose": "The brief asked for restraint. Black ink on warm paper, one photograph treated as halftone, big type. We avoided the season's typical illustrative direction entirely.",
       "coverImage": null,
       "categoryLabel": {
         "en": "POSTERS",
