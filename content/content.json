@@ -499,31 +499,31 @@
         },
         {
           "name": "bones",
-          "desc": "",
+          "desc": "Bone-white riso poster on warm paper, edition of 80.",
           "thumb": "assets/images/projects/posters/bones.jpg",
           "price": null
         },
         {
           "name": "forever",
-          "desc": "",
+          "desc": "Two-colour offset poster, 600×900mm. All-type, hand-set leading.",
           "thumb": "assets/images/projects/posters/forever.jpg",
           "price": null
         },
         {
           "name": "blue grid",
-          "desc": "",
+          "desc": "Screenprint, 50×70cm. Cyan grid over a halftone interior.",
           "thumb": "assets/images/projects/posters/blue-grid.jpg",
           "price": null
         },
         {
           "name": "gerofarm",
-          "desc": "",
+          "desc": "Concert poster, A2. Two passes through the riso, hand-trimmed.",
           "thumb": "assets/images/projects/posters/serofarm.jpg",
           "price": null
         },
         {
           "name": "war is hell",
-          "desc": "",
+          "desc": "Offset poster, 600×900mm. Bracket headline, single-image composition.",
           "thumb": "assets/images/projects/posters/war-is-hell.jpg",
           "price": null
         },
@@ -568,7 +568,7 @@
       "client": "",
       "desc": "Poster series for the 2024 season. Six titles. One halftone portrait, one block of condensed display per piece.",
       "medium": "",
-      "role": "",
+      "role": "Poster designer",
       "id": "03",
       "year": "2024",
       "category": "POSTERS",
