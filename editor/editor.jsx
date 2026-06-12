@@ -831,6 +831,7 @@ window.__editor = window.__editor || {};
           if (change.type !== 'delete') continue;
           (deleteGroups[change.listPath] = deleteGroups[change.listPath] || []).push(change);
         }
+        const deletedByList = {}; // listPath -> ascending deleted indices
         for (const [listPath, group] of Object.entries(deleteGroups)) {
           const list = [...(window.__editor.getByPath(nextContent, listPath) || [])];
           // Dedupe by index, sort descending.
@@ -838,10 +839,40 @@ window.__editor = window.__editor || {};
           for (const idx of indices) {
             list.splice(idx, 1);
           }
+          deletedByList[listPath] = indices.slice().reverse();
           nextContent = setByPath(nextContent, listPath, list);
           counts.del += indices.length;
           const labels = group.map((g) => g.label).join(', ');
           lines.push(`- DELETE ${listPath}[${indices.join(',')}] (${labels})`);
+        }
+
+        // The splices above shift the indices of every surviving item, but
+        // queued text/image keys, add listPaths and stored imageDisplay keys
+        // were recorded against the PRE-delete order. Remap them so edits
+        // follow the items they describe; paths addressing a deleted item
+        // resolve to null and the change is dropped.
+        const remapAcrossDeletes = (path) => {
+          if (typeof path !== 'string') return path;
+          let p = path;
+          for (const [listPath, deleted] of Object.entries(deletedByList)) {
+            if (!p.startsWith(listPath + '.')) continue;
+            const rest = p.slice(listPath.length + 1);
+            const m = rest.match(/^(\d+)(\..*)?$/);
+            if (!m) continue;
+            const i = Number(m[1]);
+            if (deleted.includes(i)) return null;
+            const shift = deleted.filter((d) => d < i).length;
+            p = `${listPath}.${i - shift}${m[2] || ''}`;
+          }
+          return p;
+        };
+        if (nextContent.imageDisplay && Object.keys(deletedByList).length) {
+          const remapped = {};
+          for (const [k, v] of Object.entries(nextContent.imageDisplay)) {
+            const nk = remapAcrossDeletes(k);
+            if (nk !== null) remapped[nk] = v;
+          }
+          nextContent = { ...nextContent, imageDisplay: remapped };
         }
 
         for (const [key, change] of pending.entries()) {
@@ -854,20 +885,30 @@ window.__editor = window.__editor || {};
             continue;
           }
           if (change.type === 'add') {
-            const existing = window.__editor.getByPath(nextContent, change.listPath) || [];
+            const listPath = remapAcrossDeletes(change.listPath);
+            if (listPath === null) {
+              lines.push(`- SKIP add to ${change.listPath} (parent item deleted)`);
+              continue;
+            }
+            const existing = window.__editor.getByPath(nextContent, listPath) || [];
             const newList = [...existing, change.item];
-            nextContent = setByPath(nextContent, change.listPath, newList);
+            nextContent = setByPath(nextContent, listPath, newList);
             if (change.file && change.imagePath) {
               images.push({ path: change.imagePath, file: change.file });
             }
             counts.add++;
-            lines.push(`- ADD ${change.listPath} ← ${JSON.stringify(change.item.name || change.item.title || '<new>')}`);
+            lines.push(`- ADD ${listPath} ← ${JSON.stringify(change.item.name || change.item.title || '<new>')}`);
           } else if (change.type === 'image') {
+            const target = remapAcrossDeletes(key);
+            if (target === null) {
+              lines.push(`- SKIP ${key} (item deleted)`);
+              continue;
+            }
             // Path update (only if a new file was picked)
             if (change.value && change.file) {
-              nextContent = setByPath(nextContent, key, change.value);
+              nextContent = setByPath(nextContent, target, change.value);
               images.push({ path: change.value, file: change.file });
-              lines.push(`- ${key} (uploaded ${change.value})`);
+              lines.push(`- ${target} (uploaded ${change.value})`);
             }
             // Display settings update (independent of file)
             if (change.display) {
@@ -875,18 +916,23 @@ window.__editor = window.__editor || {};
               const updated = { ...currentMap };
               // If delta is empty (all defaults) drop the entry to keep JSON clean.
               if (Object.keys(change.display).length === 0) {
-                delete updated[key];
+                delete updated[target];
               } else {
-                updated[key] = change.display;
+                updated[target] = change.display;
               }
               nextContent = { ...nextContent, imageDisplay: updated };
-              lines.push(`- ${key} (display: ${JSON.stringify(change.display)})`);
+              lines.push(`- ${target} (display: ${JSON.stringify(change.display)})`);
             }
             counts.img++;
           } else {
-            nextContent = setByPath(nextContent, key, change.value);
+            const target = remapAcrossDeletes(key);
+            if (target === null) {
+              lines.push(`- SKIP ${key} (item deleted)`);
+              continue;
+            }
+            nextContent = setByPath(nextContent, target, change.value);
             counts.text++;
-            lines.push(`- ${key}`);
+            lines.push(`- ${target}`);
           }
         }
         const summary =

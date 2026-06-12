@@ -167,7 +167,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                 <div className="prod-foot">
                   <div className="prod-info">
                     <div className="prod-line">
-                      <span className="prod-title" data-content-path={`canvas.items.${idx}.title`}>[ {it.title} ]</span>
+                      <span className="prod-title">[ <span data-content-path={`canvas.items.${idx}.title`}>{it.title}</span> ]</span>
                       {!!it.price && (
                         <span className="prod-price" data-content-path={`canvas.items.${idx}.price`}>{formatPrice(it.price)}</span>
                       )}
