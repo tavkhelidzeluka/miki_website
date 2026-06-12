@@ -14,7 +14,7 @@ const FALLBACK_RATES = { USD: 1, EUR: 0.92, RUB: 92, UAH: 41, GEL: 2.72 };
 function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, setCartOpen }) {
   // Read at render time, not module-eval time — window.CONTENT may not be
   // set yet when Babel evaluates this file (the content fetch is async).
-  const ITEMS = window.CONTENT.canvas.items;
+  const ENTRIES = window.visibleEntries(window.CONTENT.canvas.items);
   const { t, lang } = useLang();
   const [pulse, setPulse] = React.useState(null);
   const [checkoutOpen, setCheckoutOpen] = React.useState(false);
@@ -130,9 +130,9 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
       </div>
 
       <div className="canvas-scroll">
-        {ITEMS.length === 0 && <EmptyState />}
+        {ENTRIES.length === 0 && <EmptyState />}
         <div className="canvas-grid">
-          {ITEMS.map((it, idx) => {
+          {ENTRIES.map(({ item: it, srcIdx: idx }) => {
             const added = inCart(it.id) || pulse === it.id;
             const medium = lang === "UA" ? (it.mediumUa || it.medium) : it.medium;
             const mediumPath = lang === "UA" ? `canvas.items.${idx}.mediumUa` : `canvas.items.${idx}.medium`;
@@ -143,6 +143,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                 data-content-name={it.title}
                 data-editor-reorder-path="canvas.items"
                 data-editor-reorder-index={idx}
+                data-item-hidden={it.hidden ? 'true' : undefined}
               >
                 <button
                   type="button"
@@ -153,6 +154,14 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
                   data-editor-item-label={it.title}
                   aria-label={`delete ${it.title}`}
                 >×</button>
+                <button
+                  type="button"
+                  className="editor-hide-action editor-hide-action--corner"
+                  data-editor-action="toggle-hide"
+                  data-editor-list-path="canvas.items"
+                  data-editor-list-index={idx}
+                  aria-label={it.hidden ? `unhide ${it.title}` : `hide ${it.title}`}
+                >{it.hidden ? '◉' : '⊘'}</button>
                 <button
                   type="button"
                   className={tilePrefix + (it.img ? " prod-img--photo prod-img--zoomable" : "")}
