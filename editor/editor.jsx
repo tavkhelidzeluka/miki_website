@@ -441,10 +441,17 @@ window.__editor = window.__editor || {};
     const [error, setError] = React.useState(null);
     const [toast, setToast] = React.useState(null);
 
-    // Toggle the body class so CSS rules activate.
+    // Toggle the body class so CSS rules activate, and tell the app —
+    // hidden items render only in edit mode, so filtered views must
+    // re-read window.visibleEntries.
     React.useEffect(() => {
       document.body.classList.toggle('editor-mode-on', editMode);
-      return () => document.body.classList.remove('editor-mode-on');
+      window.__EDIT_MODE = editMode;
+      window.dispatchEvent(new Event('miki-content-changed'));
+      return () => {
+        document.body.classList.remove('editor-mode-on');
+        window.__EDIT_MODE = false;
+      };
     }, [editMode]);
 
     // Capture clicks on [data-content-path] elements while in edit mode.
@@ -503,6 +510,12 @@ window.__editor = window.__editor || {};
             title: `edit details — ${(typeof ownName === 'string' && ownName.trim()) ? ownName : (el.dataset.editorItemLabel || basePath)}`,
             fields,
           });
+          return;
+        }
+        if (el.dataset.editorAction === 'toggle-hide') {
+          const listPath = el.dataset.editorListPath;
+          const index = parseInt(el.dataset.editorListIndex, 10);
+          if (!Number.isNaN(index)) applyHideToggle(listPath, index);
           return;
         }
         if (el.dataset.editorAction === 'delete-item') {
@@ -628,6 +641,23 @@ window.__editor = window.__editor || {};
         next.set(key, { type: 'delete', listPath, index, label });
         return next;
       });
+    }, []);
+
+    // Toggle `hidden` on a list item. Applied to window.CONTENT immediately
+    // (reorder precedent — index-addressed views re-render from content),
+    // plus a queued text change that carries the flag into the commit.
+    // Toggling back before saving removes the queued change — net zero.
+    const applyHideToggle = React.useCallback((listPath, index) => {
+      const path = `${listPath}.${index}.hidden`;
+      const hide = !getByPath(window.CONTENT, path);
+      window.CONTENT = setByPath(window.CONTENT, path, hide);
+      setPending((prev) => {
+        const next = new Map(prev);
+        if (prev.has(path)) next.delete(path);
+        else next.set(path, { type: 'text', value: hide });
+        return next;
+      });
+      window.dispatchEvent(new Event('miki-content-changed'));
     }, []);
 
     // Reconcile the DOM with pending edits after the app re-renders (detail
