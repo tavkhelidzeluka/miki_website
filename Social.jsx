@@ -146,6 +146,11 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
   const N = items.length;
   const [i, setI] = React.useState(0);
   const [zoom, setZoom] = React.useState(false);
+  // The pool shrinks when hidden items leave it (edit mode off) — clamp the
+  // position so the SectionHead counter never reads e.g. "05 / 03".
+  React.useEffect(() => {
+    if (N > 0 && i >= N) setI(0);
+  }, [N, i]);
   const at = (off) => items[((i + off) % N + N) % N];
   const offsets = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
 
