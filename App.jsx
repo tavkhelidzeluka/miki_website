@@ -45,7 +45,8 @@ function parseHash(rawHash, allProjects) {
   }
   const wIdx = parseInt(parts[2], 10);
   const works = cat.works || [];
-  if (Number.isNaN(wIdx) || wIdx < 0 || wIdx >= works.length) {
+  const hiddenTarget = works[wIdx] && works[wIdx].hidden && !(window.isEditMode && window.isEditMode());
+  if (Number.isNaN(wIdx) || wIdx < 0 || wIdx >= works.length || hiddenTarget) {
     return isStrip
       ? { route: "projects", categoryId: cat.id, detailProject: null }
       : { route: "projects", categoryId: null, detailProject: cat };
@@ -128,11 +129,12 @@ function App() {
   // works inside that category; otherwise iterate top-level categories.
   const stepWithinWorks = (delta) => {
     const category = window.ALL_PROJECTS.find((p) => p.id === detailProject.id);
-    const works = (category && category.works) || [];
-    if (!works.length) return;
-    const nextIdx = (detailProject.workIndex + delta + works.length) % works.length;
-    const w = works[nextIdx];
-    setDetailProject({ ...category, name: w.name, desc: w.desc, thumb: w.thumb, prose: category.prose, workIndex: nextIdx });
+    const entries = window.visibleEntries((category && category.works) || []);
+    if (!entries.length) return;
+    const pos = entries.findIndex((e) => e.srcIdx === detailProject.workIndex);
+    const nextPos = ((pos < 0 ? 0 : pos) + delta + entries.length) % entries.length;
+    const { item: w, srcIdx } = entries[nextPos];
+    setDetailProject({ ...category, name: w.name, desc: w.desc, thumb: w.thumb, prose: category.prose, workIndex: srcIdx });
   };
   const detailNext = () => {
     if (!detailProject) return;

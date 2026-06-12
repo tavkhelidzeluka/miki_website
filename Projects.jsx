@@ -111,10 +111,19 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
 // ─── Category strip — horizontal carousel of works within one category. ───
 function CategoryStrip({ category, tweaks, openDetail }) {
   const { t, lang } = useLang();
-  const works = category.works || [];
+  // Entries the strip shows: every work in edit mode, non-hidden otherwise.
+  // `i` indexes into entries; entry.srcIdx is the index in content.json and
+  // is what every editor path attribute must use.
+  const entries = window.visibleEntries(category.works);
   const [i, setI] = React.useState(0);
   const [pulse, setPulse] = React.useState(false);
-  const cur = works[i] || works[0];
+  // The pool shrinks when edit mode turns off — keep i in range.
+  React.useEffect(() => {
+    if (i >= entries.length && entries.length > 0) setI(0);
+  }, [entries.length, i]);
+  const curEntry = entries[i] || entries[0];
+  const cur = curEntry && curEntry.item;
+  const curSrcIdx = curEntry && curEntry.srcIdx;
 
   // Brief "pulse" class on transition — used to bump the new center thumb.
   const triggerPulse = () => {
@@ -123,15 +132,15 @@ function CategoryStrip({ category, tweaks, openDetail }) {
   };
 
   const next = React.useCallback(() => {
-    if (!works.length) return;
-    setI((x) => (x + 1) % works.length);
+    if (!entries.length) return;
+    setI((x) => (x + 1) % entries.length);
     triggerPulse();
-  }, [works.length]);
+  }, [entries.length]);
   const prev = React.useCallback(() => {
-    if (!works.length) return;
-    setI((x) => (x - 1 + works.length) % works.length);
+    if (!entries.length) return;
+    setI((x) => (x - 1 + entries.length) % entries.length);
     triggerPulse();
-  }, [works.length]);
+  }, [entries.length]);
 
   // Keyboard
   React.useEffect(() => {
@@ -163,7 +172,7 @@ function CategoryStrip({ category, tweaks, openDetail }) {
 
   // All works deleted — keep the label + add affordance and say so instead
   // of crashing on works[0].
-  if (works.length === 0) {
+  if (entries.length === 0) {
     return (
       <div className="page page--cat" data-fresh="true">
         {catLabel}
@@ -175,7 +184,7 @@ function CategoryStrip({ category, tweaks, openDetail }) {
   // Visible window — 3 thumbs on each side of active.
   const order = [];
   for (let off = -3; off <= 3; off++) {
-    order.push((i + off + works.length) % works.length);
+    order.push((i + off + entries.length) % entries.length);
   }
 
   const baseClass = tweaks.tileStyle === "halftone"
@@ -193,14 +202,14 @@ function CategoryStrip({ category, tweaks, openDetail }) {
       <div className="cat-strip">
         {order.map((idx, j) => {
           const isActive = j === 3;
-          const w = works[idx];
+          const { item: w, srcIdx } = entries[idx];
           const hasImg = !!(w && w.thumb);
           const cls = baseClass
             + (hasImg ? " cat-thumb--img" : "")
             + (isActive ? " cat-thumb--active" : "")
             + (isActive && pulse ? " cat-thumb--pulse" : "");
           const catIdx = (window.CONTENT.projects || []).findIndex(p => p.id === category.id);
-          const thumbPath = `projects.${catIdx}.works.${idx}.thumb`;
+          const thumbPath = `projects.${catIdx}.works.${srcIdx}.thumb`;
           const style = hasImg ? { backgroundImage: `url("${w.thumb}")`, ...window.imgDisplay(thumbPath) } : undefined;
           const assetFolder = `assets/images/projects/${(category.category || "").toLowerCase().replace(/\s+/g, '-')}`;
           return (
@@ -208,15 +217,16 @@ function CategoryStrip({ category, tweaks, openDetail }) {
               key={"slot-" + j}
               className={cls}
               style={style}
-              data-content-path={`projects.${catIdx}.works.${idx}.thumb`}
+              data-content-path={`projects.${catIdx}.works.${srcIdx}.thumb`}
               data-editor-kind="image"
               data-asset-folder={assetFolder}
               data-content-name={w && w.name}
               data-editor-reorder-path={`projects.${catIdx}.works`}
-              data-editor-reorder-index={idx}
+              data-editor-reorder-index={srcIdx}
+              data-item-hidden={w && w.hidden ? 'true' : undefined}
               onClick={() => {
                 if (isActive) {
-                  openDetail({ ...category, name: cur.name, desc: cur.desc, thumb: cur.thumb, prose: category.prose, workIndex: i });
+                  openDetail({ ...category, name: cur.name, desc: cur.desc, thumb: cur.thumb, prose: category.prose, workIndex: curSrcIdx });
                 } else if (j < 3) {
                   for (let k = 0; k < 3 - j; k++) prev();
                 } else {
@@ -232,9 +242,9 @@ function CategoryStrip({ category, tweaks, openDetail }) {
 
       {(() => {
         const catIdx = (window.CONTENT.projects || []).findIndex(p => p.id === category.id);
-        const base = `projects.${catIdx}.works.${i}`;
+        const base = `projects.${catIdx}.works.${curSrcIdx}`;
         return (
-          <div className="cat-meta" key={cur.name}>
+          <div className="cat-meta" key={cur.name} data-item-hidden={cur && cur.hidden ? 'true' : undefined}>
             <div className="cat-meta-row">
               <span className="cat-bracket">[</span>
               <span className="cat-name" data-content-path={`${base}.name`}>{cur.name}</span>
@@ -262,9 +272,16 @@ function CategoryStrip({ category, tweaks, openDetail }) {
               className="editor-delete-action"
               data-editor-action="delete-item"
               data-editor-list-path={`projects.${catIdx}.works`}
-              data-editor-list-index={i}
+              data-editor-list-index={curSrcIdx}
               data-editor-item-label={cur.name}
             >× delete this work</button>
+            <button
+              type="button"
+              className="editor-hide-action"
+              data-editor-action="toggle-hide"
+              data-editor-list-path={`projects.${catIdx}.works`}
+              data-editor-list-index={curSrcIdx}
+            >{cur && cur.hidden ? '◉ unhide this work' : '⊘ hide this work'}</button>
           </div>
         );
       })()}
