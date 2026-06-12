@@ -55,6 +55,25 @@ window.__editor = window.__editor || {};
     ],
   };
 
+  // Field lists for the EditDetailsModal — every text field an item carries,
+  // including ones the page that hosts the button doesn't render (e.g. a
+  // work's client/role/medium/year live on the detail overlay only). Keyed by
+  // the schemaName supplied via data-editor-details-schema. `fallback: true`
+  // fields inherit the category value when the item has none — that value is
+  // surfaced as the input's placeholder, never as its value, so an untouched
+  // field can't copy the fallback into the item.
+  const DETAIL_SCHEMAS = {
+    work: [
+      { key: 'name',   label: 'name',        type: 'string', required: true },
+      { key: 'desc',   label: 'description', type: 'text' },
+      { key: 'client', label: 'client',      type: 'string', fallback: true },
+      { key: 'role',   label: 'role',        type: 'string', fallback: true },
+      { key: 'medium', label: 'medium',      type: 'string', fallback: true },
+      { key: 'year',   label: 'year',        type: 'string', fallback: true },
+      { key: 'price',  label: 'price',       type: 'string', emptyAs: null, placeholder: 'e.g. "200 €" or "ціна на запит"' },
+    ],
+  };
+
   // Write text into a React-rendered element WITHOUT detaching the text node
   // React manages. `el.textContent = …` replaces the child node; React keeps
   // updating the old, detached node on later renders, so the element's text
@@ -348,6 +367,68 @@ window.__editor = window.__editor || {};
     );
   }
 
+  // Pre-filled "edit details" modal — all of one item's text fields in a
+  // single form, so detail-page-only fields stay reachable from list pages.
+  // `fields` arrive resolved: [{ key, label, type, required, placeholder,
+  // path, initial }]. Saving emits [path, value] pairs for MODIFIED fields
+  // only; untouched fields never write.
+  function EditDetailsModal({ title, fields, onSave, onCancel }) {
+    const [values, setValues] = React.useState(() => {
+      const v = {};
+      for (const f of fields) v[f.key] = f.initial;
+      return v;
+    });
+    const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+      const onKey = (e) => { if (e.key === 'Escape') onCancel(); };
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    }, [onCancel]);
+
+    const updateField = (key, val) => setValues((prev) => ({ ...prev, [key]: val }));
+
+    const onSubmit = () => {
+      for (const f of fields) {
+        if (f.required && !values[f.key].trim()) { setError(`${f.label} is required.`); return; }
+      }
+      const changes = [];
+      for (const f of fields) {
+        const next = values[f.key].trim();
+        if (next === f.initial.trim()) continue;
+        changes.push([f.path, next === '' && f.emptyAs === null ? null : next]);
+      }
+      onSave(changes);
+    };
+
+    return (
+      <div className="editor-modal-scrim" onMouseDown={onCancel}>
+        <div className="editor-modal" onMouseDown={(e) => e.stopPropagation()} style={{ minWidth: 380 }}>
+          <div className="editor-popover-label">{title}</div>
+          {fields.map((f, i) => (
+            <React.Fragment key={f.key}>
+              <div className="editor-popover-label">{f.label}{f.required ? ' *' : ''}</div>
+              {f.type === 'text' ? (
+                <textarea value={values[f.key]} placeholder={f.placeholder || ''}
+                  onChange={(e) => updateField(f.key, e.target.value)}
+                  style={{ minHeight: 60, resize: 'vertical' }} />
+              ) : (
+                <input type="text" value={values[f.key]} placeholder={f.placeholder || ''}
+                  onChange={(e) => updateField(f.key, e.target.value)}
+                  autoFocus={i === 0} />
+              )}
+            </React.Fragment>
+          ))}
+          {error && <div className="editor-modal-error">{error}</div>}
+          <div className="editor-popover-actions">
+            <button data-variant="cancel" onClick={onCancel}>cancel</button>
+            <button onClick={onSubmit}>queue changes</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function EditorRoot() {
     const [editMode, setEditMode] = React.useState(false);
     // pending: Map<path, { type: 'text', value }>
@@ -355,6 +436,7 @@ window.__editor = window.__editor || {};
     const [popover, setPopover] = React.useState(null); // { anchor, path, initialValue }
     const [imageModal, setImageModal] = React.useState(null); // { path, existing, folder, slugBasis }
     const [addModal, setAddModal] = React.useState(null); // { kind, listPath, assetFolder }
+    const [detailsModal, setDetailsModal] = React.useState(null); // { title, fields }
     const [saving, setSaving] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [toast, setToast] = React.useState(null);
@@ -395,6 +477,31 @@ window.__editor = window.__editor || {};
             assetFolder: el.dataset.editorAssetFolder,
             schemaName: el.dataset.editorAddSchema,
             defaults,
+          });
+          return;
+        }
+        if (el.dataset.editorAction === 'edit-details') {
+          const basePath = el.dataset.editorBasePath;
+          const fallbackBase = el.dataset.editorFallbackPath;
+          // Pending edits win over content.json, same as the single-field flows.
+          const resolve = (p) => (pending.has(p) ? pending.get(p).value : getByPath(window.CONTENT, p));
+          const fields = (DETAIL_SCHEMAS[el.dataset.editorDetailsSchema] || []).map((f) => {
+            const path = `${basePath}.${f.key}`;
+            const own = resolve(path);
+            let placeholder = f.placeholder || '';
+            if (f.fallback && fallbackBase) {
+              const fb = resolve(`${fallbackBase}.${f.key}`);
+              if (fb) placeholder = `category: ${fb}`;
+            }
+            return { ...f, path, initial: own == null ? '' : String(own), placeholder };
+          });
+          if (!basePath || fields.length === 0) return;
+          // The label attribute renders from window.CONTENT, so a pending
+          // (unsaved) rename wouldn't show in it — prefer the resolved name.
+          const ownName = resolve(`${basePath}.name`);
+          setDetailsModal({
+            title: `edit details — ${(typeof ownName === 'string' && ownName.trim()) ? ownName : (el.dataset.editorItemLabel || basePath)}`,
+            fields,
           });
           return;
         }
@@ -446,7 +553,9 @@ window.__editor = window.__editor || {};
       );
       const currentLang = (window.getLang && window.getLang()) || 'EN';
       els.forEach((el) => {
-        const display = i18nDisplay(newValue, currentLang);
+        // null means an explicit clear (e.g. price removed via the details
+        // modal) — blank the element so the queued clear is visible.
+        const display = newValue === null ? '' : i18nDisplay(newValue, currentLang);
         if (display !== undefined && display !== null) {
           // Stash what the app had rendered before overwriting it. Components
           // may render PROJECTIONS of the content (e.g. ProjectDetail falls
@@ -534,7 +643,8 @@ window.__editor = window.__editor || {};
         if (change.type !== 'text' && change.type !== 'image') continue;
         document.querySelectorAll(`[data-content-path="${CSS.escape(key)}"]`).forEach((el) => {
           if (change.type === 'text') {
-            const display = i18nDisplay(change.value, currentLang);
+            // null = explicit clear; render as empty (mirrors applyTextChange).
+            const display = change.value === null ? '' : i18nDisplay(change.value, currentLang);
             if (display !== undefined && display !== null) {
               if (el.dataset.editorTextOwner !== key) {
                 el.dataset.editorPrevText = el.textContent;
@@ -564,7 +674,7 @@ window.__editor = window.__editor || {};
         if (cur && cur === owner && pendingMap.has(cur)) return; // handled above
         const ownChange = pendingMap.get(owner);
         if (ownChange && ownChange.type === 'text') {
-          const wrote = i18nDisplay(ownChange.value, currentLang);
+          const wrote = ownChange.value === null ? '' : i18nDisplay(ownChange.value, currentLang);
           if (wrote !== undefined && wrote !== null && el.textContent === String(wrote)) {
             // React skipped repainting (both items render the same string, so
             // its diff no-opped) — put back what the app had rendered. That
@@ -1031,6 +1141,18 @@ window.__editor = window.__editor || {};
               setImageModal(null);
             }}
             onCancel={() => setImageModal(null)}
+          />
+        )}
+
+        {detailsModal && (
+          <EditDetailsModal
+            title={detailsModal.title}
+            fields={detailsModal.fields}
+            onSave={(changes) => {
+              for (const [path, value] of changes) applyTextChange(path, value);
+              setDetailsModal(null);
+            }}
+            onCancel={() => setDetailsModal(null)}
           />
         )}
 

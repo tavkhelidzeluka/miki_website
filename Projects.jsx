@@ -250,6 +250,15 @@ function CategoryStrip({ category, tweaks, openDetail }) {
             )}
             <button
               type="button"
+              className="editor-edit-action"
+              data-editor-action="edit-details"
+              data-editor-details-schema="work"
+              data-editor-base-path={base}
+              data-editor-fallback-path={`projects.${catIdx}`}
+              data-editor-item-label={cur.name}
+            >✎ edit details</button>
+            <button
+              type="button"
               className="editor-delete-action"
               data-editor-action="delete-item"
               data-editor-list-path={`projects.${catIdx}.works`}

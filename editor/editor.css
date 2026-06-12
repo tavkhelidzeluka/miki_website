@@ -194,7 +194,8 @@ body.editor-mode-on [data-content-path][data-editor-dirty="true"]::before {
   margin: 8px 0;
 }
 .editor-modal input[type="file"],
-.editor-modal input[type="text"] {
+.editor-modal input[type="text"],
+.editor-modal textarea {
   width: 100%;
   box-sizing: border-box;
   font-family: inherit;
@@ -232,6 +233,28 @@ body.editor-mode-on .editor-add-tile {
 }
 body.editor-mode-on .editor-add-tile:hover {
   opacity: 1;
+}
+
+/* Edit-details affordance: visible only in edit mode. */
+.editor-edit-action {
+  display: none;
+}
+body.editor-mode-on .editor-edit-action {
+  display: inline-block;
+  background: transparent;
+  color: inherit;
+  border: 1.5px dashed currentColor;
+  padding: 6px 10px;
+  margin-top: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+body.editor-mode-on .editor-edit-action:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.06);
 }
 
 /* Delete affordances: visible only in edit mode. */
