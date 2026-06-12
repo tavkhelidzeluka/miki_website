@@ -440,15 +440,9 @@
     {
       "works": [
         {
-          "name": "f1",
+          "name": "boy and flowers",
           "desc": "digital",
-          "thumb": "assets/images/projects/illustration/MANjpeg",
-          "price": null
-        },
-        {
-          "name": "Parajanov and Tarskovsky",
-          "desc": "digital",
-          "thumb": "assets/images/projects/illustration/Tarkovsky-and-Parajanov.jpeg",
+          "thumb": "assets/images/projects/illustration/flowers",
           "price": null
         },
         {
@@ -458,9 +452,9 @@
           "price": null
         },
         {
-          "name": "boy and flowers",
+          "name": "Parajanov and Tarskovsky",
           "desc": "digital",
-          "thumb": "assets/images/projects/illustration/flowers",
+          "thumb": "assets/images/projects/illustration/Tarkovsky-and-Parajanov.jpeg",
           "price": null
         },
         {
@@ -470,7 +464,13 @@
           "price": null
         },
         {
-          "name": "smoke break",
+          "name": "f1",
+          "desc": "digital",
+          "thumb": "assets/images/projects/illustration/MANjpeg",
+          "price": null
+        },
+        {
+          "name": "smoke brake",
           "desc": "digital",
           "thumb": "assets/images/projects/illustration/smoke-break.jpeg",
           "price": null
@@ -479,24 +479,6 @@
           "name": "sensitive",
           "desc": "digital",
           "thumb": "assets/images/projects/illustration/sensitive",
-          "price": null
-        },
-        {
-          "name": "4EVER",
-          "desc": "digital",
-          "thumb": "assets/images/projects/illustration/4ever.jpeg",
-          "price": null
-        },
-        {
-          "name": "me",
-          "desc": "digital",
-          "thumb": "assets/images/projects/illustration/me.jpeg",
-          "price": null
-        },
-        {
-          "name": "me and him",
-          "desc": "digital",
-          "thumb": "assets/images/projects/illustration/me-and-him.jpeg",
           "price": null
         }
       ],
@@ -669,7 +651,7 @@
       "id": "06",
       "year": "2023 — Present",
       "category": "PHOTOS",
-      "prose": "Always one camera, mostly Olympus mju. I scan and treat everything to 1-bit halftone before publishing — the texture matters more than the literal photograph.",
+      "prose": "",
       "coverImage": null,
       "categoryLabel": {
         "en": "PHOTOS",
