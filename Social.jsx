@@ -17,13 +17,14 @@ function buildWorkItems(posts, carousels) {
   // Carousel covers get _editPath only (no _listPath) because deleting a
   // cover means deleting the whole carousel — out of scope for inline delete.
   const out = [];
-  posts.forEach((p, i) => {
+  window.visibleEntries(posts).forEach(({ item: p, srcIdx: i }) => {
     out.push({
       ...p,
       _editPath: `social.posts.${i}.src`,
       _listPath: 'social.posts',
       _listIdx: i,
       _label: p.brand || `post ${i + 1}`,
+      _hideable: true,
     });
   });
   carousels.forEach((c, ci) => {
@@ -206,6 +207,7 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                   'data-editor-reorder-path': listPath,
                   'data-editor-reorder-index': listIdx,
                 } : {})}
+                {...(item.hidden ? { 'data-item-hidden': 'true' } : {})}
               >
                 <div className="sm2-gal-img" style={smBg(item.src, editPath)} />
                 {listPath && (
@@ -216,6 +218,14 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                     data-editor-list-index={listIdx}
                     data-editor-item-label={deleteLabel}
                   >×</span>
+                )}
+                {listPath && item._hideable && (
+                  <span
+                    className="editor-hide-action editor-hide-action--corner"
+                    data-editor-action="toggle-hide"
+                    data-editor-list-path={listPath}
+                    data-editor-list-index={listIdx}
+                  >{item.hidden ? '◉' : '⊘'}</span>
                 )}
               </button>
             );
@@ -260,7 +270,8 @@ const adsKindLabel = (cur, lang) =>
 function WorkSection({ lang }) {
   const { t } = useLang();
   const s = window.CONTENT.social;
-  const workItems = React.useMemo(() => buildWorkItems(s.posts, s.carousels), [s]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const workItems = React.useMemo(() => buildWorkItems(s.posts, s.carousels), [s, window.isEditMode()]);
   return (
     <React.Fragment>
       <GalleryStrip
@@ -299,7 +310,14 @@ function WorkSection({ lang }) {
 
 function StoriesSection({ lang }) {
   const { t } = useLang();
-  const STORIES = window.CONTENT.social.stories;
+  const STORIES = window.visibleEntries(window.CONTENT.social.stories).map(({ item, srcIdx }) => ({
+    ...item,
+    _editPath: `social.stories.${srcIdx}.src`,
+    _listPath: 'social.stories',
+    _listIdx: srcIdx,
+    _label: item.brand || `story ${srcIdx + 1}`,
+    _hideable: true,
+  }));
   return (
     <React.Fragment>
       <GalleryStrip
@@ -330,7 +348,14 @@ function StoriesSection({ lang }) {
 
 function AdsSection({ lang }) {
   const { t } = useLang();
-  const ADS = window.CONTENT.social.ads;
+  const ADS = window.visibleEntries(window.CONTENT.social.ads).map(({ item, srcIdx }) => ({
+    ...item,
+    _editPath: `social.ads.${srcIdx}.src`,
+    _listPath: 'social.ads',
+    _listIdx: srcIdx,
+    _label: item.brand || `ad ${srcIdx + 1}`,
+    _hideable: true,
+  }));
   return (
     <React.Fragment>
       <GalleryStrip
