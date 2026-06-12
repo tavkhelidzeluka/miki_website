@@ -126,11 +126,13 @@ function AnimationStrip({ tweaks }) {
             >
               <div
                 className="anim-thumb-img"
-                style={w.thumb ? { backgroundImage: `url("${w.thumb}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+                style={w.thumb ? { backgroundImage: `url("${w.thumb}")`, ...window.imgDisplay(`animations.${w._srcIdx}.thumb`) } : undefined}
                 data-content-path={`animations.${w._srcIdx}.thumb`}
                 data-editor-kind="image"
                 data-asset-folder="assets/images/animations"
                 data-content-name={w.title}
+                data-editor-details-schema="animation"
+                data-editor-base-path={`animations.${w._srcIdx}`}
               />
               <div className="anim-thumb-play">▶</div>
               <div className="anim-thumb-meta">

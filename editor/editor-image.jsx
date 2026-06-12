@@ -1,6 +1,13 @@
 // Image modal: file picker + preview + filename + display settings
 // (background-size / position / repeat). File is OPTIONAL — the artist may
 // just want to adjust display settings without re-uploading.
+//
+// When `detailFields` is supplied (resolved DETAIL_SCHEMAS entries from
+// editor.jsx: [{ key, label, type, required, placeholder, path, initial }]),
+// the modal also hosts the item's text fields below the image controls and
+// returns [path, value] pairs for MODIFIED fields in onSave's `details` —
+// used where the image click is the only editor-reachable surface for an
+// item's detail fields (e.g. animation tiles).
 
 window.__editor = window.__editor || {};
 
@@ -23,15 +30,26 @@ function deriveDefaultFilename(existingPath, suggestedSlug, file) {
 
 window.__editor.ImageModal = function ImageModal(props) {
   const { existingPath, assetFolder, suggestedSlug, contentPath, onSave, onCancel } = props;
+  const detailFields = props.detailFields || [];
   const [file, setFile] = React.useState(null);
   const [filename, setFilename] = React.useState('');
   const [error, setError] = React.useState(null);
   const [previewUrl, setPreviewUrl] = React.useState(null);
+  const [detailValues, setDetailValues] = React.useState(() => {
+    const v = {};
+    for (const f of detailFields) v[f.key] = f.initial;
+    return v;
+  });
 
-  // Display settings — initialise from current stored values.
-  const stored = (window.CONTENT && window.CONTENT.imageDisplay && contentPath
-    ? window.CONTENT.imageDisplay[contentPath]
-    : null) || {};
+  // Display settings — initialise from the QUEUED (unsaved) display edit when
+  // one exists, else from committed content. Mirrors the pending-first
+  // resolution of the detail fields; also makes "revert to default" register
+  // as a change against the pending state instead of being silently dropped.
+  const stored = props.pendingDisplay
+    || (window.CONTENT && window.CONTENT.imageDisplay && contentPath
+      ? window.CONTENT.imageDisplay[contentPath]
+      : null)
+    || {};
   const D = window.imgDisplay.DEFAULTS;
   const [fit, setFit] = React.useState(stored.fit || D.fit);
   const [position, setPosition] = React.useState(stored.position || D.position);
@@ -89,8 +107,24 @@ window.__editor.ImageModal = function ImageModal(props) {
     const displayDelta = buildDisplayDelta();
     const displayChanged = JSON.stringify(displayDelta) !== JSON.stringify(stored || {});
 
-    if (!file && !displayChanged) {
-      setError('Pick a file or change a display setting to save.');
+    // Detail changes — MODIFIED fields only, mirroring EditDetailsModal.
+    for (const f of detailFields) {
+      if (f.required && !detailValues[f.key].trim()) {
+        setError(`${f.label} is required.`);
+        return;
+      }
+    }
+    const details = [];
+    for (const f of detailFields) {
+      const next = detailValues[f.key].trim();
+      if (next === f.initial.trim()) continue;
+      details.push([f.path, next === '' && f.emptyAs === null ? null : next]);
+    }
+
+    if (!file && !displayChanged && details.length === 0) {
+      setError(detailFields.length
+        ? 'Nothing changed — edit a field, pick a file, or change a display setting.'
+        : 'Pick a file or change a display setting to save.');
       return;
     }
 
@@ -104,6 +138,7 @@ window.__editor.ImageModal = function ImageModal(props) {
     onSave({
       file: fileResult,
       display: displayChanged ? displayDelta : null,
+      details,
     });
   };
 
@@ -208,6 +243,25 @@ window.__editor.ImageModal = function ImageModal(props) {
             ))}
           </select>
         </div>
+
+        {detailFields.length > 0 && (
+          <React.Fragment>
+            <div className="editor-popover-label" style={{ marginTop: 12 }}>details</div>
+            {detailFields.map((f) => (
+              <React.Fragment key={f.key}>
+                <div className="editor-popover-label">{f.label}{f.required ? ' *' : ''}</div>
+                {f.type === 'text' ? (
+                  <textarea value={detailValues[f.key]} placeholder={f.placeholder || ''}
+                    onChange={(e) => setDetailValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
+                    style={{ minHeight: 60, resize: 'vertical' }} />
+                ) : (
+                  <input type="text" value={detailValues[f.key]} placeholder={f.placeholder || ''}
+                    onChange={(e) => setDetailValues((prev) => ({ ...prev, [f.key]: e.target.value }))} />
+                )}
+              </React.Fragment>
+            ))}
+          </React.Fragment>
+        )}
 
         {error && <div className="editor-modal-error">{error}</div>}
         <div className="editor-popover-actions">

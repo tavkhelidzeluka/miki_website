@@ -72,6 +72,13 @@ window.__editor = window.__editor || {};
       { key: 'year',   label: 'year',        type: 'string', fallback: true },
       { key: 'price',  label: 'price',       type: 'string', emptyAs: null, placeholder: 'e.g. "200 €" or "ціна на запит"' },
     ],
+    animation: [
+      { key: 'id',       label: 'id',    type: 'string', required: true, placeholder: 'e.g. A09' },
+      { key: 'title',    label: 'title', type: 'string', required: true },
+      { key: 'date',     label: 'date',  type: 'string', placeholder: 'e.g. 28.05.2026' },
+      { key: 'desc',     label: 'description', type: 'text' },
+      { key: 'videoUrl', label: 'video URL (YouTube/Vimeo/.mp4)', type: 'string', placeholder: 'https://…' },
+    ],
   };
 
   // Write text into a React-rendered element WITHOUT detaching the text node
@@ -463,6 +470,27 @@ window.__editor = window.__editor || {};
         if (!el) return;
         e.preventDefault();
         e.stopPropagation();
+        // Pending edits win over content.json, same as the single-field flows.
+        const resolve = (p) => (pending.has(p) ? pending.get(p).value : getByPath(window.CONTENT, p));
+        // Resolve the element's details opt-in (data-editor-details-schema +
+        // data-editor-base-path) into prefilled modal fields. Null when the
+        // element doesn't opt in.
+        const resolveDetailFields = () => {
+          const schema = DETAIL_SCHEMAS[el.dataset.editorDetailsSchema];
+          const basePath = el.dataset.editorBasePath;
+          if (!schema || !basePath) return null;
+          const fallbackBase = el.dataset.editorFallbackPath;
+          return schema.map((f) => {
+            const path = `${basePath}.${f.key}`;
+            const own = resolve(path);
+            let placeholder = f.placeholder || '';
+            if (f.fallback && fallbackBase) {
+              const fb = resolve(`${fallbackBase}.${f.key}`);
+              if (fb) placeholder = `category: ${fb}`;
+            }
+            return { ...f, path, initial: own == null ? '' : String(own), placeholder };
+          });
+        };
         if (el.dataset.editorAction === 'add-work') {
           setAddModal({
             kind: 'work',
@@ -488,26 +516,13 @@ window.__editor = window.__editor || {};
           return;
         }
         if (el.dataset.editorAction === 'edit-details') {
-          const basePath = el.dataset.editorBasePath;
-          const fallbackBase = el.dataset.editorFallbackPath;
-          // Pending edits win over content.json, same as the single-field flows.
-          const resolve = (p) => (pending.has(p) ? pending.get(p).value : getByPath(window.CONTENT, p));
-          const fields = (DETAIL_SCHEMAS[el.dataset.editorDetailsSchema] || []).map((f) => {
-            const path = `${basePath}.${f.key}`;
-            const own = resolve(path);
-            let placeholder = f.placeholder || '';
-            if (f.fallback && fallbackBase) {
-              const fb = resolve(`${fallbackBase}.${f.key}`);
-              if (fb) placeholder = `category: ${fb}`;
-            }
-            return { ...f, path, initial: own == null ? '' : String(own), placeholder };
-          });
-          if (!basePath || fields.length === 0) return;
+          const fields = resolveDetailFields();
+          if (!fields || fields.length === 0) return;
           // The label attribute renders from window.CONTENT, so a pending
           // (unsaved) rename wouldn't show in it — prefer the resolved name.
-          const ownName = resolve(`${basePath}.name`);
+          const ownName = resolve(`${el.dataset.editorBasePath}.name`);
           setDetailsModal({
-            title: `edit details — ${(typeof ownName === 'string' && ownName.trim()) ? ownName : (el.dataset.editorItemLabel || basePath)}`,
+            title: `edit details — ${(typeof ownName === 'string' && ownName.trim()) ? ownName : (el.dataset.editorItemLabel || el.dataset.editorBasePath)}`,
             fields,
           });
           return;
@@ -535,18 +550,22 @@ window.__editor = window.__editor || {};
             setError(`image element at ${path} missing data-asset-folder`);
             return;
           }
-          const existing = pending.has(path)
-            ? pending.get(path).value
-            : getByPath(window.CONTENT, path);
+          const existing = resolve(path);
           const slugBasis =
             el.closest('[data-content-name]')?.dataset?.contentName ||
             path.split('.').pop();
-          setImageModal({ path, existing, folder, slugBasis });
+          // An image element can opt into details editing too — the modal
+          // then hosts the item's text fields alongside the image controls
+          // (e.g. animation tiles, where the image click is the only
+          // editor-reachable surface for desc/videoUrl).
+          const pendingImg = pending.get(path);
+          setImageModal({
+            path, existing, folder, slugBasis,
+            detailFields: resolveDetailFields(),
+            pendingDisplay: (pendingImg && pendingImg.type === 'image' && pendingImg.display) || null,
+          });
         } else {
-          const current = pending.has(path)
-            ? pending.get(path).value
-            : getByPath(window.CONTENT, path);
-          setPopover({ anchor: el, path, initialValue: current });
+          setPopover({ anchor: el, path, initialValue: resolve(path) });
         }
       };
       // Use capture so we run before the page's own click handlers.
@@ -1166,8 +1185,12 @@ window.__editor = window.__editor || {};
             assetFolder={imageModal.folder}
             suggestedSlug={imageModal.slugBasis}
             contentPath={imageModal.path}
-            onSave={({ file, display }) => {
-              applyImageChange(imageModal.path, file, display);
+            detailFields={imageModal.detailFields}
+            pendingDisplay={imageModal.pendingDisplay}
+            onSave={({ file, display, details }) => {
+              // Details-only saves must not queue an empty image change.
+              if (file || display) applyImageChange(imageModal.path, file, display);
+              for (const [path, value] of (details || [])) applyTextChange(path, value);
               setImageModal(null);
             }}
             onCancel={() => setImageModal(null)}
