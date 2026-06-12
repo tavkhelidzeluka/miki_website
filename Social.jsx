@@ -102,6 +102,7 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, lang, aspect, kindLa
   const cur = items[idx];
   React.useEffect(() => {
     const h = (e) => {
+      if (window.uiKeysBlocked(e)) return;
       if (e.key === "Escape") onClose();
       else if (e.key === "ArrowRight") onNext();
       else if (e.key === "ArrowLeft") onPrev();

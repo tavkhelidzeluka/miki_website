@@ -50,6 +50,13 @@ body.editor-mode-on [data-content-path]:hover {
   outline: 1px dashed currentColor;
   cursor: pointer;
 }
+/* Fields with no value yet (e.g. a work without its own client) would be a
+   zero-size click target — give them a minimum footprint while editing. */
+body.editor-mode-on [data-content-path]:empty {
+  min-width: 48px;
+  min-height: 1em;
+  display: inline-block;
+}
 body.editor-mode-on [data-content-path]::after {
   content: '✎';
   position: absolute;

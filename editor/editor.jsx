@@ -55,6 +55,21 @@ window.__editor = window.__editor || {};
     ],
   };
 
+  // Write text into a React-rendered element WITHOUT detaching the text node
+  // React manages. `el.textContent = …` replaces the child node; React keeps
+  // updating the old, detached node on later renders, so the element's text
+  // freezes on screen and "travels" to whatever item the element shows next
+  // (e.g. detail overlay next/prev reuses the same nodes). Updating nodeValue
+  // in place keeps React able to repaint the element.
+  function writeText(el, display) {
+    const first = el.firstChild;
+    if (first && first.nodeType === Node.TEXT_NODE && !first.nextSibling) {
+      first.nodeValue = display;
+    } else {
+      el.textContent = display;
+    }
+  }
+
   // Index remap for moving one item within a list from `from` to `to` —
   // every other index shifts by at most one.
   function moveIndexMap(from, to) {
@@ -433,22 +448,38 @@ window.__editor = window.__editor || {};
       els.forEach((el) => {
         const display = i18nDisplay(newValue, currentLang);
         if (display !== undefined && display !== null) {
-          el.textContent = display;
+          // Stash what the app had rendered before overwriting it. Components
+          // may render PROJECTIONS of the content (e.g. ProjectDetail falls
+          // back to the category value when a work has none), so this stash —
+          // not content.json — is the only faithful restore source if this
+          // node is later reused for a different item.
+          if (el.dataset.editorTextOwner !== path) {
+            el.dataset.editorPrevText = el.textContent;
+          }
+          writeText(el, display);
+          el.dataset.editorTextOwner = path;
         }
         el.dataset.editorDirty = 'true';
       });
     }, []);
 
     const applyImageChange = React.useCallback((path, fileResult, displayDelta) => {
+      // One blob URL per queued change, reused by the reconciler so previews
+      // survive app re-renders without minting new URLs each pass.
+      const blobUrl = fileResult ? URL.createObjectURL(fileResult.file) : null;
       setPending((prev) => {
         const next = new Map(prev);
-        const file = fileResult ? fileResult.file : null;
-        const newPath = fileResult ? fileResult.path : null;
+        const old = prev.get(path);
+        const prevImg = old && old.type === 'image' ? old : null;
+        // A display-only re-edit must not drop a previously queued upload —
+        // merge with it instead of replacing it.
+        if (fileResult && prevImg && prevImg.blobUrl) URL.revokeObjectURL(prevImg.blobUrl);
         next.set(path, {
           type: 'image',
-          value: newPath,    // null if only display settings changed
-          file,              // null if no file picked
-          display: displayDelta || null,
+          value: fileResult ? fileResult.path : (prevImg ? prevImg.value : null),
+          file: fileResult ? fileResult.file : (prevImg ? prevImg.file : null),
+          display: displayDelta || (prevImg ? prevImg.display : null),
+          blobUrl: blobUrl || (prevImg ? prevImg.blobUrl : null),
         });
         return next;
       });
@@ -456,7 +487,6 @@ window.__editor = window.__editor || {};
       const els = document.querySelectorAll(
         `[data-content-path="${CSS.escape(path)}"]`
       );
-      const blobUrl = fileResult ? URL.createObjectURL(fileResult.file) : null;
       els.forEach((el) => {
         if (blobUrl) {
           if (el.tagName === 'IMG') el.src = blobUrl;
@@ -491,27 +521,78 @@ window.__editor = window.__editor || {};
       });
     }, []);
 
-    // Re-paint the optimistic previews of still-pending text/image changes.
-    // Needed after a reorder: the app re-renders from window.CONTENT (which
-    // doesn't include pending edits yet), wiping the earlier DOM updates.
+    // Reconcile the DOM with pending edits after the app re-renders (detail
+    // next/prev, strip arrows, language switch, reorder). Re-renders paint
+    // from window.CONTENT — which excludes pending edits — and reuse DOM
+    // nodes across items, which both wipes optimistic previews and strands
+    // dirty markers / blob previews on elements that now show a DIFFERENT
+    // item. Every write below is guarded (fires only when the DOM diverges)
+    // so running this from a MutationObserver converges instead of looping.
     const reapplyOptimistic = React.useCallback((pendingMap) => {
       const currentLang = (window.getLang && window.getLang()) || 'EN';
       for (const [key, change] of pendingMap.entries()) {
-        if (change.type === 'text') {
-          document.querySelectorAll(`[data-content-path="${CSS.escape(key)}"]`).forEach((el) => {
+        if (change.type !== 'text' && change.type !== 'image') continue;
+        document.querySelectorAll(`[data-content-path="${CSS.escape(key)}"]`).forEach((el) => {
+          if (change.type === 'text') {
             const display = i18nDisplay(change.value, currentLang);
-            if (display !== undefined && display !== null) el.textContent = display;
-            el.dataset.editorDirty = 'true';
-          });
-        } else if (change.type === 'image' && change.file) {
-          const blobUrl = URL.createObjectURL(change.file);
-          document.querySelectorAll(`[data-content-path="${CSS.escape(key)}"]`).forEach((el) => {
-            if (el.tagName === 'IMG') el.src = blobUrl;
-            else if (el.style.backgroundImage !== undefined) el.style.backgroundImage = `url("${blobUrl}")`;
-            el.dataset.editorDirty = 'true';
-          });
-        }
+            if (display !== undefined && display !== null) {
+              if (el.dataset.editorTextOwner !== key) {
+                el.dataset.editorPrevText = el.textContent;
+                el.dataset.editorTextOwner = key;
+              }
+              if (el.textContent !== String(display)) writeText(el, display);
+            }
+          } else if (change.blobUrl) {
+            if (el.tagName === 'IMG') {
+              if (el.src !== change.blobUrl) el.src = change.blobUrl;
+            } else if (el.style.backgroundImage !== `url("${change.blobUrl}")`) {
+              el.style.backgroundImage = `url("${change.blobUrl}")`;
+            }
+          }
+          if (el.dataset.editorDirty !== 'true') el.dataset.editorDirty = 'true';
+        });
       }
+      // Residue cleanup: nodes reused for a different item keep attributes,
+      // text and inline styles the app doesn't manage. When a node we wrote
+      // text into now carries a different path, React may have skipped
+      // repainting it (its diff no-ops when both items render the same value,
+      // e.g. two works with no client both render ''). If the node still
+      // shows exactly what we wrote, restore its text from content.
+      document.querySelectorAll('[data-editor-text-owner]').forEach((el) => {
+        const owner = el.dataset.editorTextOwner;
+        const cur = el.dataset.contentPath;
+        if (cur && cur === owner && pendingMap.has(cur)) return; // handled above
+        const ownChange = pendingMap.get(owner);
+        if (ownChange && ownChange.type === 'text') {
+          const wrote = i18nDisplay(ownChange.value, currentLang);
+          if (wrote !== undefined && wrote !== null && el.textContent === String(wrote)) {
+            // React skipped repainting (both items render the same string, so
+            // its diff no-opped) — put back what the app had rendered. That
+            // stashed text equals what React believes is on screen, which
+            // also equals what THIS item should display.
+            writeText(el, el.dataset.editorPrevText || '');
+          }
+        }
+        delete el.dataset.editorTextOwner;
+        delete el.dataset.editorPrevText;
+      });
+      // Clear dirty markers whose path has no pending change, and repaint
+      // stale blob previews from content (blob: URLs only ever come from
+      // this editor).
+      document.querySelectorAll('[data-editor-dirty="true"]').forEach((el) => {
+        const p = el.dataset.contentPath;
+        if (!p || !pendingMap.has(p)) delete el.dataset.editorDirty;
+      });
+      document.querySelectorAll('[data-content-path]').forEach((el) => {
+        const p = el.dataset.contentPath;
+        if (pendingMap.has(p)) return;
+        const isBlobImg = el.tagName === 'IMG' && el.src.startsWith('blob:');
+        const isBlobBg = el.style.backgroundImage.includes('blob:');
+        if (!isBlobImg && !isBlobBg) return;
+        const real = getByPath(window.CONTENT, p);
+        if (isBlobImg) el.src = typeof real === 'string' ? real : '';
+        else el.style.backgroundImage = typeof real === 'string' && real ? `url("${real}")` : '';
+      });
     }, []);
 
     // Move one item within a list. Unlike text/image/add/delete, the move is
@@ -581,11 +662,16 @@ window.__editor = window.__editor || {};
         return next;
       });
 
+      // Owner markers on DOM nodes are keyed by path too — keep them in step
+      // with the remapped pending keys.
+      document.querySelectorAll('[data-editor-text-owner]').forEach((el) => {
+        el.dataset.editorTextOwner = remapPath(el.dataset.editorTextOwner);
+      });
+
       window.dispatchEvent(new Event('miki-content-changed'));
-      // After the app re-renders from the new content, restore the optimistic
-      // previews of pending edits (pendingRef is synced by then).
-      requestAnimationFrame(() => reapplyOptimistic(pendingRef.current));
-    }, [reapplyOptimistic]);
+      // The mutation observer below restores the optimistic previews of
+      // pending edits once the app has re-rendered from the new content.
+    }, []);
 
     // ── Drag-to-reorder ───────────────────────────────────────────────
     // Items opt in via data-editor-reorder-path (the content.json list they
@@ -593,6 +679,42 @@ window.__editor = window.__editor || {};
     // the SAME list moves A to B's index; cross-list drops are rejected.
     const pendingRef = React.useRef(pending);
     pendingRef.current = pending;
+
+    // Run the reconciler after any app re-render. rAF-debounced; reconcile
+    // writes are guarded, so the observer settles after one extra frame
+    // instead of feeding back into itself.
+    React.useEffect(() => {
+      if (!editMode) return;
+      const editorHost = document.getElementById('editor-root');
+      let raf = 0;
+      const schedule = () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          reapplyOptimistic(pendingRef.current);
+        });
+      };
+      const observer = new MutationObserver((records) => {
+        // The editor's own UI (popover typing, toolbar status) mutates
+        // constantly — only app-DOM changes need reconciling.
+        if (editorHost && records.every((r) => editorHost.contains(r.target))) return;
+        schedule();
+      });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+      });
+      // Catch up on anything that re-rendered while the observer was off
+      // (e.g. edit mode toggled off and back on with pending changes).
+      schedule();
+      return () => {
+        observer.disconnect();
+        if (raf) cancelAnimationFrame(raf);
+      };
+    }, [editMode, reapplyOptimistic]);
+
     const dragRef = React.useRef(null); // { el, path, index }
 
     React.useEffect(() => {
@@ -775,6 +897,10 @@ window.__editor = window.__editor || {};
           { contentJson: nextContent, images },
           message
         );
+        // Keep the in-memory content in sync so the reconciler doesn't
+        // repaint just-saved changes back to their old values during the
+        // pre-reload window.
+        window.CONTENT = nextContent;
         setToast({
           kind: 'ok',
           text: `Saved ${pending.size} change(s). Pages will redeploy in ~1 min.`,

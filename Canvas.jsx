@@ -75,7 +75,7 @@ function Canvas({ tweaks, cart, addToCart, removeFromCart, clearCart, cartOpen, 
 
   React.useEffect(() => {
     if (!zoom) return;
-    const onKey = (e) => { if (e.key === "Escape") setZoom(null); };
+    const onKey = (e) => { if (window.uiKeysBlocked(e)) return; if (e.key === "Escape") setZoom(null); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [zoom]);

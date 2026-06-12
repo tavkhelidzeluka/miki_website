@@ -136,6 +136,7 @@ function CategoryStrip({ category, tweaks, openDetail }) {
   // Keyboard
   React.useEffect(() => {
     const handler = (e) => {
+      if (window.uiKeysBlocked(e)) return;
       if (e.key === "ArrowRight") next();
       else if (e.key === "ArrowLeft") prev();
       else if (e.key === "Enter") cur && openDetail && openDetail({ ...category, name: cur.name, desc: cur.desc, prose: category.prose });
@@ -266,6 +267,7 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
   const { t, lang } = useLang();
   React.useEffect(() => {
     const handler = (e) => {
+      if (window.uiKeysBlocked(e)) return;
       if (e.key === "Escape") onClose();
       else if (e.key === "ArrowRight") onNext();
       else if (e.key === "ArrowLeft") onPrev();
@@ -298,6 +300,7 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
             ? `projects.${pIdx}.works.${wIdx}.thumb`
             : null;
           const assetFolder = `assets/images/projects/${(project.category || "").toLowerCase().replace(/\s+/g, '-')}`;
+          const labelMedium = (wIdx !== undefined && project.works && project.works[wIdx] && project.works[wIdx].medium) || project.medium;
           return (
             <div
               className={imgClass}
@@ -309,7 +312,7 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
                 'data-content-name': project.name,
               })}
             >
-              <div className="detail-image-label">[ {project.id} ] · {project.medium}</div>
+              <div className="detail-image-label">[ {project.id} ] · {labelMedium}</div>
             </div>
           );
         })()}
@@ -322,23 +325,32 @@ function ProjectDetail({ project, onClose, onNext, onPrev, tweaks }) {
             // are project-level.
             const namePath = wIdx !== undefined ? `${base}.works.${wIdx}.name` : `${base}.name`;
             const descPath = wIdx !== undefined ? `${base}.works.${wIdx}.desc` : `${base}.desc`;
+            // Client/role/medium/year edit per-WORK when viewing a work, so
+            // each work can carry its own value; display falls back to the
+            // category-level value while the work has none.
+            const work = wIdx !== undefined ? ((project.works || [])[wIdx] || {}) : null;
+            const metaPath = (field) => (wIdx !== undefined ? `${base}.works.${wIdx}.${field}` : `${base}.${field}`);
+            const metaVal = (field) => {
+              const own = work ? work[field] : undefined;
+              return own !== undefined && own !== null && own !== '' ? own : project[field];
+            };
             return (
               <React.Fragment>
-                <div className="detail-id">[ {project.id} ] / <span data-content-path={`${base}.categoryLabel`}>{project.categoryLabel ? t(project.categoryLabel) : tCat(project.category, lang)}</span> / <span data-content-path={`${base}.year`}>{project.year}</span></div>
+                <div className="detail-id">[ {project.id} ] / <span data-content-path={`${base}.categoryLabel`}>{project.categoryLabel ? t(project.categoryLabel) : tCat(project.category, lang)}</span> / <span data-content-path={metaPath('year')}>{metaVal('year')}</span></div>
                 <h1 className="detail-title" data-content-path={namePath}>{project.name}</h1>
                 {project.desc && <p className="detail-desc" data-content-path={descPath}>{project.desc}</p>}
                 <dl style={{ margin: 0 }}>
                   <div className="detail-row">
                     <dt>{t({ en: "Client", ua: "Клієнт" })}</dt>
-                    <dd data-content-path={`${base}.client`}>{project.client}</dd>
+                    <dd data-content-path={metaPath('client')}>{metaVal('client')}</dd>
                   </div>
                   <div className="detail-row">
                     <dt>{t({ en: "Role", ua: "Роль" })}</dt>
-                    <dd data-content-path={`${base}.role`}>{project.role}</dd>
+                    <dd data-content-path={metaPath('role')}>{metaVal('role')}</dd>
                   </div>
                   <div className="detail-row">
                     <dt>{t({ en: "Medium", ua: "Техніка" })}</dt>
-                    <dd data-content-path={`${base}.medium`}>{project.medium}</dd>
+                    <dd data-content-path={metaPath('medium')}>{metaVal('medium')}</dd>
                   </div>
                   {wIdx !== undefined && (
                     <div className="detail-row">

@@ -45,6 +45,16 @@
 
   window.useLang = useLang;
 
+  // True while the user is typing in a form field or an inline-editor
+  // popover/modal is open. Overlay keyboard handlers (arrows / Escape /
+  // Enter) must check this so they don't navigate the view or close the
+  // overlay underneath the editor UI.
+  window.uiKeysBlocked = (e) => {
+    if (document.querySelector(".editor-popover, .editor-modal-scrim")) return true;
+    const tag = e.target && e.target.tagName;
+    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+  };
+
   // Shared empty-list placeholder. Rendered by any list view whose backing
   // array in content.json has no items, so the page never goes blank. The
   // hint line is CSS-gated to edit mode (body.editor-mode-on).

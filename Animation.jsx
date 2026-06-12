@@ -157,6 +157,7 @@ function AnimationPlayer({ work, onClose }) {
 
   React.useEffect(() => {
     const handler = (e) => {
+      if (window.uiKeysBlocked(e)) return;
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handler);
