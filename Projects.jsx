@@ -112,16 +112,21 @@ function Projects({ tweaks, openDetail, categoryId, setCategoryId }) {
 function CategoryStrip({ category, tweaks, openDetail }) {
   const { t, lang } = useLang();
   // Entries the strip shows: every work in edit mode, non-hidden otherwise.
-  // `i` indexes into entries; entry.srcIdx is the index in content.json and
-  // is what every editor path attribute must use.
+  // entry.srcIdx is the index in content.json and is what every editor path
+  // attribute must use.
   const entries = window.visibleEntries(category.works);
-  const [i, setI] = React.useState(0);
+  // Track the centered WORK by source index, not by pool position — the pool
+  // composition changes under us (hide/unhide, edit-mode toggles) and the
+  // centered work must stay centered. Falls back to pool start when the
+  // centered work itself leaves the pool.
+  const [centerSrcIdx, setCenterSrcIdx] = React.useState(() => (entries[0] ? entries[0].srcIdx : 0));
   const [pulse, setPulse] = React.useState(false);
-  // The pool shrinks when edit mode turns off — keep i in range.
-  React.useEffect(() => {
-    if (i >= entries.length && entries.length > 0) setI(0);
-  }, [entries.length, i]);
-  const curEntry = entries[i] || entries[0];
+  const posOf = (list, srcIdx) => {
+    const p = list.findIndex((e) => e.srcIdx === srcIdx);
+    return p >= 0 ? p : 0;
+  };
+  const i = posOf(entries, centerSrcIdx);
+  const curEntry = entries[i];
   const cur = curEntry && curEntry.item;
   const curSrcIdx = curEntry && curEntry.srcIdx;
 
@@ -133,14 +138,22 @@ function CategoryStrip({ category, tweaks, openDetail }) {
 
   const next = React.useCallback(() => {
     if (!entries.length) return;
-    setI((x) => (x + 1) % entries.length);
+    setCenterSrcIdx((curSrc) => {
+      const p = posOf(entries, curSrc);
+      return entries[(p + 1) % entries.length].srcIdx;
+    });
     triggerPulse();
-  }, [entries.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entries]);
   const prev = React.useCallback(() => {
     if (!entries.length) return;
-    setI((x) => (x - 1 + entries.length) % entries.length);
+    setCenterSrcIdx((curSrc) => {
+      const p = posOf(entries, curSrc);
+      return entries[(p - 1 + entries.length) % entries.length].srcIdx;
+    });
     triggerPulse();
-  }, [entries.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entries]);
 
   // Keyboard
   React.useEffect(() => {

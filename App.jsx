@@ -132,6 +132,8 @@ function App() {
     const entries = window.visibleEntries((category && category.works) || []);
     if (!entries.length) return;
     const pos = entries.findIndex((e) => e.srcIdx === detailProject.workIndex);
+    // pos can be -1 only in edit-mode edge cases (overlay open on a work
+    // that just left the visible pool) — restart from the pool start.
     const nextPos = ((pos < 0 ? 0 : pos) + delta + entries.length) % entries.length;
     const { item: w, srcIdx } = entries[nextPos];
     setDetailProject({ ...category, name: w.name, desc: w.desc, thumb: w.thumb, prose: category.prose, workIndex: srcIdx });
