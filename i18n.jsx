@@ -67,9 +67,10 @@
   // data-content-path / reorder / delete / hide attribute must use it,
   // never the position in the returned array.
   window.visibleEntries = (list) => {
+    const editMode = window.isEditMode(); // snapshot once per call
     const out = [];
     (list || []).forEach((item, srcIdx) => {
-      if (window.isEditMode() || !item || !item.hidden) out.push({ item, srcIdx });
+      if (editMode || !item || !item.hidden) out.push({ item, srcIdx });
     });
     return out;
   };
