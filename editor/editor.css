@@ -327,3 +327,78 @@ body.editor-mode-on .editor-drop-target {
   outline: 2px dashed #0066cc !important;
   outline-offset: 2px;
 }
+
+/* Hide/unhide affordances: visible only in edit mode. Mirrors the delete
+   action but in neutral grey — hiding is reversible. */
+.editor-hide-action {
+  display: none;
+}
+body.editor-mode-on .editor-hide-action {
+  display: inline-block;
+  background: transparent;
+  color: #555;
+  border: 1.5px dashed #555;
+  padding: 6px 10px;
+  margin-top: 6px;
+  margin-left: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+body.editor-mode-on .editor-hide-action:hover {
+  opacity: 1;
+  background: rgba(85, 85, 85, 0.08);
+}
+
+/* Per-item corner badge — sits LEFT of the delete × (which is at right: 4px). */
+.editor-hide-action--corner { display: none; }
+body.editor-mode-on .editor-hide-action--corner {
+  display: flex;
+  position: absolute;
+  top: 4px;
+  right: 32px;
+  z-index: 10;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  background: rgba(85, 85, 85, 0.85);
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+body.editor-mode-on .editor-hide-action--corner:hover {
+  background: #555;
+}
+
+/* Hidden items (hidden: true in content.json) render only in edit mode —
+   greyed, dashed red outline, "hidden" badge. Keep this AFTER the dirty-dot
+   rule so the badge wins when an element is both dirty and hidden. */
+body.editor-mode-on [data-item-hidden="true"] {
+  position: relative;
+  opacity: 0.4;
+  outline: 1px dashed #c00 !important;
+}
+body.editor-mode-on [data-item-hidden="true"]::before {
+  content: 'hidden';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: auto;
+  height: auto;
+  background: #c00;
+  color: #fff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  line-height: 1.4;
+  padding: 1px 5px;
+  border-radius: 2px;
+  z-index: 4;
+}
