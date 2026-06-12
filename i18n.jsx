@@ -55,6 +55,25 @@
     return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
   };
 
+  // ── Hidden-item support ────────────────────────────────────────────
+  // Items in editable lists may carry `hidden: true` (set by the inline
+  // editor). The public site filters them out; edit mode renders everything.
+  // The editor sets window.__EDIT_MODE and dispatches miki-content-changed
+  // when toggling, so filtered views re-render.
+  window.isEditMode = () => window.__EDIT_MODE === true;
+
+  // Maps a content list to the entries a view should render, as
+  // [{ item, srcIdx }]. srcIdx is the index in the SOURCE array — every
+  // data-content-path / reorder / delete / hide attribute must use it,
+  // never the position in the returned array.
+  window.visibleEntries = (list) => {
+    const out = [];
+    (list || []).forEach((item, srcIdx) => {
+      if (window.isEditMode() || !item || !item.hidden) out.push({ item, srcIdx });
+    });
+    return out;
+  };
+
   // Shared empty-list placeholder. Rendered by any list view whose backing
   // array in content.json has no items, so the page never goes blank. The
   // hint line is CSS-gated to edit mode (body.editor-mode-on).
