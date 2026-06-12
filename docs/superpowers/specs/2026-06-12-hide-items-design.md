@@ -19,10 +19,12 @@ Hide is available everywhere delete is available today — the ten editable list
 | `projects.<c>.works` | Projects category strip + detail overlay |
 | `animations` | Animation strip + player |
 | `canvas.items` | Canvas shop grid (+ cart/zoom) |
-| `social.posts`, `social.stories`, `social.carousels`, `social.ads` | Social page sections |
+| `social.posts`, `social.stories`, `social.ads` | Social page sections |
 | `about.experience`, `about.exhibitions`, `about.skills` | About page lists |
 
 Hiding whole project categories is out of scope (they have no delete either).
+Carousel slides (`social.carousels.<n>.slides`) keep delete only: slides are
+plain strings in content.json and cannot carry a `hidden` flag.
 
 ## Data model
 
