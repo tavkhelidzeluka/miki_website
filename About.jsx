@@ -44,13 +44,14 @@ function About({ tweaks }) {
       <div className="about-col about-col--exp">
         <div className="about-col-head"><b>[ 01 ]</b> <span data-content-path="ui.aboutPage.experienceHeader">{t(window.CONTENT.ui.aboutPage.experienceHeader)}</span></div>
         <hr className="hairline" />
-        {a.experience.map((e, i) => (
+        {window.visibleEntries(a.experience).map(({ item: e, srcIdx: i }) => (
           <div
             className="exp-item"
             key={i}
             style={{ position: 'relative' }}
             data-editor-reorder-path="about.experience"
             data-editor-reorder-index={i}
+            data-item-hidden={e.hidden ? 'true' : undefined}
           >
             <button
               type="button"
@@ -60,6 +61,13 @@ function About({ tweaks }) {
               data-editor-list-index={i}
               data-editor-item-label={(e.title && e.title.en) || `experience ${i + 1}`}
             >×</button>
+            <button
+              type="button"
+              className="editor-hide-action editor-hide-action--corner"
+              data-editor-action="toggle-hide"
+              data-editor-list-path="about.experience"
+              data-editor-list-index={i}
+            >{e.hidden ? '◉' : '⊘'}</button>
             <div className="exp-title" data-content-path={`about.experience.${i}.title`}>{t(e.title)}</div>
             <div className="exp-role" data-content-path={`about.experience.${i}.role`}>{t(e.role)}</div>
             {e.subRole && <div className="exp-role" data-content-path={`about.experience.${i}.subRole`}>{t(e.subRole)}</div>}
@@ -80,12 +88,13 @@ function About({ tweaks }) {
         <div className="about-col-head"><b>[ 02 ]</b> <span data-content-path="ui.aboutPage.exhibitionsHeader">{t(window.CONTENT.ui.aboutPage.exhibitionsHeader)}</span></div>
         <hr className="hairline" />
         <div className="projects-grid">
-          {a.exhibitions.map((x, i) => (
+          {window.visibleEntries(a.exhibitions).map(({ item: x, srcIdx: i }) => (
             <div
               key={i}
               style={{ position: 'relative' }}
               data-editor-reorder-path="about.exhibitions"
               data-editor-reorder-index={i}
+              data-item-hidden={x.hidden ? 'true' : undefined}
             >
               <button
                 type="button"
@@ -95,6 +104,13 @@ function About({ tweaks }) {
                 data-editor-list-index={i}
                 data-editor-item-label={(x.label && x.label.en) || `exhibition ${i + 1}`}
               >×</button>
+              <button
+                type="button"
+                className="editor-hide-action editor-hide-action--corner"
+                data-editor-action="toggle-hide"
+                data-editor-list-path="about.exhibitions"
+                data-editor-list-index={i}
+              >{x.hidden ? '◉' : '⊘'}</button>
               <span data-content-path={`about.exhibitions.${i}.label`}>{t(x.label)}</span>
             </div>
           ))}
@@ -112,13 +128,14 @@ function About({ tweaks }) {
       <div className="about-col about-col--skills">
         <div className="about-col-head"><b>[ 03 ]</b> <span data-content-path="ui.aboutPage.skillsHeader">{t(window.CONTENT.ui.aboutPage.skillsHeader)}</span></div>
         <hr className="hairline" />
-        {a.skills.map((s, i) => (
+        {window.visibleEntries(a.skills).map(({ item: s, srcIdx: i }) => (
           <div
             className="skill"
             key={i}
             style={{ position: 'relative' }}
             data-editor-reorder-path="about.skills"
             data-editor-reorder-index={i}
+            data-item-hidden={s.hidden ? 'true' : undefined}
           >
             <button
               type="button"
@@ -128,6 +145,13 @@ function About({ tweaks }) {
               data-editor-list-index={i}
               data-editor-item-label={(s.label && s.label.en) || `skill ${i + 1}`}
             >×</button>
+            <button
+              type="button"
+              className="editor-hide-action editor-hide-action--corner"
+              data-editor-action="toggle-hide"
+              data-editor-list-path="about.skills"
+              data-editor-list-index={i}
+            >{s.hidden ? '◉' : '⊘'}</button>
             <span data-content-path={`about.skills.${i}.label`}>{t(s.label)}</span>
           </div>
         ))}
