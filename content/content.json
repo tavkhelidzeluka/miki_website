@@ -665,6 +665,30 @@
           "desc": "",
           "thumb": "assets/images/projects/photos/touch-trace.png",
           "price": null
+        },
+        {
+          "name": "Touch Trace 2",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace-2.png",
+          "price": null
+        },
+        {
+          "name": "Touch Trace 3",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace-3.png",
+          "price": null
+        },
+        {
+          "name": "Touch Trace 4",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace-4.png",
+          "price": null
+        },
+        {
+          "name": "Touch Trace 5",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace-5.png",
+          "price": null
         }
       ],
       "name": "field notes",
