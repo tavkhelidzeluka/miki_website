@@ -659,6 +659,12 @@
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me4.jpeg",
           "price": null
+        },
+        {
+          "name": "Touch Trace",
+          "desc": "Through double film exposure, I show how touch leaves an imprint, how the body folds into itself, becoming a complete image.",
+          "thumb": "assets/images/projects/photos/touch-trace.png",
+          "price": null
         }
       ],
       "name": "field notes",
