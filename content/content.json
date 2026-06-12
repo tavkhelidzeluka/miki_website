@@ -440,9 +440,9 @@
     {
       "works": [
         {
-          "name": "f1",
+          "name": "boy and flowers",
           "desc": "digital",
-          "thumb": "assets/images/projects/illustration/MANjpeg",
+          "thumb": "assets/images/projects/illustration/flowers",
           "price": null
         },
         {
@@ -452,15 +452,15 @@
           "price": null
         },
         {
-          "name": "lovers",
+          "name": "f1",
           "desc": "digital",
-          "thumb": "assets/images/projects/illustration/love.jpeg",
+          "thumb": "assets/images/projects/illustration/MANjpeg",
           "price": null
         },
         {
-          "name": "boy and flowers",
+          "name": "lovers",
           "desc": "digital",
-          "thumb": "assets/images/projects/illustration/flowers",
+          "thumb": "assets/images/projects/illustration/love.jpeg",
           "price": null
         },
         {
@@ -637,25 +637,25 @@
     {
       "works": [
         {
-          "name": "collage of me1",
+          "name": "field notes — kyiv",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me1.jpeg",
           "price": null
         },
         {
-          "name": "collage of me2",
+          "name": "field notes — berlin",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me2.jpeg",
           "price": null
         },
         {
-          "name": "collage of me3",
+          "name": "studio portraits",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me5jpeg",
           "price": null
         },
         {
-          "name": "collage of me4",
+          "name": "halftone studies",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me4.jpeg",
           "price": null
