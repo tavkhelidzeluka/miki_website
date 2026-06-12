@@ -18,6 +18,12 @@
   "imageDisplay": {
     "projects.4.coverImage": {
       "fit": "contain"
+    },
+    "projects.5.works.8.thumb": {
+      "fit": "contain"
+    },
+    "projects.5.works.7.thumb": {
+      "fit": "contain"
     }
   },
   "ui": {
@@ -662,31 +668,31 @@
         },
         {
           "name": "Touch Trace",
-          "desc": "",
+          "desc": "Through double film exposure, I show how touch leaves an imprint, how the body folds into itself, becoming a complete image.",
           "thumb": "assets/images/projects/photos/touch-trace.png",
           "price": null
         },
         {
           "name": "Touch Trace 2",
-          "desc": "",
+          "desc": "Through double film exposure, I show how touch leaves an imprint, how the body folds into itself, becoming a complete image.",
           "thumb": "assets/images/projects/photos/touch-trace-2.png",
           "price": null
         },
         {
           "name": "Touch Trace 3",
-          "desc": "",
+          "desc": "Through double film exposure, I show how touch leaves an imprint, how the body folds into itself, becoming a complete image.",
           "thumb": "assets/images/projects/photos/touch-trace-3.png",
           "price": null
         },
         {
           "name": "Touch Trace 4",
-          "desc": "",
+          "desc": "Through double film exposure, I show how touch leaves an imprint, how the body folds into itself, becoming a complete image.",
           "thumb": "assets/images/projects/photos/touch-trace-4.png",
           "price": null
         },
         {
           "name": "Touch Trace 5",
-          "desc": "",
+          "desc": "Through double film exposure, I show how touch leaves an imprint, how the body folds into itself, becoming a complete image.",
           "thumb": "assets/images/projects/photos/touch-trace-5.png",
           "price": null
         }
