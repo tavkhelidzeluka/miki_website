@@ -15,11 +15,16 @@ function AnimationStrip({ tweaks }) {
   // carries _srcIdx so we can wire data-content-path back to the SOURCE
   // array index in content.json (the three copies otherwise share the same
   // visible content but different DOM nodes).
+  // window.isEditMode() is a memo input: toggling edit mode re-renders (via
+  // miki-content-changed) without replacing ANIMATION_WORKS, and hidden
+  // entries must appear/disappear.
+  const entries = window.visibleEntries(ANIMATION_WORKS);
   const looped = React.useMemo(() => {
-    const withSrc = ANIMATION_WORKS.map((w, srcIdx) => ({ ...w, _srcIdx: srcIdx }));
+    const withSrc = entries.map(({ item, srcIdx }) => ({ ...item, _srcIdx: srcIdx }));
     return [...withSrc, ...withSrc, ...withSrc];
-  }, [ANIMATION_WORKS]);
-  const baseLen = ANIMATION_WORKS.length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ANIMATION_WORKS, window.isEditMode()]);
+  const baseLen = entries.length;
 
   // Convert vertical wheel to horizontal scroll on the strip.
   React.useEffect(() => {
@@ -105,7 +110,7 @@ function AnimationStrip({ tweaks }) {
         >+ add animation</button>
       </div>
 
-      {ANIMATION_WORKS.length === 0 && <EmptyState />}
+      {entries.length === 0 && <EmptyState />}
 
       <div className="anim-strip-wrap">
         <div className="anim-strip" ref={scrollRef}>
@@ -114,6 +119,7 @@ function AnimationStrip({ tweaks }) {
               key={idx}
               ref={(el) => (thumbsRef.current[idx] = el)}
               className="anim-thumb"
+              data-item-hidden={w.hidden ? 'true' : undefined}
               onClick={() => setPlaying(w)}
               data-editor-reorder-path="animations"
               data-editor-reorder-index={w._srcIdx}
@@ -138,6 +144,12 @@ function AnimationStrip({ tweaks }) {
                 data-editor-list-index={w._srcIdx}
                 data-editor-item-label={w.title}
               >×</span>
+              <span
+                className="editor-hide-action editor-hide-action--corner"
+                data-editor-action="toggle-hide"
+                data-editor-list-path="animations"
+                data-editor-list-index={w._srcIdx}
+              >{w.hidden ? '◉' : '⊘'}</span>
             </button>
           ))}
         </div>
