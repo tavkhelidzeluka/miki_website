@@ -637,27 +637,57 @@
     {
       "works": [
         {
-          "name": "collage of me1",
+          "name": "field notes — kyiv",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me1.jpeg",
           "price": null
         },
         {
-          "name": "collage of me2",
+          "name": "field notes — berlin",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me2.jpeg",
           "price": null
         },
         {
-          "name": "collage of me3",
+          "name": "studio portraits",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me5jpeg",
           "price": null
         },
         {
-          "name": "collage of me4",
+          "name": "halftone studies",
           "desc": "mixed media",
           "thumb": "assets/images/projects/photos/me4.jpeg",
+          "price": null
+        },
+        {
+          "name": "Touch Trace",
+          "desc": "Through double film exposure, I show how touch leaves an imprint, how the body folds into itself, becoming a complete image.",
+          "thumb": "assets/images/projects/photos/touch-trace.png",
+          "price": null
+        },
+        {
+          "name": "Touch Trace",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace.png",
+          "price": null
+        },
+        {
+          "name": "Touch Trace",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace.png",
+          "price": null
+        },
+        {
+          "name": "Touch Trace",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace.png",
+          "price": null
+        },
+        {
+          "name": "Touch Trace",
+          "desc": "",
+          "thumb": "assets/images/projects/photos/touch-trace.png",
           "price": null
         }
       ],
