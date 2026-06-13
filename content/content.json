@@ -24,6 +24,15 @@
     },
     "projects.5.works.7.thumb": {
       "fit": "contain"
+    },
+    "projects.5.works.6.thumb": {
+      "fit": "contain"
+    },
+    "projects.5.works.5.thumb": {
+      "fit": "contain"
+    },
+    "projects.5.works.4.thumb": {
+      "fit": "contain"
     }
   },
   "ui": {
@@ -524,27 +533,21 @@
     {
       "works": [
         {
-          "name": "DELULU NIGHT FEST",
-          "desc": "concert poster",
+          "name": "Lugansk",
+          "desc": "The project speaks about occupied Luhansk and about my connection with the city during its occupation a connection maintained through memories, rare messages, and inner dialogue rather than physical proximity",
           "thumb": "assets/images/projects/posters/.jpeg",
           "price": null
         },
         {
-          "name": "collage",
-          "desc": "The post is compiled from personal photos",
-          "thumb": "assets/images/projects/posters/collage.jpeg",
+          "name": "war is hell",
+          "desc": "protest collage",
+          "thumb": "assets/images/projects/posters/war-is-hell.jpeg",
           "price": null
         },
         {
-          "name": "me",
-          "desc": "",
-          "thumb": "assets/images/projects/posters/.jpeg",
-          "price": null
-        },
-        {
-          "name": "#FFFFFF",
-          "desc": "A poster collage of subscribers' photos",
-          "thumb": "assets/images/projects/posters/.jpeg",
+          "name": "Lugansk",
+          "desc": "The project speaks about occupied Luhansk and about my connection with the city during its occupation a connection maintained through memories, rare messages, and inner dialogue rather than physical proximity",
+          "thumb": "assets/images/projects/posters/lugansk.jpeg",
           "price": null
         }
       ],
