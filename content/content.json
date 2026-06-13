@@ -533,6 +533,12 @@
     {
       "works": [
         {
+          "name": "Lugansk",
+          "desc": "The project speaks about occupied Luhansk and about my connection with the city during its occupation a connection maintained through memories, rare messages, and inner dialogue rather than physical proximity",
+          "thumb": "assets/images/projects/posters/.jpeg",
+          "price": null
+        },
+        {
           "name": "war is hell",
           "desc": "protest collage",
           "thumb": "assets/images/projects/posters/war-is-hell.jpeg",
@@ -542,12 +548,6 @@
           "name": "Lugansk",
           "desc": "The project speaks about occupied Luhansk and about my connection with the city during its occupation a connection maintained through memories, rare messages, and inner dialogue rather than physical proximity",
           "thumb": "assets/images/projects/posters/lugansk.jpeg",
-          "price": null
-        },
-        {
-          "name": "Lugansk",
-          "desc": "The project speaks about occupied Luhansk and about my connection with the city during its occupation a connection maintained through memories, rare messages, and inner dialogue rather than physical proximity",
-          "thumb": "assets/images/projects/posters/.jpeg",
           "price": null
         }
       ],
@@ -559,7 +559,7 @@
       "id": "03",
       "year": "2024",
       "category": "POSTERS",
-      "prose": "\n",
+      "prose": "",
       "coverImage": null,
       "categoryLabel": {
         "en": "POSTERS",
