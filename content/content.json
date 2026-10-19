@@ -811,12 +811,6 @@
       "videoUrl": "https://www.youtube.com/watch?v=gJKwmYLrQxo"
     },
     {
-      "id": "A08",
-      "title": "field test / ii",
-      "date": "18.06.2024",
-      "desc": "Second field test — full storyboard timing on twos."
-    },
-    {
       "id": "HOME",
       "title": "HOME",
       "date": "16.07.2023",
@@ -833,12 +827,12 @@
       "videoUrl": "https://youtu.be/57C4p8CAEa8"
     },
     {
-      "id": "CRYPTO",
-      "title": "CRYPTO",
+      "id": "Luhansk",
+      "title": "LUHANSK",
       "date": "",
-      "desc": "",
+      "desc": "digital collage",
       "thumb": "undefined/item.png",
-      "videoUrl": "https://youtu.be/C_wQmIp9oRg"
+      "videoUrl": "https://youtu.be/ocNJM_UBS-k"
     }
   ],
   "canvas": {
