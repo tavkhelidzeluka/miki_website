@@ -803,16 +803,12 @@
   ],
   "animations": [
     {
-      "id": "A01",
-      "title": "through the magic crystal",
-      "date": "10.04.2025",
-      "desc": "Character animation for Studio SHAR's feature. Crystal facets rigged separately."
-    },
-    {
       "id": "A02",
       "title": "nyaono spot",
       "date": "22.02.2025",
-      "desc": "Animated 30-second commercial, two-frame loops in Photoshop."
+      "desc": "",
+      "thumb": "assets/images/animations/nyaono-spot.png",
+      "videoUrl": "https://www.youtube.com/watch?v=gJKwmYLrQxo"
     },
     {
       "id": "A05",
@@ -831,8 +827,8 @@
       "title": "POLUKHUTENKO",
       "date": "20.08.2024",
       "desc": "",
-      "thumb": null,
-      "videoUrl": "https://youtu.be/gCHC-XNIi9o"
+      "thumb": "assets/images/animations/polukhutenko.png",
+      "videoUrl": "https://youtu.be/gCHC-XNIi9o?si=hz7ScftDcrPRLyPK"
     }
   ],
   "canvas": {
