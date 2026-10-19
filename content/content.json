@@ -811,17 +811,11 @@
       "videoUrl": "https://www.youtube.com/watch?v=gJKwmYLrQxo"
     },
     {
-      "id": "A08",
-      "title": "field test / ii",
-      "date": "18.06.2024",
-      "desc": "Second field test — full storyboard timing on twos."
-    },
-    {
       "id": "HOME",
       "title": "HOME",
       "date": "16.07.2023",
       "desc": "",
-      "thumb": "assets/images/animations/item.png",
+      "thumb": "undefined/item.png",
       "videoUrl": "https://youtu.be/2pZ9wOlAgok"
     },
     {
