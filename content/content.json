@@ -803,18 +803,38 @@
   ],
   "animations": [
     {
+      "id": "A01",
+      "title": "through the magic crystal",
+      "date": "10.04.2025",
+      "desc": "Character animation for Studio SHAR's feature. Crystal facets rigged separately."
+    },
+    {
       "id": "A02",
       "title": "nyaono spot",
       "date": "22.02.2025",
-      "desc": "",
+      "desc": "Animated 30-second commercial, two-frame loops in Photoshop.",
       "thumb": "assets/images/animations/nyaono-spot.png",
-      "videoUrl": "https://www.youtube.com/watch?v=gJKwmYLrQxo"
+      "videoUrl": "https://youtu.be/gJKwmYLrQxo"
+    },
+    {
+      "id": "A05",
+      "title": "creature studies",
+      "date": "30.10.2024",
+      "desc": "Daily walk-cycle studies. Sketchbook origin, finished line."
     },
     {
       "id": "A08",
       "title": "field test / ii",
       "date": "18.06.2024",
       "desc": "Second field test — full storyboard timing on twos."
+    },
+    {
+      "id": "POLUKHUTENKO",
+      "title": "POLUKHUTENKO",
+      "date": "20.08.2024",
+      "desc": "",
+      "thumb": "assets/images/animations/polukhutenko.png",
+      "videoUrl": "https://youtu.be/gCHC-XNIi9o"
     }
   ],
   "canvas": {
