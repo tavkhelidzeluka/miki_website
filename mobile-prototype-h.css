@@ -1,0 +1,57 @@
+/* mobile-prototype-h.css — PROTOTYPE ONLY (throwaway). Variant H, Sketchbook. */
+
+.mph { position: fixed; inset: 0; background: var(--paper); overflow: hidden; }
+.mph-top { position: absolute; top: 0; left: 0; right: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 6px 16px; min-height: 48px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; background: linear-gradient(var(--paper) 60%, transparent); }
+.mph-top button { min-height: 44px; font-weight: 700 !important; }
+
+.mph-scroll { position: absolute; inset: 0; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; }
+.mph-scroll::-webkit-scrollbar { display: none; }
+
+/* The pencil line lives behind the sheets, spanning the whole book. */
+.mph-line { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; overflow: visible; }
+.mph-stroke { fill: none; stroke: var(--ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
+.mph-stroke--ghost { stroke-width: 1; opacity: 0.35; transform: translate(1.6px, 1.2px); }
+.mph-tip circle { fill: var(--ink); }
+.mph-tip text { font-size: 16px; fill: var(--ink); }
+
+.mph-page { position: relative; z-index: 1; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; padding: 56px 34px 96px 22px; box-sizing: border-box; }
+.mph-sheet { will-change: transform, opacity; transform-origin: 50% 60%; }
+
+/* A work: white paper on the page, caption pinned below. */
+.mph-work { position: relative; margin: 0; max-width: 100%; display: flex; flex-direction: column; align-items: center; }
+.mph-work img { display: block; max-width: 78vw; max-height: 58dvh; object-fit: contain; background: var(--paper); padding: 9px; border: 1px solid rgba(10,10,10,0.12); box-shadow: 0 1px 0 rgba(10,10,10,0.08), 6px 10px 22px rgba(10,10,10,0.14); }
+.mph-work figcaption { align-self: flex-start; margin-top: 16px; display: flex; flex-direction: column; gap: 3px; max-width: 78vw; background: var(--paper); padding: 4px 8px 6px 0; }
+.mph-work figcaption b { font-family: var(--font-display-mid); font-weight: 400; font-size: 34px; line-height: 0.95; }
+.mph-work figcaption small { font-size: 13px; opacity: 0.65; }
+.mph-work figcaption a { margin-top: 4px; min-height: 32px; display: inline-flex; align-items: center; font-size: 14px; font-weight: 700; }
+
+.mph-intro { text-align: left; background: var(--paper); padding: 8px; }
+.mph-intro h1 { font-family: var(--font-display); font-size: 132px; line-height: 0.84; }
+.mph-intro p { font-size: 15px; margin: 14px 0 4px; }
+.mph-intro small { font-size: 13px; opacity: 0.6; }
+
+.mph-chapter { background: var(--ink); color: var(--paper); padding: 26px 22px 30px; max-width: 86vw; box-shadow: 6px 10px 22px rgba(10,10,10,0.18); }
+.mph-chapter small { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.7; }
+.mph-chapter h2 { font-family: var(--font-display); font-size: 76px; line-height: 0.88; margin: 8px 0 12px; overflow-wrap: anywhere; }
+.mph-chapter p { font-size: 15px; line-height: 1.4; margin: 0; opacity: 0.85; }
+
+.mph-end { background: var(--paper); padding: 10px; max-width: 86vw; max-height: 100%; overflow-y: auto; }
+.mph-end h2 { font-family: var(--font-display); font-size: 96px; line-height: 0.9; margin-bottom: 18px; }
+.mph-end-about { margin-top: 24px; }
+
+/* Pencil scrollbar on the right edge. */
+.mph-bar { position: absolute; z-index: 12; right: 2px; top: 64px; bottom: 96px; width: 30px; touch-action: none; cursor: ns-resize; }
+.mph-bar svg { position: absolute; left: 5px; top: 0; width: 20px; height: 100%; overflow: visible; }
+.mph-bar-track { fill: none; stroke: rgba(10,10,10,0.22); stroke-width: 1.2; vector-effect: non-scaling-stroke; filter: url(#mph-pencil); }
+.mph-bar-ink { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; vector-effect: non-scaling-stroke; filter: url(#mph-pencil); }
+.mph-bar-mark { position: absolute; right: 4px; font-family: var(--font-display-mid); font-size: 20px; line-height: 1; background: var(--paper); padding: 2px 1px; transition: transform 160ms ease-out; white-space: nowrap; }
+
+.mph-menu { position: absolute; inset: 48px 0 0; z-index: 11; background: var(--paper); padding: 12px 20px 96px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; overflow-y: auto; }
+.mph-menu button { min-height: 48px; font-family: var(--font-display-mid); font-size: 40px; line-height: 1; text-align: left; }
+.mph-menu small { font-family: var(--font-body); font-size: 11px; vertical-align: top; margin-right: 6px; }
+.mph-menu .mp-lang { margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mph-sheet { transform: none !important; opacity: 1 !important; }
+  .mph-bar-mark { transition: none; }
+}

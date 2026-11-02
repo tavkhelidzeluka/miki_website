@@ -1,0 +1,310 @@
+/* mobile-prototype-art.css — PROTOTYPE ONLY (throwaway). Variants I–L. */
+
+.art-info { position: fixed; inset: 0; z-index: 60; overflow-y: auto; background: var(--paper); color: var(--ink); padding: 16px 20px 110px; }
+.art-info--dark { background: #000; color: #fff; }
+.art-info--dark .mp-about-row { border-color: rgba(255,255,255,0.2); }
+.art-info h2 { font-family: var(--font-display); font-size: 88px; line-height: 0.88; margin: 18px 0 20px; }
+.art-info-close { min-height: 44px; font-size: 13px !important; font-weight: 700 !important; }
+
+/* ═══ I — Light table ═══ */
+.mpi { position: fixed; inset: 0; display: flex; flex-direction: column; color: var(--ink); background: radial-gradient(120% 80% at 50% 42%, #fff 35%, #e9e9e9 100%); font-family: var(--font-body); }
+.mpi-top { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px; min-height: 48px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; }
+.mpi-top button { min-height: 44px; font-weight: 700 !important; }
+.mpi-table { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; padding: 0 22px; touch-action: none; user-select: none; }
+.mpi-peg { position: relative; z-index: 3; width: 72%; height: 16px; background: var(--ink); border-radius: 3px; display: flex; justify-content: space-between; align-items: center; padding: 0 16%; box-sizing: border-box; box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+.mpi-peg i, .mpi-punch i { display: block; background: #d8d8d8; }
+.mpi-peg .mpi-hole { width: 9px; height: 9px; border-radius: 50%; background: #9a9a9a; }
+.mpi-peg .mpi-slot { width: 26px; height: 6px; border-radius: 3px; background: #9a9a9a; }
+.mpi-sheet { position: relative; margin-top: -10px; flex: 1; min-height: 0; width: 100%; max-width: 420px; background: rgba(255,255,255,0.86); border: 1px solid rgba(10,10,10,0.12); box-shadow: 0 1px 2px rgba(0,0,0,0.08); overflow: hidden; }
+.mpi-punch { position: absolute; top: 0; left: 0; right: 0; height: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 calc(14% + 8px); box-sizing: border-box; z-index: 2; pointer-events: none; }
+.mpi-punch .mpi-hole { width: 11px; height: 11px; border-radius: 50%; background: #efefef; box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); }
+.mpi-punch .mpi-slot { width: 30px; height: 8px; border-radius: 4px; background: #efefef; box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); }
+.mpi-field { position: absolute; inset: 30px 14px 14px; border: 1px dashed rgba(10,10,10,0.12); pointer-events: none; z-index: 1; }
+.mpi-field::before, .mpi-field::after { content: ""; position: absolute; background: rgba(10,10,10,0.12); }
+.mpi-field::before { left: 50%; top: calc(50% - 10px); width: 1px; height: 20px; }
+.mpi-field::after { top: 50%; left: calc(50% - 10px); height: 1px; width: 20px; }
+.mpi-field span { position: absolute; right: 4px; bottom: 2px; font: 600 10px var(--font-mono); opacity: 0.35; }
+.mpi-art, .mpi-onion { position: absolute; inset: 34px 18px 18px; width: calc(100% - 36px); height: calc(100% - 52px); object-fit: contain; }
+.mpi-art { mix-blend-mode: multiply; }
+.mpi-onion { opacity: 0.2; filter: grayscale(1) contrast(1.4); mix-blend-mode: multiply; }
+.mpi-onion--prev { transform: translate(-7px, 4px) rotate(-1deg); }
+.mpi-onion--next { opacity: 0.09; transform: translate(8px, -3px) rotate(1deg); }
+.mpi-corner { position: absolute; right: 10px; top: 26px; z-index: 2; font: 700 12px var(--font-mono); border: 1.5px solid var(--ink); border-radius: 50%; padding: 5px 4px; }
+.mpi-hint { position: absolute; left: 4px; top: 50%; writing-mode: vertical-rl; transform: rotate(180deg); font: 600 10px var(--font-mono); opacity: 0.4; }
+.mpi-xsheet { display: grid; grid-template-columns: 44px 54px 1fr; margin: 10px 16px 0; border: 1.5px solid var(--ink); font-size: 15px; font-weight: 600; background: var(--paper); }
+.mpi-xsheet > div { padding: 5px 8px; border-right: 1px solid var(--ink); min-width: 0; }
+.mpi-xsheet > div:last-child { border-right: 0; }
+.mpi-xsheet small { display: block; font: 600 9px var(--font-mono); opacity: 0.55; letter-spacing: 0.08em; }
+.mpi-x-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mpi-controls { display: flex; gap: 8px; align-items: center; padding: 10px 16px 0; font: 600 12px var(--font-mono); }
+.mpi-controls button { min-height: 44px; padding: 0 12px !important; border: 1.5px solid var(--ink) !important; font: 600 13px var(--font-body) !important; touch-action: none; user-select: none; }
+.mpi-controls button[data-on="true"] { background: var(--ink); color: var(--paper) !important; }
+.mpi-controls .mpi-flip { flex: 1; }
+.mpi-chart { position: relative; height: 40px; margin: 10px 22px 74px; border-top: 1.5px solid var(--ink); touch-action: none; }
+.mpi-tick { position: absolute; top: 0; width: 1px; height: 8px; background: var(--ink); }
+.mpi-tick--key { height: 16px; width: 1.5px; }
+.mpi-tick b { position: absolute; top: 17px; left: -6px; font: 600 9px var(--font-mono); }
+.mpi-tick--on::after { content: ""; position: absolute; top: -7px; left: -6px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper); }
+
+/* ═══ J — Collage stacks (desktop language: white, ink, brackets, Coolvetica) ═══ */
+/* Two full screens in one vertical scroll: hero, then the stacks. */
+.mpj { position: fixed; inset: 0; overflow-y: auto; overflow-x: hidden; scroll-snap-type: y mandatory; scroll-padding-top: 52px; /* snap below the sticky nav */ scrollbar-width: none; background: var(--paper); color: var(--ink); font-family: var(--font-body); }
+.mpj::-webkit-scrollbar { display: none; }
+.mpj-link { font-size: 13px !important; font-weight: 700 !important; letter-spacing: 0.04em; white-space: nowrap; color: var(--ink) !important; text-decoration: none; }
+.mpj-nav { position: sticky; top: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: 4px 16px; height: 52px; box-sizing: border-box; background: var(--paper); }
+
+/* ─── Screen 1: desktop hero, scaled to a phone. Desktop: 720×480 portrait
+   centred, 340px Coolvetica marks overlapping its top-left / bottom-right. */
+.mpj-hero { position: relative; height: calc(100% - 52px); overflow: hidden; scroll-snap-align: start; }
+.mpj-hero-bg { position: absolute; left: 0; right: 0; top: 50%; height: 62%; transform: translateY(-52%); background: var(--home-bg, none) center / cover no-repeat; z-index: 1; pointer-events: none; }
+.mpj-hero-mark { position: absolute; z-index: 2; font-family: var(--font-display-mid); font-size: min(27vw, 128px); line-height: 0.84; text-transform: uppercase; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; user-select: none; cursor: pointer; }
+.mpj-hero-mark--tl { top: 10%; left: 10px; }
+.mpj-hero-mark--br { bottom: 13%; right: 10px; }
+.mpj-hero-br, .mpj-hero-tx { display: inline-block; vertical-align: top; }
+/* Same bracket-led reveal as desktop: brackets slide out from the centre,
+   the word is unclipped behind them. */
+.mpj-hero-br--l { animation: mpj-br-l 550ms cubic-bezier(0.2, 0.75, 0.15, 1) 60ms both; }
+.mpj-hero-tx--l { animation: mpj-rv-l 550ms cubic-bezier(0.2, 0.75, 0.15, 1) 60ms both; }
+.mpj-hero-br--r { animation: mpj-br-r 550ms cubic-bezier(0.2, 0.75, 0.15, 1) 60ms both; }
+.mpj-hero-tx--r { animation: mpj-rv-r 550ms cubic-bezier(0.2, 0.75, 0.15, 1) 60ms both; }
+@keyframes mpj-br-l { from { transform: translateX(40vw); } to { transform: none; } }
+@keyframes mpj-br-r { from { transform: translateX(-40vw); } to { transform: none; } }
+@keyframes mpj-rv-l { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } }
+@keyframes mpj-rv-r { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+.mpj-hero-cue { position: absolute; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 3; transform: translateX(-50%); min-height: 44px; padding: 0 12px !important; font-size: 13px !important; font-weight: 700 !important; letter-spacing: 0.04em; animation: mpj-cue 1.6s ease-in-out 1s infinite; }
+@keyframes mpj-cue { 50% { transform: translate(-50%, 5px); } }
+
+/* ─── Screen 2: the stacks fill exactly one screen under the sticky nav. */
+.mpj-projects { height: calc(100% - 52px); display: flex; flex-direction: column; scroll-snap-align: start; }
+.mpj-nav button { min-height: 44px; }
+
+/* Title row: small count on the left, bracketed display title on the right —
+   the desktop projects page's [ PROJECTS ] box. */
+.mpj-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding: 0 16px 12px; }
+.mpj-head span { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding-bottom: 6px; white-space: nowrap; }
+.mpj-head b { font-family: var(--font-display-mid); font-weight: 400; font-size: 52px; line-height: 0.9; text-transform: uppercase; text-align: right; overflow-wrap: anywhere; }
+
+/* isolation: prints raise their z-index while dragged; keep that inside the desk so they never cover the detail page or menu. */
+.mpj-desk { position: relative; z-index: 0; isolation: isolate; flex: 1; min-height: 0; margin: 0 16px; overflow: hidden; }
+.mpj-desk--open { overflow-y: auto; scrollbar-width: none; }
+.mpj-sheet { position: relative; }
+
+/* A print: plain full-colour crop — no border, no shadow. */
+.mpj-print { position: absolute; left: 0; top: 0; padding: 0 !important; overflow: hidden; background: rgba(10,10,10,0.06) !important; transform-origin: 50% 50%; will-change: transform; transition: transform 560ms cubic-bezier(.2,.85,.25,1), opacity 300ms ease, width 560ms cubic-bezier(.2,.85,.25,1), height 560ms cubic-bezier(.2,.85,.25,1); }
+.mpj-print img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+.mpj-label { position: absolute; display: flex; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; pointer-events: none; }
+.mpj-label--stack { justify-content: space-between; padding: 0 2px; }
+.mpj-label--chip { z-index: 50; padding: 3px 5px; background: var(--paper); font-size: 10px; letter-spacing: 0.04em; opacity: 0; animation: mpj-label-in 300ms ease-out forwards; }
+.mpj-print--drag { touch-action: none; cursor: grab; }
+.mpj-print--drag:active { cursor: grabbing; }
+/* messy / organized switch: desktop nav style, active = underlined. */
+.mpj-mode { display: flex; align-items: center; gap: 12px; padding: 0 16px 6px; }
+.mpj-mode small { margin-left: auto; font-size: 10px; font-weight: 600; opacity: 0.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mpj-mode button { min-height: 32px; padding: 0 !important; font-size: 12px !important; font-weight: 700 !important; letter-spacing: 0.04em; opacity: 0.45; }
+.mpj-mode button[data-on="true"] { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.mpj-label--stack > span:first-child { flex: none; white-space: nowrap; }
+.mpj-label-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; }
+.mpj-label--grid { display: block; font-size: 10px; letter-spacing: 0.02em; text-transform: none; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; animation: mpj-label-in 300ms ease-out forwards; }
+.mpj-label--grid span { font-weight: 700; }
+@keyframes mpj-label-in { to { opacity: 1; } }
+
+.mpj-bar { position: relative; z-index: 40; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 4px; padding: 4px 12px calc(4px + env(safe-area-inset-bottom)); background: var(--paper); border-top: 1px solid var(--ink); }
+.mpj-arrow { min-height: 44px; font-size: 20px !important; }
+.mpj-cat { min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.mpj-cat span { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }
+.mpj-cat { min-width: 0; }
+.mpj-cat b { max-width: 100%; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mpj-cat--hint { grid-column: 1 / -1; }
+.mpj-cat--hint b { font-weight: 600; letter-spacing: 0.02em; text-transform: none; opacity: 0.55; }
+
+.mpj-menu { position: fixed; top: 48px; left: 0; right: 0; bottom: 0; z-index: 39; background: var(--paper); display: flex; flex-direction: column; align-items: flex-start; padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); }
+.mpj-menu-link { min-height: 56px; font-family: var(--font-display-mid); font-size: 52px; line-height: 1; text-transform: uppercase; }
+.mpj-menu-lang { margin-top: 18px; }
+
+/* Picked = the desktop detail page, stacked for a phone. */
+.mpj-detail { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; overflow: hidden; background: var(--paper); padding: 8px 16px calc(62px + env(safe-area-inset-bottom)); animation: mpj-in 260ms ease-out; }
+/* The detail's prev/next is the project switcher bar, pinned to the bottom. */
+.mpj-bar--detail { position: fixed; left: 0; right: 0; bottom: 0; z-index: 51; }
+.mpj-cat--toggle { cursor: pointer; }
+.mpj-cat--toggle span { opacity: 0.6; }
+
+/* Details drawer: slides up from behind the bar. The outer box clips it so
+   it's invisible when closed; only the open panel takes touches. */
+.mpj-drawer { position: absolute; left: 0; right: 0; bottom: 100%; height: 64dvh; overflow: hidden; pointer-events: none; }
+.mpj-drawer-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 100%; overflow-y: auto; background: var(--paper); border-top: 1px solid var(--ink); padding: 0 16px 18px; transform: translateY(101%); transition: transform 320ms cubic-bezier(.2,.8,.2,1); visibility: hidden; transition-property: transform, visibility; }
+.mpj-drawer--open .mpj-drawer-panel { transform: none; visibility: visible; pointer-events: auto; }
+.mpj-drawer-grab { display: flex !important; width: 100%; min-height: 28px; align-items: center; justify-content: center; }
+.mpj-drawer-grab i { display: block; width: 36px; height: 3px; background: var(--ink); }
+.mpj-drawer .mpj-detail-title { font-size: 48px; }
+@media (prefers-reduced-motion: reduce) { .mpj-drawer-panel { transition: none; } }
+.mpj-close { display: block; margin-left: auto; min-height: 44px; }
+.mpj-detail-img { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 4px 0 8px; }
+/* The image takes its own shape (no letterbox box), centred — portrait
+   works used to sit left inside a full-width box, leaving space on the right. */
+.mpj-detail-img img { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; margin: 0 auto; animation: mpj-lift 420ms cubic-bezier(.2,.9,.25,1.1) both; }
+/* Work page track: swipe sideways, one work per snap page. It bleeds to the
+   screen edges so the next work slides in from off-screen. */
+.mpj-track { flex: 1; min-height: 0; display: flex; margin: 4px -16px 8px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.mpj-track::-webkit-scrollbar { display: none; }
+.mpj-slide { flex: 0 0 100%; margin: 0; padding: 0 16px; box-sizing: border-box; scroll-snap-align: center; scroll-snap-stop: always; }
+.mpj-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+.mpj-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.mpj-cover { position: relative; width: min(100%, 58dvh); aspect-ratio: 1; background: var(--ink); color: var(--paper); }
+.mpj-cover span { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.mpj-detail-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
+.mpj-detail-title { font-family: var(--font-display-mid); font-weight: 400; font-size: 64px; line-height: 0.88; text-transform: uppercase; margin: 8px 0 10px; overflow-wrap: anywhere; }
+.mpj-detail-desc { margin: 0 0 18px; font-size: 15px; font-style: italic; color: var(--fg-2); }
+.mpj-detail-table { display: grid; grid-template-columns: 96px 1fr; margin: 0; border-top: 1px solid var(--grey-line); }
+.mpj-detail-table dt, .mpj-detail-table dd { margin: 0; padding: 10px 0; border-bottom: 1px solid var(--grey-line); font-size: 13px; }
+.mpj-detail-table dt { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--fg-2); align-self: center; }
+.mpj-watch { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; }
+.mpj-detail-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; font-size: 13px; }
+.mpj-detail-nav button { min-height: 44px; font-size: 13px !important; font-weight: 600 !important; }
+.mpj-detail-nav span { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
+@keyframes mpj-in { from { opacity: 0; } }
+@keyframes mpj-lift { from { transform: scale(0.85); opacity: 0.3; } to { transform: none; opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mpj-hero-br, .mpj-hero-tx, .mpj-hero-cue { animation: none; }
+  .mpj-print { transition: opacity 200ms ease; }
+  .mpj-detail-img img { animation: none; }
+}
+
+/* Books: black tile with the label in outline type, like the desktop tile. */
+.mpj-print .mpj-blank { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--ink); color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.45); font-family: var(--font-display-mid); font-size: 34px; text-transform: uppercase; }
+
+/* Animation rows: title with ◎ on the left, date on the right. */
+.mpj-label--anim { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0; animation: mpj-label-in 300ms ease-out forwards; }
+
+/* About / Contact: the desktop pages, stacked. */
+.mpj-page { position: fixed; inset: 0; z-index: 50; overflow-y: auto; background: var(--paper); color: var(--ink); padding: 8px 16px calc(32px + env(safe-area-inset-bottom)); animation: mpj-in 260ms ease-out; }
+.mpj-page .mpj-close, .mpj-detail .mpj-close { position: sticky; top: 0; z-index: 2; background: var(--paper); padding-left: 10px !important; } /* stays reachable on long pages */
+.mpj-page-title { font-family: var(--font-display-mid); font-weight: 400; font-size: 64px; line-height: 0.9; text-transform: uppercase; text-align: right; margin: 0 0 16px; }
+.mpj-portrait { width: 78%; aspect-ratio: 456 / 568; margin: 0 0 18px -16px; background: var(--about-portrait, none) center / cover no-repeat; }
+.mpj-portrait--contact { aspect-ratio: 280 / 340; width: 66%; background-image: var(--social-portrait, none); }
+.mpj-page-name { font-size: 20px; font-weight: 700; letter-spacing: 0.02em; margin: 0; }
+.mpj-page-role { font-size: 13px; color: var(--fg-2); margin: 4px 0 16px; }
+.mpj-page-prose p { font-size: 15px; line-height: 1.45; margin: 0 0 10px; }
+.mpj-cv { display: inline-flex; align-items: center; min-height: 44px; margin: 8px 0 28px; padding: 0 14px; border: 1px solid var(--ink); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); text-decoration: none; }
+.mpj-col-head { margin: 22px 0 0; padding-bottom: 8px; border-bottom: 1px solid var(--ink); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
+.mpj-exp { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--grey-line); }
+.mpj-exp i { font-style: normal; font-size: 14px; line-height: 1.2; }
+.mpj-exp div { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.mpj-exp b { font-size: 14px; }
+.mpj-exp small { color: var(--fg-3); font-size: 12px; font-style: italic; }
+.mpj-skill { padding: 10px 0; border-bottom: 1px solid var(--grey-line); font-size: 13px; }
+.mpj-contact-table { margin-top: 8px; grid-template-columns: 110px 1fr; }
+.mpj-contact-table dd a { color: var(--ink); text-decoration: none; }
+.mpj-multi { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* ─── Cart: [ add to cart ] in the details drawer, [ cart 02 ] in the nav,
+   a full-screen cart sheet, then the desktop checkout restacked. */
+.mpj-nav-right { display: flex; gap: 14px; align-items: center; }
+.mpj-buy { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin-top: 14px; }
+.mpj-buy-btn { min-height: 48px; padding: 0 16px !important; border: 1.5px solid var(--ink) !important; background: var(--ink) !important; color: var(--paper) !important; font-size: 12px !important; font-weight: 700 !important; letter-spacing: 0.06em; text-transform: uppercase; }
+.mpj-buy-btn[data-on="true"] { background: var(--paper) !important; color: var(--ink) !important; }
+.mpj-buy-view { min-height: 44px; }
+.mpj-cart { z-index: 60; }
+.mpj-cart-sub { display: flex; justify-content: space-between; align-items: center; min-height: 44px; padding-bottom: 6px; border-bottom: 1px solid var(--ink); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; }
+.mpj-cart-item { display: grid; grid-template-columns: 56px 1fr auto 44px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--grey-line); }
+.mpj-cart-item img, .mpj-cart-item i { display: block; width: 56px; height: 56px; object-fit: cover; background: var(--ink); }
+.mpj-cart-item div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mpj-cart-item b { font-size: 14px; overflow-wrap: anywhere; }
+.mpj-cart-item small { font-size: 12px; font-style: italic; color: var(--fg-2); }
+.mpj-cart-price { font-size: 13px; font-weight: 700; }
+.mpj-cart-rm { min-height: 44px; font-size: 20px !important; color: var(--ink) !important; }
+.mpj-cart-total { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 0; border-bottom: 1.5px solid var(--ink); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
+.mpj-cart-total b { font-size: 16px; letter-spacing: 0; text-transform: none; }
+.mpj-cart-go { display: block; width: 100%; min-height: 52px; margin-top: 20px; border: 1.5px solid var(--ink) !important; background: var(--ink) !important; color: var(--paper) !important; font-size: 13px !important; font-weight: 700 !important; letter-spacing: 0.06em; text-transform: uppercase; }
+/* Desktop checkout is laid out for the 1440px canvas: restack it. */
+.mpj-checkout .checkout { position: fixed; z-index: 70; padding: 56px 16px calc(32px + env(safe-area-inset-bottom)); animation: mpj-in 260ms ease-out; }
+.mpj-checkout .checkout-close { top: 4px; right: 16px; min-height: 44px; font-weight: 700; }
+.mpj-checkout .checkout-headline { font-size: 52px; }
+.mpj-checkout .checkout-steps { gap: 6px 14px; flex-wrap: wrap; font-size: 11px; margin-bottom: 24px; padding-bottom: 12px; }
+.mpj-checkout .checkout-body { grid-template-columns: 1fr; gap: 28px; }
+.mpj-checkout .checkout-grid { grid-template-columns: 1fr; gap: 14px; }
+.mpj-checkout .checkout-input, .mpj-checkout .checkout-textarea { font-size: 16px; } /* no iOS zoom on focus */
+/* .mp-root button resets borders/padding — give checkout buttons theirs back. */
+.mpj-checkout .checkout-radio { min-height: 44px; padding: 10px 16px; border: 1.5px solid var(--ink); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; }
+.mpj-checkout .checkout-radio[data-active="true"] { background: var(--ink); color: var(--paper); }
+.mpj-checkout .checkout-cta { width: 100%; min-height: 52px; padding: 14px 22px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.mpj-checkout .checkout-cta:disabled { opacity: 0.35; }
+.mpj-checkout .checkout-back-btn { min-height: 44px; margin-right: 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.mpj-checkout .checkout-actions .checkout-cta { width: auto; flex: 1; }
+.mpj-checkout .checkout-summary { position: static; padding: 16px; }
+
+/* ═══ K — Darkroom ═══ */
+.mpk { position: fixed; inset: 0; display: flex; flex-direction: column; background: #000; color: #fff; }
+.mpk-top { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px; min-height: 48px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; }
+.mpk-top button { min-height: 44px; font-weight: 700 !important; }
+.mpk-tray { flex: 1; min-height: 0; margin: 0 12px; padding: 12px; border-radius: 6px; background: #111; box-shadow: inset 0 0 0 1.5px #262626, inset 0 6px 18px rgba(0,0,0,0.8); }
+.mpk-tray--rock { animation: mpk-rock 0.7s ease-in-out 2; }
+@keyframes mpk-rock { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-1.6deg) translateY(2px); } 75% { transform: rotate(1.6deg) translateY(-2px); } }
+.mpk-paper { position: relative; width: 100%; height: 100%; background: #000; touch-action: none; overflow: hidden; }
+.mpk-paper canvas { display: block; }
+.mpk-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 600 13px var(--font-mono); letter-spacing: 0.06em; color: rgba(255,255,255,0.55); pointer-events: none; animation: mpk-pulse 1.8s ease-in-out infinite; }
+@keyframes mpk-pulse { 50% { opacity: 0.25; } }
+.mpk-cap { padding: 12px 18px 0; min-height: 64px; }
+.mpk-cap small { display: block; font: 600 11px var(--font-mono); opacity: 0.5; letter-spacing: 0.06em; }
+.mpk-cap b { display: block; font-family: var(--font-display-mid); font-weight: 400; font-size: 34px; line-height: 1; margin-top: 4px; transition: opacity 600ms; opacity: 0.35; }
+.mpk-cap[data-on="true"] b { opacity: 1; }
+.mpk-cap a { font-size: 14px; font-weight: 700; color: #fff; }
+.mpk-controls { display: grid; grid-template-columns: 56px 1fr 56px; gap: 8px; padding: 8px 12px 72px; }
+.mpk-controls button { min-height: 48px; color: #fff !important; border: 1px solid rgba(255,255,255,0.3) !important; font-size: 15px !important; font-weight: 600 !important; }
+.mpk-controls button[aria-label] { font-size: 26px !important; }
+
+/* ═══ L — Riso zine ═══ */
+.mpl { position: fixed; inset: 0; display: flex; flex-direction: column; background: #d9d7d2; --ink2: #0A0A0A; }
+.mpl-top { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px; min-height: 48px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; }
+.mpl-top button { min-height: 44px; font: 600 12px var(--font-mono) !important; }
+.mpl-book { position: relative; flex: 1; min-height: 0; margin: 0 14px 0 18px; perspective: 1600px; touch-action: none; user-select: none; }
+.mpl-leaf { position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d; }
+.mpl-leaf--settle { transition: transform 420ms cubic-bezier(.3,.7,.3,1); }
+.mpl-face { position: absolute; inset: 0; backface-visibility: hidden; }
+.mpl-face--back { transform: rotateY(180deg); background: #faf9f5; overflow: hidden; }
+.mpl-showthrough { position: absolute; inset: 0; transform: scaleX(-1); opacity: 0.09; pointer-events: none; }
+.mpl-shadow { position: absolute; inset: 0; background: linear-gradient(90deg, #000, transparent 70%); pointer-events: none; }
+.mpl-foot { display: flex; justify-content: space-between; padding: 10px 18px 72px; font: 600 12px var(--font-mono); opacity: 0.7; }
+
+.zine-page { position: absolute; inset: 0; overflow: hidden; background-color: #faf9f5; color: var(--ink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-shadow: inset 10px 0 14px -10px rgba(0,0,0,0.35), 2px 3px 10px rgba(0,0,0,0.18); }
+.crop { position: absolute; width: 14px; height: 14px; border-color: var(--ink); border-style: solid; border-width: 0; opacity: 0.6; }
+.crop--tl { top: 8px; left: 8px; border-top-width: 1px; border-left-width: 1px; }
+.crop--tr { top: 8px; right: 8px; border-top-width: 1px; border-right-width: 1px; }
+.crop--bl { bottom: 8px; left: 8px; border-bottom-width: 1px; border-left-width: 1px; }
+.crop--br { bottom: 8px; right: 8px; border-bottom-width: 1px; border-right-width: 1px; }
+.staple { position: absolute; left: 6px; width: 3px; height: 26px; background: linear-gradient(90deg, #8d8d8d, #e6e6e6, #8d8d8d); border-radius: 1px; }
+.staple--a { top: 22%; } .staple--b { bottom: 22%; }
+
+/* Two-pass print: pass 2 (spot ink) is the image multiplied over the ink
+   colour and nudged off-register; pass 1 is a hard black on top. */
+.riso { position: relative; overflow: hidden; }
+.riso img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.riso-ink2 { position: absolute; inset: 0; background: var(--ink2); }
+.riso-ink2 img { mix-blend-mode: screen; filter: grayscale(1) contrast(1.3) brightness(1.15); opacity: 0.95; }
+.riso-ink1 { position: relative; filter: grayscale(1) contrast(2.2) brightness(1.15); mix-blend-mode: multiply; }
+
+.zine-cover { padding: 26px 22px; display: flex; flex-direction: column; }
+.zine-cover small { font: 600 11px var(--font-mono); letter-spacing: 0.1em; }
+.zine-cover h1 { font-family: var(--font-display); font-weight: 400; font-size: 112px; line-height: 0.84; margin: 12px 0 0; position: relative; z-index: 2; mix-blend-mode: multiply; }
+.zine-cover .riso { flex: 1; min-height: 0; margin: -36px -22px 0 30%; transform: rotate(3deg); }
+.zine-cover p { font-size: 14px; line-height: 1.4; margin: 14px 0 0; }
+
+.zine-work .riso { position: absolute; }
+.zine-work--0 .riso { inset: 0 0 32% 0; }
+.zine-work--0 .zine-text { position: absolute; left: 22px; right: 22px; bottom: 30px; }
+.zine-work--1 .riso { top: 34px; left: 30%; right: 22px; height: 54%; transform: rotate(-2deg); }
+.zine-work--1 .zine-text { position: absolute; left: 22px; right: 22px; bottom: 30px; }
+.zine-work--1 .zine-text h2 { font-size: 64px; }
+.zine-work--2 .riso { top: 22%; left: 22px; right: 22px; bottom: 22%; }
+.zine-work--2 .zine-text { position: absolute; top: 28px; left: 22px; right: 22px; }
+.zine-text small { font: 600 11px var(--font-mono); letter-spacing: 0.1em; }
+.zine-text h2 { font-family: var(--font-display); font-weight: 400; font-size: 52px; line-height: 0.88; margin: 6px 0 6px; overflow-wrap: anywhere; }
+.zine-text p { font-size: 14px; margin: 0; opacity: 0.75; }
+.zine-text a { display: inline-flex; min-height: 32px; align-items: center; font-size: 14px; font-weight: 700; }
+.zine-folio { position: absolute; right: 22px; bottom: 12px; font: 600 11px var(--font-mono); }
+.zine-back { padding: 30px 22px; overflow-y: auto; }
+.zine-back h2 { font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: 0.9; margin: 0 0 18px; }
+.zine-colophon { margin-top: 26px; font-size: 13px; }

@@ -4183,6 +4183,14 @@ window.__CV = {
 <!-- App.jsx -->
 <script type="text/babel" src="App.jsx"></script>
 
+<!-- PROTOTYPE ONLY — mobile design variants (?variant=A|B|C|D). Do not merge to main. -->
+<link rel="stylesheet" href="mobile-prototype.css">
+<link rel="stylesheet" href="mobile-prototype-efg.css">
+<link rel="stylesheet" href="mobile-prototype-h.css">
+<link rel="stylesheet" href="mobile-prototype-art.css">
+<script type="text/babel" src="MobilePrototypeArt.jsx"></script>
+<script type="text/babel" src="MobilePrototype.jsx"></script>
+
 <!-- Pre-mount content fetch — exposes window.CONTENT and window.__contentReady -->
 <script>
   window.__contentReady = (async function () {
@@ -4265,9 +4273,19 @@ window.__CV = {
       </div>
     );
   }
+  // PROTOTYPE ONLY: on localhost phones (or any ?variant= URL) render the
+  // mobile design variants instead of the scaled desktop canvas.
+  function useMobilePrototype() {
+    if (new URLSearchParams(window.location.search).has("variant")) return true;
+    // localhost, or this PC on the home Wi-Fi (192.168.x / 10.x) so a phone
+    // can open it directly. Never true on the public gtxhi.art host.
+    const h = window.location.hostname;
+    const local = h === "localhost" || h === "127.0.0.1" || /^(192\.168|10)\./.test(h);
+    return local && window.innerWidth <= 768;
+  }
   window.__contentReady.then(() => {
     ReactDOM.createRoot(document.getElementById("root")).render(
-      <ErrorBoundary><Scaled /></ErrorBoundary>
+      <ErrorBoundary>{useMobilePrototype() ? <MobilePrototype /> : <Scaled />}</ErrorBoundary>
     );
   });
 </script>
