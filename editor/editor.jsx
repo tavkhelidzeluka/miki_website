@@ -225,13 +225,13 @@ window.__editor = window.__editor || {};
   //   type 'image' = file picker; result item field is the resolved path,
   //                  with file + imagePath passed alongside.
   //   type 'i18n'  = pair of en/ua inputs → { en, ua } object
-  function AddListItemModal({ title, fields, assetFolder, onSave, onCancel }) {
+  function AddListItemModal({ title, fields, assetFolder, defaults, onSave, onCancel }) {
     const [values, setValues] = React.useState(() => {
       const v = {};
       for (const f of fields) {
         if (f.type === 'i18n') v[f.key] = { en: '', ua: '' };
         else if (f.type === 'image') v[f.key] = { file: null, filename: '' };
-        else v[f.key] = '';
+        else v[f.key] = (defaults && defaults[f.key]) || '';
       }
       return v;
     });
@@ -1130,6 +1130,21 @@ window.__editor = window.__editor || {};
       return () => window.removeEventListener('beforeunload', handle);
     }, [pending]);
 
+    // Log out: forget the saved Decap login so the editor stops loading, then
+    // reload the page as a visitor. Always ask first; unsaved changes are lost too.
+    const logout = () => {
+      const question = pending.size > 0
+        ? `You have ${pending.size} unsaved change(s). Log out and discard them?`
+        : 'Log out of the editor?';
+      if (!confirm(question)) return;
+      try {
+        for (const k of Object.keys(localStorage)) {
+          if (/^(decap-cms|netlify-cms)[.-]user$/.test(k)) localStorage.removeItem(k);
+        }
+      } catch (_) { /* storage blocked: the reload still drops the editor for this session */ }
+      window.location.reload();
+    };
+
     return (
       <React.Fragment>
         <div
@@ -1141,6 +1156,9 @@ window.__editor = window.__editor || {};
         >
           <button onClick={() => setEditMode((m) => !m)}>
             {editMode ? 'edit: on' : 'edit'}
+          </button>
+          <button data-variant="cancel" onClick={logout}>
+            log out
           </button>
           {editMode && (
             <React.Fragment>
@@ -1225,6 +1243,7 @@ window.__editor = window.__editor || {};
             title={addModal.title}
             fields={SCHEMAS[addModal.schemaName] || []}
             assetFolder={addModal.assetFolder}
+            defaults={addModal.defaults}
             onSave={(item, file, imagePath) => {
               const merged = { ...(addModal.defaults || {}), ...item };
               applyAddChange(addModal.listPath, merged, file, imagePath);

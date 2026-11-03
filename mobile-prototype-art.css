@@ -139,6 +139,29 @@
 .mpj-drawer .mpj-detail-title { font-size: 48px; }
 @media (prefers-reduced-motion: reduce) { .mpj-drawer-panel { transition: none; } }
 .mpj-close { display: block; margin-left: auto; min-height: 44px; }
+/* Story tray at the top of the Social media screen (Instagram-style, square). */
+.mpj-tray { flex: 0 0 auto; display: flex; gap: 14px; overflow-x: auto; padding: 6px 16px 10px; scrollbar-width: none; }
+.mpj-tray::-webkit-scrollbar { display: none; }
+.mpj-tray-item { flex: 0 0 auto; width: 68px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; background: none; border: 0; color: inherit; font: inherit; cursor: pointer; }
+/* Ring: dark while any story of the brand is unseen, grey once all are seen. */
+.mpj-tray-ring { display: block; padding: 2px; background: var(--ink); }
+.mpj-tray-item.is-seen .mpj-tray-ring { background: rgba(128, 128, 128, 0.6); }
+.mpj-tray-img { display: block; box-sizing: border-box; width: 62px; height: 62px; border: 2px solid var(--paper); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: var(--paper); }
+.mpj-tray-brand { max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+/* Instagram-style story progress: one segment per story, filled up to the current one. */
+/* Laid over the top of the story photo, like Instagram. The close button moves
+   to the same top row, on top of the photo as well. */
+.mpj-progress { position: absolute; top: 10px; left: 16px; right: 16px; z-index: 3; display: flex; gap: 4px; pointer-events: none; }
+/* Instagram's soft top shade, so the bar stays visible on white photos. */
+.mpj-progress::before { content: ""; position: absolute; top: -10px; left: -16px; right: -16px; height: 84px; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0)); z-index: -1; pointer-events: none; }
+.mpj-detail .mpj-progress ~ .mpj-close { position: absolute; top: 16px; right: 16px; z-index: 3; background: none; }
+.mpj-seg { position: relative; flex: 1; height: 3px; border-radius: 2px; background: var(--grey-line); overflow: hidden; }
+.mpj-seg.is-done { background: var(--ink); }
+/* Details drawer open: the story stops filling. */
+.mpj-detail--paused .mpj-seg.is-active::after { animation-play-state: paused; }
+/* The active story fills left to right over 5s (see the timer in MobilePrototypeArt.jsx). */
+.mpj-seg.is-active::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: left center; animation: mpj-seg-fill 5s linear forwards; }
+@keyframes mpj-seg-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .mpj-detail-img { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 4px 0 8px; }
 /* The image takes its own shape (no letterbox box), centred — portrait
    works used to sit left inside a full-width box, leaving space on the right. */
@@ -147,6 +170,8 @@
    screen edges so the next work slides in from off-screen. */
 .mpj-track { flex: 1; min-height: 0; display: flex; margin: 4px -16px 8px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
 .mpj-track::-webkit-scrollbar { display: none; }
+/* Stories: one story on screen. Taps step through them, swipes change brand. */
+.mpj-track--story { overflow: hidden; scroll-snap-type: none; }
 .mpj-slide { flex: 0 0 100%; margin: 0; padding: 0 16px; box-sizing: border-box; scroll-snap-align: center; scroll-snap-stop: always; }
 .mpj-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
 .mpj-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
@@ -308,3 +333,124 @@
 .zine-back { padding: 30px 22px; overflow-y: auto; }
 .zine-back h2 { font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: 0.9; margin: 0 0 18px; }
 .zine-colophon { margin-top: 26px; font-size: 13px; }
+
+/* ─── Social group feed: Instagram's post layout, scrolled top to bottom. ─── */
+.ig-feed { position: fixed; inset: 0; z-index: 50; overflow-y: auto; overscroll-behavior: contain; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; padding-bottom: env(safe-area-inset-bottom); animation: mpj-in 220ms ease-out; }
+.ig-top { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 6px; background: var(--paper); border-bottom: 1px solid var(--grey-line); }
+.ig-top-title { display: flex; flex-direction: column; align-items: center; line-height: 1.2; min-width: 0; }
+.ig-top-title small { font-size: 12px; font-weight: 600; color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.02em; }
+.ig-top-title b { font-size: 16px; font-weight: 700; text-transform: capitalize; }
+.ig-btn { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; background: none; border: 0; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ig-btn:active svg { transform: scale(0.85); }
+.ig-btn svg { transition: transform 120ms ease; }
+.ig-btn.is-liked { color: #ff3040; }
+.ig-btn.is-liked svg { animation: ig-like 300ms ease-out; }
+
+.ig-post { margin-bottom: 14px; }
+.ig-post-head { display: flex; align-items: center; gap: 10px; height: 54px; padding: 0 4px 0 12px; }
+.ig-avatar { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; background: var(--grey-line) center / cover no-repeat; box-shadow: 0 0 0 1px var(--grey-line); }
+.ig-who { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+.ig-who b { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ig-who small { font-size: 12px; }
+.ig-more { width: 40px; }
+
+.ig-media { position: relative; width: 100%; background: var(--grey-line); overflow: hidden; touch-action: pan-x pan-y; user-select: none; -webkit-user-select: none; }
+.ig-slides { position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.ig-slides::-webkit-scrollbar { display: none; }
+.ig-slides img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: center; scroll-snap-stop: always; }
+.ig-count { position: absolute; top: 12px; right: 12px; padding: 4px 8px; border-radius: 12px; background: rgba(18, 18, 18, 0.7); color: #fff; font-size: 12px; font-weight: 600; pointer-events: none; }
+.ig-burst { position: absolute; top: 50%; left: 50%; width: 96px; height: 96px; margin: -48px 0 0 -48px; color: #fff; filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.3)); pointer-events: none; animation: ig-burst 900ms ease-out forwards; }
+.ig-burst svg { width: 100%; height: 100%; }
+.ig-burst path { stroke: none; }
+
+.ig-actions { position: relative; display: flex; align-items: center; height: 46px; padding: 0 2px; }
+.ig-btn--save { margin-left: auto; }
+.ig-dots { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; gap: 4px; }
+.ig-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--grey-line); transition: background 150ms; }
+.ig-dots i.is-on { background: #0095f6; }
+.ig-likes { padding: 0 12px 4px; font-weight: 600; }
+.ig-caption { margin: 0; padding: 0 12px; line-height: 1.4; }
+.ig-caption b { font-weight: 600; }
+
+.ig-end { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 28px 16px 48px; border-top: 1px solid var(--grey-line); text-align: center; }
+.ig-end-check { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; border: 2px solid; border-color: #f9ce34 #ee2a7b #6228d7 #ee2a7b; font-size: 26px; }
+.ig-end b { font-size: 16px; }
+.ig-end-next { margin-top: 4px; padding: 8px 4px; background: none; border: 0; color: #0095f6; font: inherit; font-weight: 600; cursor: pointer; }
+
+@keyframes ig-burst { 0% { transform: scale(0); opacity: 0; } 15% { transform: scale(1.2); opacity: 1; } 30% { transform: scale(0.95); } 45%, 75% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.6) translateY(-30px); opacity: 0; } }
+@keyframes ig-like { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .ig-feed, .ig-btn.is-liked svg { animation: none; }
+  .ig-burst { animation-duration: 1ms; }
+}
+
+/* Share / save confirmation, over the bottom of the photo. */
+.ig-toast { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 8px 14px; border-radius: 8px; background: rgba(18, 18, 18, 0.88); color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; animation: mpj-in 160ms ease-out; }
+
+/* Saved: Instagram's 3-column grid (3:4 tiles, 2px gaps). */
+.ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.ig-tile { position: relative; aspect-ratio: 3 / 4; padding: 0; border: 0; background: var(--grey-line); overflow: hidden; cursor: pointer; }
+.ig-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* Carousel marker: two stacked squares in the corner. */
+.ig-tile-multi { position: absolute; top: 8px; right: 8px; width: 12px; height: 12px; border: 2px solid #fff; border-radius: 2px; box-shadow: -4px 4px 0 -2px rgba(255, 255, 255, 0.9), 0 0 4px rgba(0, 0, 0, 0.35); }
+.ig-empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 72px 32px; text-align: center; }
+.ig-empty-icon { display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--ink); }
+.ig-empty-icon svg { width: 32px; height: 32px; }
+.ig-empty b { font-size: 20px; font-weight: 700; }
+.ig-empty p { margin: 0; color: var(--fg-2); line-height: 1.4; }
+
+/* The ••• menu: Instagram's bottom sheet over a dimmed feed. */
+.ig-sheet-back { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; background: rgba(0, 0, 0, 0.45); animation: mpj-in 160ms ease-out; }
+.ig-sheet { width: 100%; padding: 6px 0 calc(10px + env(safe-area-inset-bottom)); border-radius: 14px 14px 0 0; background: var(--paper); color: var(--ink); animation: ig-sheet-up 240ms cubic-bezier(.2,.8,.2,1); }
+.ig-sheet-grab { display: block; width: 40px; height: 4px; margin: 4px auto 10px; border-radius: 2px; background: var(--grey-line); }
+.ig-sheet button { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 0 20px; border: 0; background: none; color: inherit; font: inherit; font-size: 15px; text-align: left; cursor: pointer; }
+.ig-sheet button:active { background: var(--grey-line); }
+.ig-sheet .ig-sheet-cancel { justify-content: center; margin-top: 6px; border-top: 1px solid var(--grey-line); font-weight: 600; }
+@keyframes ig-sheet-up { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .ig-sheet, .ig-sheet-back { animation: none; } }
+
+/* Story tray atop the post feed: square black frames like the site's own
+   tray (grey once all of a brand's stories are seen), lowercase names. */
+.mpj-tray--ig { gap: 12px; padding: 10px 12px 12px; border-bottom: 1px solid var(--grey-line); }
+.mpj-tray--ig .mpj-tray-item { width: 70px; gap: 5px; }
+.mpj-tray--ig .mpj-tray-ring { padding: 2.5px; background: var(--ink); }
+.mpj-tray--ig .mpj-tray-item.is-seen .mpj-tray-ring { padding: 1.5px; margin: 1px; background: var(--grey-line); }
+.mpj-tray--ig .mpj-tray-img { width: 62px; height: 62px; border-width: 3px; }
+.mpj-tray--ig .mpj-tray-brand { max-width: 70px; font-size: 12px; font-weight: 400; letter-spacing: 0; text-transform: lowercase; }
+/* A story opened from the feed plays over it. */
+.mpj-detail { z-index: 55; }
+.mpj-bar--detail { z-index: 56; }
+
+/* ─── Content loading: images fade in once loaded; until then their frame
+   shows a soft sweep. Images are marked .is-loaded by jImg in
+   MobilePrototypeArt.jsx. */
+.jimg { opacity: 0; transition: opacity 360ms ease; }
+.jimg.is-loaded { opacity: 1; }
+/* The work viewer has its own lift-in animation, so it only waits hidden. */
+.mpj-detail-img .jimg--lift:not(.is-loaded) { animation: none; }
+.mpj-print:has(> .jimg:not(.is-loaded))::after,
+.ig-media:has(.jimg:not(.is-loaded))::after,
+.ig-tile:has(.jimg:not(.is-loaded))::after,
+.mpj-slide:has(.jimg:not(.is-loaded))::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.55) 50%, transparent 80%) var(--grey-line);
+  background-size: 220% 100%;
+  animation: jimg-sweep 1.3s ease-in-out infinite;
+}
+/* In a carousel only the slide on screen matters: once the first photo is in,
+   the frame stops sweeping even if later slides are still on their way. */
+.ig-media:has(.jimg:first-child.is-loaded)::after { content: none; }
+.mpj-slide { position: relative; }
+.mpj-slide:has(.jimg:not(.is-loaded))::after { inset: 20% 16px; }
+@keyframes jimg-sweep { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .jimg { transition: none; }
+  .mpj-print:has(> .jimg:not(.is-loaded))::after,
+  .ig-media:has(.jimg:not(.is-loaded))::after,
+  .ig-tile:has(.jimg:not(.is-loaded))::after,
+  .mpj-slide:has(.jimg:not(.is-loaded))::after { animation: none; }
+}
+
+/* The account (avatar + name) in a post's header; a button when it opens a group. */
+.ig-user { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
+button.ig-user { cursor: pointer; -webkit-tap-highlight-color: transparent; }

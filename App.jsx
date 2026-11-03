@@ -33,6 +33,9 @@ function parseHash(rawHash, allProjects) {
   const parts = String(rawHash || "").replace(/^#/, "").replace(/^\//, "").split("/").filter(Boolean);
   const home = { route: "home", categoryId: null, detailProject: null };
   if (parts.length === 0) return home;
+  // #/post/<id> is a shared social post (opened as such on mobile); desktop
+  // shows the Social media page.
+  if (parts[0] === "post") return { route: "projects", categoryId: "07", detailProject: null };
   if (parts[0] !== "projects") return URL_TOP_ROUTES.has(parts[0]) ? { ...home, route: parts[0] } : home;
   if (parts.length === 1) return { route: "projects", categoryId: null, detailProject: null };
   const cat = allProjects.find((p) => p.id === parts[1]);

@@ -99,23 +99,71 @@ function SectionHead({ idx, label, count, current }) {
 
 // ─── Generic Gallery (centered focus strip + zoom modal) ───────────
 
-function GalleryZoom({ items, idx, onClose, onPrev, onNext, lang, aspect, kindLabel }) {
+// How long each story stays up before the viewer moves on (matches the fill
+// animation on the progress segment in index.html).
+const STORY_MS = 5000;
+
+function GalleryZoom({ items, idx, onClose, onPrev, onNext, onGroupPrev, onGroupNext, lang, aspect, kindLabel }) {
   const cur = items[idx];
+  // Arrows and arrow keys step through the stories of this group; they move to
+  // the neighbouring group only from the group's last story (next) or first (previous).
+  const goNext = () => {
+    if (idx < items.length - 1 || !onGroupNext) onNext();
+    else onGroupNext();
+  };
+  const goPrev = () => {
+    if (idx > 0 || !onGroupPrev) onPrev();
+    else onGroupPrev();
+  };
   React.useEffect(() => {
     const h = (e) => {
       if (window.uiKeysBlocked(e)) return;
       if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") onNext();
-      else if (e.key === "ArrowLeft") onPrev();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "ArrowLeft") goPrev();
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, [onClose, onNext, onPrev]);
 
+  // Stories autoplay like Instagram: each one advances after STORY_MS, and the
+  // last one closes the viewer. The ref keeps the timer on the latest callbacks
+  // without restarting it on every parent render.
+  const isStory = aspect === "9 / 16";
+  const advance = React.useRef(null);
+  // At the end of a group, autoplay moves on to the next group (or closes).
+  advance.current = () => {
+    if (idx < items.length - 1) onNext();
+    else if (onGroupNext) onGroupNext();
+    else onClose();
+  };
+  // Swipe sideways on the story: left goes to the next group, right to the previous.
+  const swipe = React.useRef(null);
+  const onFrameTouchStart = (e) => {
+    const t0 = e.touches[0];
+    swipe.current = { x: t0.clientX, y: t0.clientY };
+  };
+  const onFrameTouchEnd = (e) => {
+    const s = swipe.current;
+    swipe.current = null;
+    if (!s) return;
+    const t1 = e.changedTouches[0];
+    const dx = t1.clientX - s.x, dy = t1.clientY - s.y;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0 && onGroupNext) onGroupNext();
+      else if (dx > 0 && onGroupPrev) onGroupPrev();
+    }
+  };
+  React.useEffect(() => {
+    if (!isStory || !cur) return;
+    const t = setTimeout(() => advance.current(), STORY_MS);
+    return () => clearTimeout(t);
+  }, [idx, isStory]);
+
   if (!cur) return null;
 
-  return (
-    <div className="sm2-zoom" onClick={onClose}>
+  const zoom = (
+    <div className="sm2-zoom" data-story={isStory ? "true" : undefined} onClick={onClose}>
       <div className="sm2-zoom-inner" onClick={(e) => e.stopPropagation()}>
         <button className="sm2-zoom-close" onClick={onClose}>
           [ {lang === "UA" ? "закрити" : "close"} × ]
@@ -124,11 +172,34 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, lang, aspect, kindLa
           ( {String(idx + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")} )
         </div>
 
-        <button className="sm2-zoom-nav sm2-zoom-nav--prev" onClick={onPrev} aria-label="prev">←</button>
-        <div className="sm2-zoom-frame" key={"zf-" + idx} data-aspect={aspect || cur.aspect || "4 / 5"}>
+        <button className="sm2-zoom-nav sm2-zoom-nav--prev" onClick={goPrev} aria-label="prev">←</button>
+        <div
+          className="sm2-zoom-frame"
+          key={"zf-" + idx}
+          data-aspect={aspect || cur.aspect || "4 / 5"}
+          onTouchStart={onFrameTouchStart}
+          onTouchEnd={onFrameTouchEnd}
+          onClick={(e) => {
+            // Instagram-style: the left half goes back, the right half forward.
+            const r = e.currentTarget.getBoundingClientRect();
+            if (e.clientX - r.left < r.width / 2) goPrev();
+            else goNext();
+          }}
+        >
           <div className="sm2-zoom-img" style={{ ...smBg(cur.src), aspectRatio: aspect || cur.aspect || "4 / 5" }} />
+          {isStory && <div className="sm2-zoom-head">{cur.brand}</div>}
+          {aspect === "9 / 16" && (
+            <div className="sm2-zoom-progress">
+              {items.map((_, i) => (
+                <span
+                  key={i}
+                  className={"sm2-zoom-seg" + (i < idx ? " is-done" : i === idx ? " is-active" : "")}
+                />
+              ))}
+            </div>
+          )}
         </div>
-        <button className="sm2-zoom-nav sm2-zoom-nav--next" onClick={onNext} aria-label="next">→</button>
+        <button className="sm2-zoom-nav sm2-zoom-nav--next" onClick={goNext} aria-label="next">→</button>
 
         <div className="sm2-zoom-meta">
           <span className="sm2-zoom-bracket">[</span>
@@ -140,6 +211,10 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, lang, aspect, kindLa
       </div>
     </div>
   );
+  // Portal to <body>: the desktop canvas is CSS-scaled with a transform, and a
+  // transformed ancestor would confine this position:fixed overlay to that box,
+  // pushing the close button and the caption off screen.
+  return ReactDOM.createPortal(zoom, document.body);
 }
 
 function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel, variant, pathBase, assetFolder }) {
@@ -155,8 +230,9 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
   const offsets = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
 
   const goTo = (target) => { if (N > 0) setI(((target % N) + N) % N); };
-  const next = () => goTo(i + 1);
-  const prev = () => goTo(i - 1);
+  // Stories stop at the first and last one instead of wrapping around.
+  const next = () => { if (variant !== "stories" || i < N - 1) goTo(i + 1); };
+  const prev = () => { if (variant !== "stories" || i > 0) goTo(i - 1); };
 
   // Every item deleted — show the section header + placeholder instead of
   // indexing into an empty pool (items[NaN]). The parent section keeps its
@@ -272,22 +348,67 @@ const adsKindLabel = (cur, lang) =>
     ? (lang === "UA" ? "рекламний банер · 16:9" : "ad banner · 16:9")
     : (lang === "UA" ? "рекламний пост · 1:1" : "ad square · 1:1");
 
+// Desktop rows, grouped the way the mobile social screen groups them: posts by
+// brand, one row per carousel, ads by brand. Each group is its own row, and
+// tapping a tile opens the viewer on that row.
+function socialRowGroups(list, kind) {
+  const m = new Map();
+  window.visibleEntries(list).forEach(({ item }) => {
+    const b = item.brand || "—";
+    if (!m.has(b)) m.set(b, []);
+    m.get(b).push({ src: item.src, brand: item.brand, aspect: item.aspect });
+  });
+  return [...m.entries()].map(([brand, items]) => ({ key: `${kind}:${brand}`, kind, label: brand, items }));
+}
+function workRowGroups(s) {
+  const out = socialRowGroups(s.posts, "posts");
+  window.visibleEntries(s.carousels).forEach(({ item: c }) => {
+    const srcs = [c.cover, ...(c.slides || [])].filter(Boolean);
+    out.push({
+      key: `carousel:${c.id}`,
+      kind: "carousel",
+      label: c.title || c.titleEn || c.brand,
+      items: srcs.map((src, si) => ({
+        src,
+        brand: c.brand,
+        role: si === 0 ? "cover" : "slide",
+        set: c.id,
+        n: srcs.length - 1,
+      })),
+    });
+  });
+  return out;
+}
+// One carousel strip per group, so each group sits in its own row.
+function SocialRows({ groups, lang, aspect, kindLabel, variant }) {
+  return (
+    <React.Fragment>
+      {groups.map((g, gi) => (
+        <GalleryStrip
+          key={g.key}
+          items={g.items}
+          aspect={aspect}
+          kindLabel={kindLabel}
+          lang={lang}
+          sectionIdx={gi + 1}
+          sectionLabel={g.label}
+          variant={variant}
+        />
+      ))}
+    </React.Fragment>
+  );
+}
+
 function WorkSection({ lang }) {
   const { t } = useLang();
   const s = window.CONTENT.social;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const workItems = React.useMemo(() => buildWorkItems(s.posts, s.carousels), [s, window.isEditMode()]);
+  const groups = workRowGroups(s);
+  const count = groups.reduce((n, g) => n + g.items.length, 0);
   return (
     <React.Fragment>
-      <GalleryStrip
-        items={workItems}
-        aspect="4 / 5"
-        kindLabel={workKindLabel}
-        lang={lang}
-        sectionIdx={1}
-        sectionLabel={t(window.CONTENT.ui.socialPage.sectionPosts)}
-        variant="work"
-      />
+      <SectionHead idx={1} label={t(window.CONTENT.ui.socialPage.sectionPosts)} count={count} />
+      <SocialRows groups={groups} lang={lang} aspect="4 / 5" kindLabel={workKindLabel} variant="work" />
       <div style={{ textAlign: 'center', marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
         <button
           type="button"
@@ -313,7 +434,13 @@ function WorkSection({ lang }) {
   );
 }
 
+// Desktop Social page stories block: the Instagram-style tray.
 function StoriesSection({ lang }) {
+  return <StoryTrayStrip lang={lang} />;
+}
+
+// The 9:16 story carousel (arrows and tiles), opened in the story viewer.
+function CarouselStories({ lang }) {
   const { t } = useLang();
   const STORIES = window.visibleEntries(window.CONTENT.social.stories).map(({ item, srcIdx }) => ({
     ...item,
@@ -351,29 +478,165 @@ function StoriesSection({ lang }) {
   );
 }
 
-function AdsSection({ lang }) {
+// Which stories the visitor has already opened. Kept per browser, so a story
+// turns "seen" (grey ring) the way it does on Instagram.
+const STORIES_SEEN_KEY = "miki-stories-seen";
+function readSeenStories() {
+  try { return JSON.parse(localStorage.getItem(STORIES_SEEN_KEY) || "[]"); }
+  catch (_) { return []; }
+}
+function writeSeenStories(list) {
+  try { localStorage.setItem(STORIES_SEEN_KEY, JSON.stringify(list)); }
+  catch (_) { /* storage can be blocked; the ring just won't persist */ }
+}
+// The story each brand was last left on, so reopening it resumes there.
+const STORIES_POS_KEY = "miki-stories-pos";
+function readStoryPos() {
+  try { return JSON.parse(localStorage.getItem(STORIES_POS_KEY) || "{}"); }
+  catch (_) { return {}; }
+}
+function writeStoryPos(map) {
+  try { localStorage.setItem(STORIES_POS_KEY, JSON.stringify(map)); }
+  catch (_) { /* storage can be blocked; the position just won't persist */ }
+}
+
+// Instagram-style story tray: a row of square thumbnails with a ring (dark when
+// unseen, grey once opened) and the brand underneath. Tapping one opens the
+// viewer, which autoplays through the stories in order.
+function StoryTrayStrip({ lang }) {
   const { t } = useLang();
-  const ADS = window.visibleEntries(window.CONTENT.social.ads).map(({ item, srcIdx }) => ({
+  const STORIES = window.visibleEntries(window.CONTENT.social.stories).map(({ item, srcIdx }) => ({
     ...item,
-    _editPath: `social.ads.${srcIdx}.src`,
-    _listPath: 'social.ads',
+    _editPath: `social.stories.${srcIdx}.src`,
+    _listPath: 'social.stories',
     _listIdx: srcIdx,
-    _label: item.brand || `ad ${srcIdx + 1}`,
+    _label: item.brand || `story ${srcIdx + 1}`,
     _hideable: true,
   }));
+  // One tray item per brand, like Instagram's per-account rings: the ring only
+  // turns grey once every story of that brand has been opened.
+  const groups = [];
+  STORIES.forEach((s) => {
+    const key = s.brand || "—";
+    let g = groups.find((x) => x.brand === key);
+    if (!g) { g = { brand: key, items: [] }; groups.push(g); }
+    g.items.push(s);
+  });
+  const G = groups.length;
+  const trayRef = React.useRef(null);
+  const [openGroup, setOpenGroup] = React.useState(-1);
+  const [openIdx, setOpenIdx] = React.useState(0);
+  const [seen, setSeen] = React.useState(readSeenStories);
+  const [pos, setPos] = React.useState(readStoryPos);
+  const openStory = (g, i) => {
+    setOpenGroup(g);
+    setOpenIdx(i);
+    const item = groups[g].items[i];
+    if (item.src && !seen.includes(item.src)) {
+      const next = [...seen, item.src];
+      setSeen(next);
+      writeSeenStories(next);
+    }
+    // Remember where the visitor stopped in this brand.
+    const nextPos = { ...pos, ["stories:" + groups[g].brand]: i };
+    setPos(nextPos);
+    writeStoryPos(nextPos);
+  };
+  // Tapping a brand resumes at the story it was left on.
+  const startGroup = (g) => {
+    const saved = pos["stories:" + groups[g].brand] || 0;
+    openStory(g, Math.min(saved, groups[g].items.length - 1));
+  };
+  // Swipe (or the end of a brand's autoplay) moves to the neighbouring brand;
+  // past the last or first one, the viewer closes.
+  const moveGroup = (d) => {
+    const ng = openGroup + d;
+    if (ng < 0 || ng >= G) setOpenGroup(-1);
+    else startGroup(ng);
+  };
+  const cur = openGroup >= 0 ? groups[openGroup] : null;
+  const nextStory = () => { if (cur && openIdx < cur.items.length - 1) openStory(openGroup, openIdx + 1); };
+  const prevStory = () => { if (cur && openIdx > 0) openStory(openGroup, openIdx - 1); };
+
   return (
     <React.Fragment>
-      <GalleryStrip
-        items={ADS}
-        aspect={null}
-        kindLabel={adsKindLabel}
-        lang={lang}
-        sectionIdx={3}
-        sectionLabel={t(window.CONTENT.ui.socialPage.sectionAds)}
-        variant="ads"
-        pathBase="social.ads"
-        assetFolder="assets/images/social"
-      />
+      <section className="sm2-section sm2-section--gal sm2-section--stories">
+        <SectionHead idx={2} label={t(window.CONTENT.ui.socialPage.sectionStories)} count={G} current={Math.max(openGroup, 0)} />
+        {(
+          <div className="sm2-tray-wrap">
+          <button type="button" className="sm2-tray-arrow sm2-tray-arrow--prev" onClick={() => trayRef.current && trayRef.current.scrollBy({ left: -260, behavior: "smooth" })} aria-label="scroll stories back">‹</button>
+          <div className="sm2-tray" ref={trayRef}>
+            {/* Edit mode only (the editor shows .editor-add-tile): a new story at the start of the row, like Instagram's "+" tile. */}
+            <button
+              type="button"
+              className="editor-add-tile sm2-tray-add"
+              data-editor-action="add-generic"
+              data-editor-add-title="add new story"
+              data-editor-add-schema="socialTile"
+              data-editor-list-path="social.stories"
+              data-editor-asset-folder="assets/images/social"
+              data-editor-add-defaults='{"brand":"MIKI"}'
+            >
+              <span className="sm2-tray-ring sm2-tray-add-ring">
+                <span className="sm2-tray-img sm2-tray-add-plus">+</span>
+              </span>
+              <span className="sm2-tray-brand">add story</span>
+            </button>
+            {groups.map((g, gi) => {
+              const first = g.items[0];
+              const done = g.items.every((s) => seen.includes(s.src));
+              return (
+                <button
+                  key={g.brand}
+                  type="button"
+                  className={"sm2-tray-item" + (done ? " is-seen" : "")}
+                  onClick={() => startGroup(gi)}
+                  aria-label={g.brand}
+                  {...(first._editPath ? {
+                    'data-content-path': first._editPath,
+                    'data-editor-kind': 'image',
+                    'data-asset-folder': 'assets/images/social',
+                    'data-content-name': g.brand,
+                  } : {})}
+                >
+                  <span className="sm2-tray-ring">
+                    <span className="sm2-tray-img" style={smBg(first.src, first._editPath)} />
+                  </span>
+                  <span className="sm2-tray-brand">{g.brand}</span>
+                </button>
+              );
+            })}
+          </div>
+          <button type="button" className="sm2-tray-arrow sm2-tray-arrow--next" onClick={() => trayRef.current && trayRef.current.scrollBy({ left: 260, behavior: "smooth" })} aria-label="scroll stories forward">›</button>
+          </div>
+        )}
+      </section>
+      {cur && (
+        <GalleryZoom
+          items={cur.items}
+          idx={openIdx}
+          onClose={() => setOpenGroup(-1)}
+          onPrev={prevStory}
+          onNext={nextStory}
+          onGroupPrev={() => moveGroup(-1)}
+          onGroupNext={() => moveGroup(1)}
+          lang={lang}
+          aspect="9 / 16"
+          kindLabel={storyKindLabel}
+        />
+      )}
+    </React.Fragment>
+  );
+}
+
+function AdsSection({ lang }) {
+  const { t } = useLang();
+  const groups = socialRowGroups(window.CONTENT.social.ads, "ads");
+  const count = groups.reduce((n, g) => n + g.items.length, 0);
+  return (
+    <React.Fragment>
+      <SectionHead idx={3} label={t(window.CONTENT.ui.socialPage.sectionAds)} count={count} />
+      <SocialRows groups={groups} lang={lang} aspect={null} kindLabel={adsKindLabel} variant="ads" />
       <div style={{ textAlign: 'center', marginTop: 12 }}>
         <button
           type="button"
@@ -428,9 +691,9 @@ function SocialMediaStrip({ tweaks }) {
     <div className="page page--sm page--sm2">
       <div className="sm-scroll">
         <SocialHero lang={lang} />
+        <StoriesSection lang={lang} />
         <WorkSection lang={lang} />
         <Statement lang={lang} />
-        <StoriesSection lang={lang} />
         <AdsSection lang={lang} />
       </div>
     </div>

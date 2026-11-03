@@ -144,6 +144,17 @@ const J_BOOKS = "05";                   // BOOKS: no images yet — black tiles,
 const J_SHOP = "04";                    // CANVAS: originals for sale — the only works with [ add to cart ]
 const jPrice = (p) => (typeof p === "number" && p > 0 ? `€${p}` : null);
 
+// Content images fade in once loaded; until then their frame shimmers (.jimg
+// in mobile-prototype-art.css). An image already in the cache is marked
+// straight away, and a broken one is marked too so the shimmer stops.
+const jImgLoaded = (e) => e.currentTarget.classList.add("is-loaded");
+const jImg = {
+  className: "jimg",
+  onLoad: jImgLoaded,
+  onError: jImgLoaded,
+  ref: (el) => { if (el && el.complete) el.classList.add("is-loaded"); },
+};
+
 // youtube.com/watch?v=ID or youtu.be/ID → privacy-friendly embed URL.
 const ytEmbed = (u) => {
   const m = /(?:v=|youtu\.be\/)([\w-]{6,})/.exec(u || "");
@@ -164,12 +175,35 @@ function socialGroups(lang) {
   };
   byBrand(S.posts, "posts");
   vis(S.carousels).forEach((c) => out.push({
-    key: `carousel:${c.id}`, kind: kinds.carousel, label: (ua ? c.title : c.titleEn) || c.title,
+    key: `carousel:${c.id}`, kind: kinds.carousel, label: (ua ? c.title : c.titleEn) || c.title, brand: c.brand,
     imgs: [c.cover, ...(c.slides || [])].filter(Boolean),
   }));
   byBrand(S.stories, "stories");
   byBrand(S.ads, "ads");
   return out;
+}
+
+// Stories the visitor has opened, shared with the desktop Social page through
+// the same key. A brand's ring turns grey only once all of its stories are seen.
+const STORIES_SEEN_KEY = "miki-stories-seen";
+function readSeenStories() {
+  try { return JSON.parse(localStorage.getItem(STORIES_SEEN_KEY) || "[]"); }
+  catch (_) { return []; }
+}
+function writeSeenStories(list) {
+  try { localStorage.setItem(STORIES_SEEN_KEY, JSON.stringify(list)); }
+  catch (_) { /* storage can be blocked; the ring just won't persist */ }
+}
+
+// The story each brand was last left on, so reopening it resumes there.
+const STORIES_POS_KEY = "miki-stories-pos";
+function readStoryPos() {
+  try { return JSON.parse(localStorage.getItem(STORIES_POS_KEY) || "{}"); }
+  catch (_) { return {}; }
+}
+function writeStoryPos(map) {
+  try { localStorage.setItem(STORIES_POS_KEY, JSON.stringify(map)); }
+  catch (_) { /* storage can be blocked; the position just won't persist */ }
 }
 
 function VariantJ() {
@@ -195,8 +229,37 @@ function VariantJ() {
   const [open, setOpen] = React.useState(-1); // index into cats, -1 = category stacks
   const [sub, setSub] = React.useState(-1);   // index into groups when SOCIAL is open
   const [picked, setPicked] = React.useState(null); // index into all
+  // Story tray at the top of the Social media screen: one item per brand.
+  const storyGroups = React.useMemo(() => groups.filter((g) => g.key.startsWith("stories:")), [groups]);
+  const [seen, setSeen] = React.useState(readSeenStories);
+  const [storyPos, setStoryPos] = React.useState(readStoryPos);
   const [drawer, setDrawer] = React.useState(false); // details drawer on the work page
   const [menu, setMenu] = React.useState(false);
+  // Social feed: every post of every non-story group, the visitor's saved
+  // posts, and the post a shared link points at.
+  const feedGroups = React.useMemo(() => groups.filter((g) => !g.key.startsWith("stories:")), [groups]);
+  const allPosts = React.useMemo(() => feedGroups.flatMap(feedPosts), [feedGroups]);
+  const [saved, setSaved] = React.useState(readSaved);
+  const [savedView, setSavedView] = React.useState(null); // null | { focus: null } (grid) | { focus, ids } (feed)
+  const [feedFocus, setFeedFocus] = React.useState(null);
+  const toggleSave = (id) => setSaved((list) => {
+    const next = list.includes(id) ? list.filter((x) => x !== id) : [id, ...list];
+    writeSaved(next);
+    return next;
+  });
+  // "See all from …" in a post's ••• menu opens the brand's posts group (a
+  // carousel's brand usually has one), else the post's own group. Left out
+  // when that group is the one already open.
+  const seeAll = (openGroup) => (post) => {
+    const g = groups.find((x) => x.key === `posts:${post.brand}`) || groups.find((x) => x.key === post.group);
+    if (!g || g === openGroup) return null;
+    return () => {
+      setSavedView(null);
+      setOpen(cats.findIndex((c) => c.id === J_SOCIAL));
+      setSub(groups.indexOf(g));
+      setFeedFocus(null);
+    };
+  };
   const [info, setInfo] = React.useState(null); // "about" | "contact"
   // Cart: same item shape as the desktop shop ({ id, title, medium, img,
   // price }), so the desktop CheckoutPage takes it as is.
@@ -238,6 +301,25 @@ function VariantJ() {
     return () => ro.disconnect();
   }, []);
   React.useEffect(() => { if (desk.current) desk.current.scrollTop = 0; }, [open, sub]);
+  // A shared link (#/post/<id>) opens that post in its group's feed. The hash
+  // is cleared once used, so going back and reloading land on the site itself.
+  React.useEffect(() => {
+    const openLinked = () => {
+      const id = linkedPost();
+      const post = id && allPosts.find((p) => p.id === id);
+      if (!post) return;
+      history.replaceState(null, "", location.pathname + location.search);
+      setPicked(null);
+      setSavedView(null);
+      setOpen(cats.findIndex((c) => c.id === J_SOCIAL));
+      setSub(groups.findIndex((g) => g.key === post.group));
+      setFeedFocus(post.id);
+      if (projects.current) projects.current.scrollIntoView();
+    };
+    openLinked();
+    window.addEventListener("hashchange", openLinked);
+    return () => window.removeEventListener("hashchange", openLinked);
+  }, [allPosts]);
 
   const cat = open >= 0 ? cats[open] : null;
   const social = cat && cat.id === J_SOCIAL;
@@ -247,7 +329,7 @@ function VariantJ() {
   const view = !cat
     ? { mode: "stacks", keyOf: (it) => it.cat.id, stacks: cats.map((c) => ({ key: c.id, tag: c.id, label: c.label })) }
     : social && !group
-      ? { mode: "stacks", keyOf: (it) => (it.cat.id === J_SOCIAL ? it.group : null), stacks: groups.map((g) => ({ key: g.key, tag: g.kind, label: g.label, n: g.imgs.length })) }
+      ? { mode: "stacks", keyOf: (it) => (it.cat.id === J_SOCIAL ? it.group : null), stacks: groups.filter((g) => !g.key.startsWith("stories:")).map((g) => ({ key: g.key, tag: g.kind, label: g.label, n: g.imgs.length })) }
       : { mode: "grid", inSet: (it) => (group ? it.group === group.key : it.cat.id === cat.id) };
 
   // Rank of each print inside its category, its group, and the open set.
@@ -413,7 +495,14 @@ function VariantJ() {
   const pk = picked != null && all[picked];
   const pkList = pk ? all.filter((x) => (pk.group ? x.group === pk.group : x.cat.id === pk.cat.id)) : [];
   const pkPos = pk ? pkList.indexOf(pk) : -1;
-  const step = (d) => { const nx = pkList[(pkPos + d + pkList.length) % pkList.length]; setPicked(all.indexOf(nx)); };
+  const step = (d) => {
+    // Stories: step within the brand; from its first or last story, move to the
+    // neighbouring brand (as the desktop viewer does).
+    const isStory = !!(pk && pk.group && pk.group.startsWith("stories:"));
+    if (isStory && (pkPos + d < 0 || pkPos + d >= pkList.length)) { moveGroup(d); return; }
+    const nx = pkList[(pkPos + d + pkList.length) % pkList.length];
+    setPicked(all.indexOf(nx));
+  };
 
   const shopId = (i) => pad(ranks[i].cat + 1);
   const inCart = (i) => cart.some((c) => c.id === shopId(i));
@@ -434,7 +523,67 @@ function VariantJ() {
     el.scrollTo({ left: target, behavior: trackOpened.current && !artReduce() ? "smooth" : "auto" });
     trackOpened.current = true;
   }, [picked]);
+  // Stories autoplay like Instagram: each one advances after 5s (the fill on
+  // .mpj-seg in mobile-prototype-art.css), and the last one closes the viewer.
+  const pkIsStory = !!(pk && pk.group && pk.group.startsWith("stories:"));
+  // Swipe (or the end of a brand's autoplay) moves to the neighbouring brand,
+  // resuming at the story it was left on; past the first or last, it closes.
+  const moveGroup = (d) => {
+    const gi = storyGroups.findIndex((g) => g.key === pk.group);
+    const ng = storyGroups[gi + d];
+    if (!ng) { setPicked(null); setDrawer(false); return; }
+    const first = all.findIndex((x) => x.group === ng.key);
+    setPicked(first + Math.min(storyPos[ng.key] || 0, ng.imgs.length - 1));
+  };
+  const storySwipe = React.useRef(null);
+  const onDetailTouchStart = (e) => {
+    if (!pkIsStory) return;
+    const t0 = e.touches[0];
+    storySwipe.current = { x: t0.clientX, y: t0.clientY };
+  };
+  const onDetailTouchEnd = (e) => {
+    const s = storySwipe.current;
+    storySwipe.current = null;
+    if (!s || drawer) return;
+    const t1 = e.changedTouches[0];
+    const dx = t1.clientX - s.x, dy = t1.clientY - s.y;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) moveGroup(dx < 0 ? 1 : -1);
+  };
+  // Autoplay: 5s per story, paused while the details drawer is open. The timer
+  // keeps the time that is left, so resuming carries on where it stopped.
+  const storyTimer = React.useRef({ left: 5000, started: 0, id: 0 });
+  React.useEffect(() => { storyTimer.current.left = 5000; }, [picked]);
+  React.useEffect(() => {
+    if (!pkIsStory || drawer) return;
+    const tm = storyTimer.current;
+    tm.started = performance.now();
+    tm.id = setTimeout(() => {
+      if (pkPos < pkList.length - 1) step(1);
+      else moveGroup(1);
+    }, tm.left);
+    return () => {
+      clearTimeout(tm.id);
+      tm.left = Math.max(0, tm.left - (performance.now() - tm.started));
+    };
+  }, [picked, pkIsStory, drawer]);
+  // Opening a story marks it seen and remembers where the visitor stopped.
+  React.useEffect(() => {
+    if (!pkIsStory) return;
+    if (pk.img && !seen.includes(pk.img)) {
+      const next = [...seen, pk.img];
+      setSeen(next);
+      writeSeenStories(next);
+    }
+    const nextPos = { ...storyPos, [pk.group]: pkPos };
+    setStoryPos(nextPos);
+    writeStoryPos(nextPos);
+  }, [picked, pkIsStory]);
+  // A tap moves the track with a smooth scroll; scroll events from that move
+  // (or the snap still settling) must not push the page back, so they are
+  // ignored for a moment after a tap.
+  const tapLock = React.useRef(0);
   const onTrackScroll = (e) => {
+    if (performance.now() < tapLock.current) return;
     const el = e.currentTarget, k = Math.round(el.scrollLeft / el.clientWidth);
     // Only settle once the snap has landed on a page.
     if (k !== pkPos && Math.abs(el.scrollLeft - k * el.clientWidth) < 2 && pkList[k]) setPicked(all.indexOf(pkList[k]));
@@ -455,6 +604,30 @@ function VariantJ() {
     const t1 = e.changedTouches[0], dx = t1.clientX - sw.x, dy = t1.clientY - sw.y;
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6 && performance.now() - sw.t < 700) cycle(dx < 0 ? 1 : -1);
   };
+  // Story tray: one item per brand, opening its stories where they were left.
+  // Shown on the Social media screen and, Instagram-style, atop the post feeds.
+  const storyTray = (variant) => storyGroups.length > 0 && (
+    <div className={"mpj-tray" + (variant ? ` mpj-tray--${variant}` : "")}>
+      {storyGroups.map((g) => {
+        const first = all.findIndex((x) => x.group === g.key);
+        const done = g.imgs.every((s) => seen.includes(s));
+        return (
+          <button
+            key={g.key}
+            type="button"
+            className={"mpj-tray-item" + (done ? " is-seen" : "")}
+            onClick={() => { if (first >= 0) setPicked(first + Math.min(storyPos[g.key] || 0, g.imgs.length - 1)); }}
+            aria-label={g.label}
+          >
+            <span className="mpj-tray-ring">
+              <span className="mpj-tray-img" style={{ backgroundImage: `url("${g.imgs[0]}")` }} />
+            </span>
+            <span className="mpj-tray-brand">{g.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
   const navLink = (label, onClick) => (
     <button className="mpj-menu-link" onClick={() => { setMenu(false); onClick && onClick(); }}>[ {label} ]</button>
   );
@@ -506,6 +679,7 @@ function VariantJ() {
           </div>
         )}
 
+        {social && !group && storyTray()}
         <div className="mpj-desk mpj-desk--open" ref={desk} onTouchStart={onDeskTouchStart} onTouchEnd={onDeskTouchEnd}>
           <div className="mpj-sheet" style={{ height: sheetH }}>
             {all.map((it, i) => {
@@ -531,7 +705,7 @@ function VariantJ() {
                   }}
                 >
                   {it.img
-                    ? <img src={it.img} alt="" loading="lazy" draggable="false" />
+                    ? <img {...jImg} src={it.img} alt="" loading="lazy" draggable="false" />
                     : <span className="mpj-blank">{it.cat.label}</span>}
                 </button>
               );
@@ -585,24 +759,45 @@ function VariantJ() {
           {navLink(t(window.CONTENT.ui.nav.about), () => setInfo("about"))}
           {navLink(t(window.CONTENT.ui.nav.canvas), () => { setOpen(cats.findIndex((c) => c.id === "04")); setSub(-1); toProjects(); })}
           {navLink(t(window.CONTENT.ui.nav.contact), () => setInfo("contact"))}
+          {navLink(`${lang === "UA" ? "ЗБЕРЕЖЕНЕ" : "SAVED"} ${pad(saved.length)}`, () => setSavedView({ focus: null }))}
           <span className="mpj-menu-lang"><ProtoLang /></span>
         </nav>
       )}
 
       {pk && (
-        <div className="mpj-detail">
+        <div className={"mpj-detail" + (pkIsStory && drawer ? " mpj-detail--paused" : "")} onTouchStart={onDetailTouchStart} onTouchEnd={onDetailTouchEnd}>
+          {pk.group && pk.group.startsWith("stories:") && (
+            <div className="mpj-progress">
+              {pkList.map((_, k) => (
+                <span key={k} className={"mpj-seg" + (k < pkPos ? " is-done" : k === pkPos ? " is-active" : "")} />
+              ))}
+            </div>
+          )}
           <button className="mpj-link mpj-close" onClick={() => { setPicked(null); setDrawer(false); }}>[ close × ]</button>
           {/* The work alone; tapping it tucks the drawer away. */}
           {/* Swipe sideways through the set: a scroll-snap track, one work
               per page. Only the current work embeds its video; neighbours
               show their still. */}
-          <div className="mpj-track" ref={track} onScroll={onTrackScroll} onClick={() => setDrawer(false)}>
-            {pkList.map((w, k) => (
+          <div
+            className={"mpj-track" + (pkIsStory ? " mpj-track--story" : "")}
+            ref={track}
+            onScroll={onTrackScroll}
+            onClick={(e) => {
+              // Stories: tap the left half to go back, the right half to go on.
+              if (pkIsStory) {
+                const r = e.currentTarget.getBoundingClientRect();
+                tapLock.current = performance.now() + 700;
+                step(e.clientX - r.left < r.width / 2 ? -1 : 1);
+              }
+              setDrawer(false);
+            }}
+          >
+            {pkList.map((w, k) => pkIsStory && k !== pkPos ? null : (
               <div key={k} className="mpj-detail-img mpj-slide">
                 {k === pkPos && ytEmbed(w.href)
                   ? <div className="mpj-video"><iframe src={ytEmbed(w.href)} title={w.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen /></div>
                   : w.img
-                    ? <img src={w.img} alt={w.title} loading={Math.abs(k - pkPos) <= 1 ? "eager" : "lazy"} draggable="false" />
+                    ? <img {...jImg} className="jimg jimg--lift" src={w.img} alt={w.title} loading={Math.abs(k - pkPos) <= 1 ? "eager" : "lazy"} draggable="false" />
                     : <div className="mpj-cover"><span>[ {w.cat.id} ] {w.cat.name}</span></div>}
               </div>
             ))}
@@ -647,6 +842,62 @@ function VariantJ() {
           </footer>
         </div>
       )}
+      {group && (() => {
+        const nextGroup = feedGroups[feedGroups.indexOf(group) + 1];
+        const posts = feedPosts(group);
+        const ua = lang === "UA";
+        return (
+          <JFeed
+            key={group.key}
+            title={posts[0].handle}
+            heading={group.kind}
+            posts={posts}
+            focus={feedFocus}
+            lang={lang}
+            saved={saved}
+            onToggleSave={toggleSave}
+            seeAll={seeAll(group)}
+            top={storyTray("ig")}
+            onBack={() => { setSub(-1); setFeedFocus(null); }}
+            onSaved={() => setSavedView({ focus: null })}
+            end={
+              <div className="ig-end">
+                <span className="ig-end-check" aria-hidden="true">✓</span>
+                <b>{ua ? "Ви все переглянули" : "You're all caught up"}</b>
+                {nextGroup
+                  ? <button className="ig-end-next" onClick={() => { setSub(groups.indexOf(nextGroup)); setFeedFocus(null); }}>{ua ? "Далі" : "Next"}: {nextGroup.label} →</button>
+                  : <button className="ig-end-next" onClick={() => { setSub(-1); setFeedFocus(null); }}>{ua ? "Назад до груп" : "Back to groups"}</button>}
+              </div>
+            }
+          />
+        );
+      })()}
+      {/* Saved: the grid, or (after a tap) those posts as a feed. The feed
+          keeps the list it opened with, so un-saving a post there doesn't
+          pull it out from under the visitor. */}
+      {savedView && (savedView.focus
+        ? (
+          <JFeed
+            key="saved"
+            title={lang === "UA" ? "Збережене" : "Saved"}
+            heading={lang === "UA" ? "Публікації" : "Posts"}
+            posts={savedView.ids.map((id) => allPosts.find((p) => p.id === id)).filter(Boolean)}
+            focus={savedView.focus}
+            lang={lang}
+            saved={saved}
+            onToggleSave={toggleSave}
+            seeAll={seeAll(null)}
+            top={storyTray("ig")}
+            onBack={() => setSavedView({ focus: null })}
+          />
+        ) : (
+          <JSaved
+            posts={saved.map((id) => allPosts.find((p) => p.id === id)).filter(Boolean)}
+            lang={lang}
+            onOpen={(id) => setSavedView({ focus: id, ids: saved.slice() })}
+            onBack={() => setSavedView(null)}
+          />
+        ))}
       {info === "about" && <JAbout t={t} lang={lang} onClose={() => setInfo(null)} />}
       {info === "contact" && <JContact t={t} onClose={() => setInfo(null)} />}
       {cartOpen && (
@@ -671,6 +922,282 @@ function VariantJ() {
   );
 }
 VariantJ.label = "Collage stacks";
+
+// Instagram-style feed for one social group: posts top to bottom, a carousel
+// as a single post you swipe through, ads marked "Sponsored". Double-tap a
+// photo to like it (likes only last for this visit). Saved posts persist in
+// this browser and are listed on the Saved screen. Every post has its own
+// link, #/post/<id>, which opens straight to it.
+const IG_PATHS = {
+  back: "M15 4 7 12l8 8",
+  heart: "M12 20.5s-7.6-4.7-9.4-9.4C1.3 7.6 3.5 4.3 7 4.3c2.1 0 3.6 1.1 5 2.9 1.4-1.8 2.9-2.9 5-2.9 3.5 0 5.7 3.3 4.4 6.8-1.8 4.7-9.4 9.4-9.4 9.4z",
+  share: "M21.5 3 10 13.2M21.5 3l-7 18-4.5-7.8L2.5 9z",
+  save: "M18.5 21 12 15.3 5.5 21V3h13z",
+  link: "M10 14a4.5 4.5 0 0 0 6.4 0l3.3-3.3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2M14 10a4.5 4.5 0 0 0-6.4 0l-3.3 3.3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2",
+  grid: "M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18",
+};
+function IgIcon({ name, filled }) {
+  if (name === "more") {
+    return (
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        {[5, 12, 19].map((x) => <circle key={x} cx={x} cy="12" r="1.6" fill="currentColor" />)}
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d={IG_PATHS[name]} fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// The posts of a group as the feed shows them. A post's id is its image path
+// under assets/images/social without the extension (legnacat/post-1), or
+// carousel-<id> for a carousel, so links survive reordering.
+function feedPosts(group) {
+  const isCarousel = group.key.startsWith("carousel:");
+  const base = {
+    group: group.key,
+    brand: isCarousel ? group.brand || group.label : group.label,
+    handle: (isCarousel ? group.brand || group.label : group.label).replace(/^@/, "").toLowerCase(),
+    avatar: group.imgs[0],
+    sponsored: group.key.startsWith("ads:"),
+  };
+  if (isCarousel) return [{ ...base, id: "carousel-" + group.key.slice("carousel:".length), imgs: group.imgs, caption: group.label }];
+  return group.imgs.map((src) => ({
+    ...base, imgs: [src], caption: null,
+    id: src.replace(/^assets\/images\/social\//, "").replace(/\.[a-z0-9]+$/i, ""),
+  }));
+}
+const postLink = (id) => `${location.origin}${location.pathname}#/post/${id}`;
+// Copy without the Clipboard API (missing on plain-http pages): select a
+// hidden field and use the old copy command. True if it worked.
+function copyByHand(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (_) { /* unsupported */ }
+  ta.remove();
+  return ok;
+}
+// #/post/<id> → <id>, or null.
+const linkedPost = () => {
+  const m = /^#\/post\/(.+)$/.exec(location.hash);
+  return m ? decodeURIComponent(m[1]) : null;
+};
+
+// Saved posts, newest first. Kept in this browser only.
+const SAVED_KEY = "miki-saved-posts";
+function readSaved() {
+  try { return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]"); }
+  catch (_) { return []; }
+}
+function writeSaved(list) {
+  try { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); }
+  catch (_) { /* storage can be blocked; saves then last for this visit */ }
+}
+
+function IgPost({ post, lang, saved, onToggleSave, onSeeAll }) {
+  const ua = lang === "UA";
+  const { imgs, handle } = post;
+  const [sheet, setSheet] = React.useState(false); // the ••• menu
+  const [liked, setLiked] = React.useState(false);
+  const [burst, setBurst] = React.useState(0); // bumps on each double-tap → heart pops
+  const [slide, setSlide] = React.useState(0);
+  const [toast, setToast] = React.useState(null);
+  // The first photo sets the frame for every slide, within Instagram's
+  // 4:5 (tall) to 1.91:1 (wide) range.
+  const [ratio, setRatio] = React.useState(0.8);
+  const lastTap = React.useRef(0);
+  const toastTimer = React.useRef(0);
+  React.useEffect(() => () => clearTimeout(toastTimer.current), []);
+  const flash = (msg) => {
+    setToast(msg);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 1800);
+  };
+  const onMediaClick = () => {
+    const now = performance.now();
+    if (now - lastTap.current < 300) { setLiked(true); setBurst((b) => b + 1); lastTap.current = 0; }
+    else lastTap.current = now;
+  };
+  const onScroll = (e) => {
+    const el = e.currentTarget, k = Math.round(el.scrollLeft / el.clientWidth);
+    if (k !== slide) setSlide(k);
+  };
+  // The phone's native share sheet. Browsers only offer it on https pages, so
+  // elsewhere (or if it fails for a reason other than the visitor closing it)
+  // the link is copied instead.
+  const share = () => {
+    const url = postLink(post.id);
+    const data = { title: `${handle} · MIKI / GTXHI`, text: post.caption || handle, url };
+    if (navigator.share && (!navigator.canShare || navigator.canShare(data))) {
+      navigator.share(data).catch((err) => { if (err && err.name !== "AbortError") copyLink(url); });
+      return;
+    }
+    copyLink(url);
+  };
+  const copyLink = (url) => {
+    const done = () => flash(ua ? "Посилання скопійовано" : "Link copied");
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(done, () => (copyByHand(url) ? done() : flash(url)));
+    } else if (copyByHand(url)) done();
+    else flash(url);
+  };
+  const toggleSave = () => {
+    flash(saved ? (ua ? "Видалено зі збережених" : "Removed from saved") : (ua ? "Збережено" : "Saved"));
+    onToggleSave(post.id);
+  };
+  return (
+    <article className="ig-post" id={"ig-" + post.id}>
+      <header className="ig-post-head">
+        {/* Tapping the account opens its group, unless that's the one open. */}
+        {React.createElement(onSeeAll ? "button" : "span", {
+          className: "ig-user",
+          ...(onSeeAll ? { type: "button", onClick: onSeeAll, "aria-label": ua ? `Усе від ${handle}` : `See all from ${handle}` } : {}),
+        },
+          <span className="ig-avatar" style={{ backgroundImage: `url("${post.avatar}")` }} />,
+          <span className="ig-who">
+            <b>{handle}</b>
+            {post.sponsored && <small>{ua ? "Реклама" : "Sponsored"}</small>}
+          </span>,
+        )}
+        <button className="ig-btn ig-more" onClick={() => setSheet(true)} aria-haspopup="dialog" aria-label={ua ? "більше" : "more options"}>
+          <IgIcon name="more" />
+        </button>
+      </header>
+      {sheet && (
+        <div className="ig-sheet-back" onClick={() => setSheet(false)}>
+          <div className="ig-sheet" role="dialog" aria-label={handle} onClick={(e) => e.stopPropagation()}>
+            <i className="ig-sheet-grab" aria-hidden="true" />
+            <button onClick={() => { setSheet(false); copyLink(postLink(post.id)); }}>
+              <IgIcon name="link" />{ua ? "Копіювати посилання" : "Copy link"}
+            </button>
+            <button onClick={() => { setSheet(false); share(); }}>
+              <IgIcon name="share" />{ua ? "Поділитися…" : "Share to…"}
+            </button>
+            <button onClick={() => { setSheet(false); toggleSave(); }}>
+              <IgIcon name="save" filled={saved} />{saved ? (ua ? "Видалити зі збережених" : "Remove from saved") : (ua ? "Зберегти" : "Save")}
+            </button>
+            {onSeeAll && (
+              <button onClick={() => { setSheet(false); onSeeAll(); }}>
+                <IgIcon name="grid" />{ua ? `Усе від ${handle}` : `See all from ${handle}`}
+              </button>
+            )}
+            <button className="ig-sheet-cancel" onClick={() => setSheet(false)}>{ua ? "Скасувати" : "Cancel"}</button>
+          </div>
+        </div>
+      )}
+      <div className="ig-media" style={{ aspectRatio: String(ratio) }} onClick={onMediaClick}>
+        <div className="ig-slides" onScroll={onScroll}>
+          {imgs.map((src, k) => (
+            <img
+              key={k}
+              {...jImg}
+              src={src}
+              alt=""
+              loading="lazy"
+              draggable="false"
+              onLoad={(e) => {
+                jImgLoaded(e);
+                if (k === 0) setRatio(Math.min(1.91, Math.max(0.8, e.currentTarget.naturalWidth / e.currentTarget.naturalHeight)));
+              }}
+            />
+          ))}
+        </div>
+        {imgs.length > 1 && <span className="ig-count">{slide + 1}/{imgs.length}</span>}
+        {burst > 0 && (
+          <span key={burst} className="ig-burst" aria-hidden="true"><IgIcon name="heart" filled /></span>
+        )}
+        {toast && <span className="ig-toast" role="status">{toast}</span>}
+      </div>
+      <div className="ig-actions">
+        <button className={"ig-btn" + (liked ? " is-liked" : "")} onClick={() => setLiked((l) => !l)} aria-pressed={liked} aria-label={ua ? "подобається" : "like"}>
+          <IgIcon name="heart" filled={liked} />
+        </button>
+        <button className="ig-btn" onClick={share} aria-label={ua ? "поділитися" : "share"}><IgIcon name="share" /></button>
+        {imgs.length > 1 && (
+          <span className="ig-dots" aria-hidden="true">
+            {imgs.map((_, k) => <i key={k} className={k === slide ? "is-on" : ""} />)}
+          </span>
+        )}
+        <button className="ig-btn ig-btn--save" onClick={toggleSave} aria-pressed={saved} aria-label={ua ? "зберегти" : "save"}>
+          <IgIcon name="save" filled={saved} />
+        </button>
+      </div>
+      {liked && <div className="ig-likes">{ua ? "Подобається вам" : "Liked by you"}</div>}
+      {post.caption && <p className="ig-caption"><b>{handle}</b> {post.caption}</p>}
+    </article>
+  );
+}
+
+// A list of posts under Instagram's top bar. `focus` scrolls to that post on
+// open (a shared link, or a tile tapped on the Saved screen).
+// `seeAll(post)` gives the handler for the ••• menu's "See all from …", or
+// null to leave that item out.
+// `top` sits under the bar, above the first post (the story tray).
+function JFeed({ title, heading, posts, focus, lang, saved, onToggleSave, seeAll, onBack, onSaved, top, end }) {
+  const ua = lang === "UA";
+  const box = React.useRef(null);
+  React.useLayoutEffect(() => {
+    const el = focus && document.getElementById("ig-" + focus);
+    if (el && box.current) box.current.scrollTop = el.offsetTop - 52; // below the sticky bar
+  }, []);
+  return (
+    <div className="ig-feed" ref={box}>
+      <header className="ig-top">
+        <button className="ig-btn" onClick={onBack} aria-label={ua ? "назад" : "back"}><IgIcon name="back" /></button>
+        <div className="ig-top-title">
+          {title && <small>{title}</small>}
+          <b>{heading}</b>
+        </div>
+        {onSaved
+          ? <button className="ig-btn" onClick={onSaved} aria-label={ua ? "збережене" : "saved"}><IgIcon name="save" /></button>
+          : <span className="ig-btn" aria-hidden="true" />}
+      </header>
+      {top}
+      {posts.map((p) => (
+        <IgPost key={p.id} post={p} lang={lang} saved={saved.includes(p.id)} onToggleSave={onToggleSave} onSeeAll={seeAll ? seeAll(p) : null} />
+      ))}
+      {end}
+    </div>
+  );
+}
+
+// Instagram's Saved screen: a 3-column grid of what this visitor bookmarked.
+function JSaved({ posts, lang, onOpen, onBack }) {
+  const ua = lang === "UA";
+  return (
+    <div className="ig-feed">
+      <header className="ig-top">
+        <button className="ig-btn" onClick={onBack} aria-label={ua ? "назад" : "back"}><IgIcon name="back" /></button>
+        <div className="ig-top-title"><b>{ua ? "Збережене" : "Saved"}</b></div>
+        <span className="ig-btn" aria-hidden="true" />
+      </header>
+      {posts.length ? (
+        <div className="ig-grid">
+          {posts.map((p) => (
+            <button key={p.id} className="ig-tile" onClick={() => onOpen(p.id)} aria-label={p.handle}>
+              <img {...jImg} src={p.imgs[0]} alt="" loading="lazy" draggable="false" />
+              {p.imgs.length > 1 && <span className="ig-tile-multi" aria-hidden="true" />}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="ig-empty">
+          <span className="ig-empty-icon"><IgIcon name="save" /></span>
+          <b>{ua ? "Збережіть те, що сподобалося" : "Save what you like"}</b>
+          <p>{ua ? "Торкніться закладки під публікацією, щоб додати її сюди. Збережене бачите лише ви." : "Tap the bookmark under a post to add it here. Only you can see what you've saved."}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Desktop cart drawer, as a full-screen sheet: count + clear, one row per
 // work (thumb, title, medium, price, ×), total, checkout.
