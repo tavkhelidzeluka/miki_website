@@ -534,9 +534,10 @@
       "works": [
         {
           "name": "Collage",
-          "desc": "The project speaks about occupied Luhansk and about my connection with the city during its occupation a connection maintained through memories, rare messages, and inner dialogue rather than physical proximity",
+          "desc": "",
           "thumb": "assets/images/projects/posters/.jpeg",
-          "price": null
+          "price": null,
+          "medium": "/"
         },
         {
           "name": "war is hell",
@@ -546,7 +547,7 @@
         },
         {
           "name": "Lugansk",
-          "desc": "The project speaks about occupied Luhansk and about my connection with the city during its occupation a connection maintained through memories, rare messages, and inner dialogue rather than physical proximity",
+          "desc": "",
           "thumb": "assets/images/projects/posters/lugansk.jpeg",
           "price": null
         }
