@@ -591,7 +591,8 @@
           "name": "холст / 07",
           "desc": "Untitled canvas, in-progress.",
           "thumb": "assets/images/projects/canvas/no-title.jpeg",
-          "price": null
+          "price": null,
+          "medium": "mix media "
         }
       ],
       "name": "originals on canvas",
