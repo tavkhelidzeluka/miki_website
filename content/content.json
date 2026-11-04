@@ -576,11 +576,10 @@
           "medium": "Acrylic"
         },
         {
-          "name": "в пиджаке",
+          "name": "collection",
           "desc": "Collage A3, mixed media.",
           "thumb": "assets/images/projects/canvas/collection.jpeg",
-          "price": null,
-          "medium": "collage"
+          "price": null
         },
         {
           "name": "ночной",
@@ -592,8 +591,7 @@
           "name": "холст / 07",
           "desc": "Untitled canvas, in-progress.",
           "thumb": "assets/images/projects/canvas/no-title.jpeg",
-          "price": null,
-          "medium": "mix media "
+          "price": null
         }
       ],
       "name": "originals on canvas",
@@ -846,7 +844,8 @@
         "medium": "(oil, 100×80, 2025)",
         "mediumUa": "(олія, 100×80, 2025)",
         "img": "assets/painting-01.png",
-        "price": 100
+        "price": 100,
+        "hidden": false
       },
       {
         "id": "01",
