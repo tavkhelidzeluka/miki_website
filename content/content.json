@@ -569,10 +569,11 @@
     {
       "works": [
         {
-          "name": "с котом",
+          "name": "recovery",
           "desc": "Coloured paper A3, acrylic + pencils.",
           "thumb": "assets/images/projects/canvas/recovery.jpeg",
-          "price": null
+          "price": null,
+          "medium": "Acrylic"
         },
         {
           "name": "в пиджаке",
@@ -601,7 +602,7 @@
       "id": "04",
       "year": "2023 — Present",
       "category": "CANVAS",
-      "prose": "I work alla-prima, building tone in two or three sessions, then collaging textured paper over the top. The canvas works are the slowest part of the practice — usually one finished piece every two weeks.",
+      "prose": "",
       "coverImage": "assets/images/projects/covers/canvas-cover.jpeg",
       "categoryLabel": {
         "en": "CANVAS",
