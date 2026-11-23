@@ -13,20 +13,28 @@ window.__editor = window.__editor || {};
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
+// A replacement image always gets a NEW filename (slug + short stamp) rather
+// than overwriting the existing file: another item may point at the same file
+// (overwriting it would change both), and browsers/the Pages CDN cache images
+// by URL, so a same-named upload keeps showing the old picture after reload.
 function deriveDefaultFilename(existingPath, suggestedSlug, file) {
-  if (existingPath) {
-    const idx = existingPath.lastIndexOf('/');
-    return existingPath.slice(idx + 1);
-  }
   const ext = (file.name.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
-  const slug = (suggestedSlug || 'image')
+  const existingStem = existingPath
+    ? existingPath.slice(existingPath.lastIndexOf('/') + 1).replace(/\.[a-z0-9]+$/i, '').replace(/-[a-z0-9]{8}$/, '')
+    : '';
+  return window.__editor.uniqueFilename(suggestedSlug || existingStem || 'image', ext);
+}
+
+// slug-<base36 timestamp>.ext — unique per upload, readable in the repo.
+window.__editor.uniqueFilename = function uniqueFilename(basis, ext) {
+  const slug = (basis || 'image')
     .toString()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-    .slice(0, 60);
-  return `${slug}${ext}`;
-}
+    .slice(0, 50) || 'image';
+  return `${slug}-${Date.now().toString(36)}${ext}`;
+};
 
 window.__editor.ImageModal = function ImageModal(props) {
   const { existingPath, assetFolder, suggestedSlug, contentPath, onSave, onCancel } = props;

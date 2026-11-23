@@ -149,7 +149,7 @@ window.__editor = window.__editor || {};
       setError(null);
       setFile(f);
       const ext = (f.name.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
-      setFilename(`${slugify(name)}${ext}`);
+      setFilename(window.__editor.uniqueFilename(slugify(name), ext));
     };
 
     React.useEffect(() => {
@@ -157,7 +157,7 @@ window.__editor = window.__editor || {};
       // unless they've already manually edited it.
       if (file && filename && filename.startsWith(slugify(filename.split('.')[0]))) {
         const ext = (filename.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
-        setFilename(`${slugify(name)}${ext}`);
+        setFilename(window.__editor.uniqueFilename(slugify(name), ext));
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [name]);
@@ -261,9 +261,13 @@ window.__editor = window.__editor || {};
       }
       setError(null);
       // Auto-suggest filename based on best available text field.
-      const slugBasis = values.title?.en || values.name || values.brand || values.label?.en || 'item';
+      // Titles are plain strings in some schemas (animation) and i18n objects
+      // in others; read both. The filename is made unique so two items can
+      // never end up sharing (and overwriting) one image file.
+      const text = (v) => (typeof v === 'string' ? v : v && v.en) || '';
+      const slugBasis = text(values.title) || text(values.titleEn) || text(values.name) || text(values.brand) || text(values.label) || text(values.id) || 'item';
       const ext = (file.name.match(/\.[a-z0-9]+$/i) || ['.png'])[0].toLowerCase();
-      const filename = `${slugify(slugBasis)}${ext}`;
+      const filename = window.__editor.uniqueFilename(slugify(slugBasis), ext);
       setValues((prev) => ({ ...prev, [key]: { file, filename } }));
       const url = URL.createObjectURL(file);
       setPreviewUrls((prev) => {
@@ -302,6 +306,7 @@ window.__editor = window.__editor || {};
         const v = values[f.key];
         if (f.type === 'image') {
           if (v.file) {
+            if (!assetFolder) { setError('This list has no image folder configured (data-editor-asset-folder).'); return; }
             const cleanName = (v.filename || `image.png`).replace(/[^a-zA-Z0-9._-]+/g, '-');
             imagePath = `${assetFolder}/${cleanName}`;
             item[f.key] = imagePath;

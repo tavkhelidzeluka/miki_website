@@ -107,6 +107,7 @@ function AnimationStrip({ tweaks }) {
           data-editor-add-title="add new animation"
           data-editor-add-schema="animation"
           data-editor-list-path="animations"
+          data-editor-asset-folder="assets/images/animations"
         >+ add animation</button>
       </div>
 
