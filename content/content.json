@@ -537,19 +537,27 @@
           "desc": "",
           "thumb": "assets/images/projects/posters/.jpeg",
           "price": null,
-          "medium": ""
+          "medium": "—",
+          "client": "Freelance",
+          "role": "Poster design"
         },
         {
           "name": "war is hell",
           "desc": "protest collage",
           "thumb": "assets/images/projects/posters/war-is-hell.jpeg",
-          "price": null
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
         },
         {
           "name": "Lugansk",
           "desc": "",
           "thumb": "assets/images/projects/posters/lugansk.jpeg",
-          "price": null
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
         }
       ],
       "name": "bolshoi theatre",
@@ -584,7 +592,7 @@
           "medium": "Paper, fabric, gouache"
         },
         {
-          "name": "night",
+          "name": "To the Heart",
           "desc": "A1",
           "thumb": "assets/images/projects/canvas/new-baby.jpeg",
           "price": "Sold",
@@ -592,7 +600,7 @@
           "year": "2024"
         },
         {
-          "name": "To the Heart",
+          "name": "холст / 07",
           "desc": "Untitled canvas, in-progress.",
           "thumb": "assets/images/projects/canvas/no-title.jpeg",
           "price": null,
