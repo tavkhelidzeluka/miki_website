@@ -579,7 +579,7 @@
       "works": [
         {
           "name": "recovery",
-          "desc": "Coloured paper A3, acrylic + pencils.",
+          "desc": "Oil.",
           "thumb": "assets/images/projects/canvas/recovery.jpeg",
           "price": null,
           "medium": "Oil"
@@ -610,7 +610,16 @@
           "name": "Boys",
           "desc": "",
           "thumb": "assets/images/projects/canvas/boys-mwxjep2r.png",
-          "price": "150 $"
+          "price": "150 $",
+          "medium": "Acrylic",
+          "year": "2026"
+        },
+        {
+          "name": "Miki.Lg 2/3",
+          "desc": "From the series “Miki.Lg”, 2/3.\n\nA series of works that look nothing alike in style — this one leans more on collage. What ties them together is only the theme, and me. Each piece is a separate period of my life and what I felt at that moment.\n\nI decided to show the second work first, not the first one. Starting from the middle! I think that's fine for this series, because there is no right order here.\n\nThis work is about the time when I had almost stopped thinking about the occupation all the time. Back then it seemed that one day I would be able to study in Lviv or Kharkiv. I watched Ukrainian art bloggers and thought that someday I'd end up in that bubble too.\n\nIt was a time when Ukrainian artists were almost always playing in my headphones — Poshlaya Molly, Nervy and others. Back then it felt like everything was going to be fine.\n\nNow this painting is more about who I was at that moment.",
+          "thumb": "assets/images/projects/canvas/miki-lg-2.jpeg",
+          "price": "150 $",
+          "medium": "Acrylic"
         }
       ],
       "name": "originals on canvas",
@@ -936,6 +945,22 @@
         "mediumUa": "(різо-постер, тираж 50)",
         "img": null,
         "price": null
+      },
+      {
+        "id": "10",
+        "title": "Boys",
+        "medium": "(acrylic, 2026)",
+        "mediumUa": "(акрил, 2026)",
+        "img": "assets/images/projects/canvas/boys-mwxjep2r.png",
+        "price": 150
+      },
+      {
+        "id": "11",
+        "title": "Miki.Lg 2/3",
+        "medium": "(acrylic)",
+        "mediumUa": "(акрил)",
+        "img": "assets/images/projects/canvas/miki-lg-2.jpeg",
+        "price": 150
       }
     ]
   },
