@@ -1003,6 +1003,14 @@
       "desc": "",
       "thumb": "assets/images/animations/train.jpeg",
       "videoUrl": "https://youtu.be/y11luCG1MsQ"
+    },
+    {
+      "id": "POLUKHUTENKO",
+      "title": "POLUKHUTENKO",
+      "date": "",
+      "desc": "Music video for Grigory Polukhutenko.",
+      "thumb": "assets/images/animations/polukhutenko-video.jpeg",
+      "videoUrl": "https://youtu.be/gCHC-XNIi9o"
     }
   ],
   "canvas": {
