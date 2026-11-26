@@ -959,7 +959,28 @@
     ]
   },
   "social": {
-    "posts": [],
+    "posts": [
+      {
+        "src": "assets/images/social/yang/post-1.webp",
+        "brand": "YANG"
+      },
+      {
+        "src": "assets/images/social/yang/post-2.webp",
+        "brand": "YANG"
+      },
+      {
+        "src": "assets/images/social/yang/post-3.webp",
+        "brand": "YANG"
+      },
+      {
+        "src": "assets/images/social/yang/post-4.webp",
+        "brand": "YANG"
+      },
+      {
+        "src": "assets/images/social/yang/post-5.webp",
+        "brand": "YANG"
+      }
+    ],
     "carousels": [
       {
         "id": "02",
