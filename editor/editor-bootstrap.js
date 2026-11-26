@@ -38,7 +38,7 @@
   // Load CSS first so styles are applied as soon as editor renders.
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'editor/editor.css';
+  link.href = 'editor/editor.css?v=' + Date.now();
   document.head.appendChild(link);
 
   // Inject editor scripts. Babel-standalone observes the DOM and processes
@@ -54,7 +54,9 @@
   for (const src of scripts) {
     const s = document.createElement('script');
     s.type = 'text/babel';
-    s.src = src;
+    // Bust the ~10 min Pages cache so all editor files come from the same
+    // deploy (a mix of old and new files breaks saving).
+    s.src = src + '?v=' + Date.now();
     document.body.appendChild(s);
   }
 })();
