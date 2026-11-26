@@ -537,9 +537,7 @@
           "desc": "",
           "thumb": "assets/images/projects/posters/.jpeg",
           "price": null,
-          "medium": "",
-          "client": "Freelance",
-          "role": "Poster design"
+          "medium": ""
         },
         {
           "name": "war is hell",
@@ -576,24 +574,25 @@
           "desc": "Coloured paper A3, acrylic + pencils.",
           "thumb": "assets/images/projects/canvas/recovery.jpeg",
           "price": null,
-          "medium": "Acrylic"
+          "medium": "Oil"
         },
         {
-          "name": "в пиджаке",
-          "desc": "Collage A3, mixed media.",
+          "name": "Collection",
+          "desc": "A2",
           "thumb": "assets/images/projects/canvas/collection.jpeg",
           "price": null,
-          "medium": "collage"
+          "medium": "Paper, fabric, gouache"
         },
         {
           "name": "night",
-          "desc": "A2 ",
+          "desc": "A1",
           "thumb": "assets/images/projects/canvas/new-baby.jpeg",
-          "price": "sold out",
-          "medium": "Acrylic"
+          "price": "Sold",
+          "medium": "Acrylic, gouache, pastel",
+          "year": "2024"
         },
         {
-          "name": "холст / 07",
+          "name": "To the Heart",
           "desc": "Untitled canvas, in-progress.",
           "thumb": "assets/images/projects/canvas/no-title.jpeg",
           "price": null,
