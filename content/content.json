@@ -558,6 +558,106 @@
           "client": "Freelance",
           "role": "Poster design",
           "medium": "—"
+        },
+        {
+          "name": "Delulu Night Fest",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-delulu-night-fest.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "Anna German",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-anna-german.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "Bones",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-bones.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "Botanical Prints",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-botanical-prints.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "Don't Say What You Think",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-dont-say-what-you-think.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "Forever",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-forever.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "G",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-g.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "GTXHI",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-gtxhi.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "Message to Man",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-message-to-man.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—",
+          "year": "2025"
+        },
+        {
+          "name": "Serofarm",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-serofarm.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
+        },
+        {
+          "name": "The Scariest Thing Is to Miss It All",
+          "desc": "",
+          "thumb": "assets/images/projects/posters/poster-the-scariest-thing.jpeg",
+          "price": null,
+          "client": "Freelance",
+          "role": "Poster design",
+          "medium": "—"
         }
       ],
       "name": "bolshoi theatre",
