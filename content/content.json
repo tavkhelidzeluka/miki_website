@@ -537,7 +537,9 @@
           "desc": "",
           "thumb": "assets/images/projects/posters/.jpeg",
           "price": null,
-          "medium": ""
+          "medium": "",
+          "client": "Freelance",
+          "role": "Poster design"
         },
         {
           "name": "war is hell",
