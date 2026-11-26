@@ -1094,6 +1094,12 @@
     ],
     "ads": [
       {
+        "src": "assets/images/social/ads-crypto.webp",
+        "aspect": "16 / 9",
+        "brand": "GAUS CRYPTO",
+        "videoUrl": "https://youtu.be/C_wQmIp9oRg"
+      },
+      {
         "src": "assets/images/social/scratch/ad-1.webp",
         "aspect": "1 / 1",
         "brand": "SCRATCH SCHOOL"
@@ -1112,12 +1118,6 @@
         "src": "assets/images/social/scratch/ad-4.webp",
         "aspect": "16 / 9",
         "brand": "SCRATCH SCHOOL"
-      },
-      {
-        "src": "assets/images/social/ads-crypto.webp",
-        "aspect": "16 / 9",
-        "brand": "GAUS CRYPTO",
-        "videoUrl": "https://youtu.be/C_wQmIp9oRg"
       }
     ],
     "services": [
