@@ -162,6 +162,9 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, onGroupPrev, onGroup
 
   if (!cur) return null;
 
+  const ytMatch = cur.videoUrl && cur.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+  const ytId = ytMatch ? ytMatch[1] : null;
+
   const zoom = (
     <div className="sm2-zoom" data-story={isStory ? "true" : undefined} onClick={onClose}>
       <div className="sm2-zoom-inner" onClick={(e) => e.stopPropagation()}>
@@ -180,13 +183,25 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, onGroupPrev, onGroup
           onTouchStart={onFrameTouchStart}
           onTouchEnd={onFrameTouchEnd}
           onClick={(e) => {
+            if (ytId) return; // the video player takes its own clicks
             // Instagram-style: the left half goes back, the right half forward.
             const r = e.currentTarget.getBoundingClientRect();
             if (e.clientX - r.left < r.width / 2) goPrev();
             else goNext();
           }}
         >
-          <div className="sm2-zoom-img" style={{ ...smBg(cur.src), aspectRatio: aspect || cur.aspect || "4 / 5" }} />
+          {ytId ? (
+            <iframe
+              className="sm2-zoom-video"
+              src={`https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0`}
+              style={{ aspectRatio: aspect || cur.aspect || "16 / 9" }}
+              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allowFullScreen
+              title={cur.brand}
+            />
+          ) : (
+            <div className="sm2-zoom-img" style={{ ...smBg(cur.src), aspectRatio: aspect || cur.aspect || "4 / 5" }} />
+          )}
           {isStory && <div className="sm2-zoom-head">{cur.brand}</div>}
           {aspect === "9 / 16" && (
             <div className="sm2-zoom-progress">
@@ -291,6 +306,7 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                 {...(item.hidden ? { 'data-item-hidden': 'true' } : {})}
               >
                 <div className="sm2-gal-img" style={smBg(item.src, editPath)} />
+                {item.videoUrl && <span className="sm2-gal-play" aria-hidden="true">[ ▶ ]</span>}
                 {listPath && (
                   <span
                     className="editor-delete-action editor-delete-action--corner"
@@ -344,7 +360,9 @@ const storyKindLabel = (cur, lang) =>
   lang === "UA" ? "сторіс · 9:16" : "story · 9:16";
 
 const adsKindLabel = (cur, lang) =>
-  cur.aspect === "16 / 9"
+  cur.videoUrl
+    ? (lang === "UA" ? "рекламне відео" : "ad video")
+    : cur.aspect === "16 / 9"
     ? (lang === "UA" ? "рекламний банер · 16:9" : "ad banner · 16:9")
     : (lang === "UA" ? "рекламний пост · 1:1" : "ad square · 1:1");
 
@@ -356,7 +374,7 @@ function socialRowGroups(list, kind) {
   window.visibleEntries(list).forEach(({ item }) => {
     const b = item.brand || "—";
     if (!m.has(b)) m.set(b, []);
-    m.get(b).push({ src: item.src, brand: item.brand, aspect: item.aspect });
+    m.get(b).push({ src: item.src, brand: item.brand, aspect: item.aspect, videoUrl: item.videoUrl });
   });
   return [...m.entries()].map(([brand, items]) => ({ key: `${kind}:${brand}`, kind, label: brand, items }));
 }

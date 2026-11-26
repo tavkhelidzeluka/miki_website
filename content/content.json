@@ -887,6 +887,14 @@
       "desc": "digital collage",
       "thumb": "assets/images/animations/luhansk.png",
       "videoUrl": "https://youtu.be/ocNJM_UBS-k"
+    },
+    {
+      "id": "CRYPTO",
+      "title": "CRYPTO AD",
+      "date": "",
+      "desc": "",
+      "thumb": "assets/images/animations/crypto-ad.jpeg",
+      "videoUrl": "https://youtu.be/C_wQmIp9oRg"
     }
   ],
   "canvas": {
@@ -1104,6 +1112,12 @@
         "src": "assets/images/social/scratch/ad-4.webp",
         "aspect": "16 / 9",
         "brand": "SCRATCH SCHOOL"
+      },
+      {
+        "src": "assets/images/social/ads-crypto.webp",
+        "aspect": "16 / 9",
+        "brand": "CRYPTO AD",
+        "videoUrl": "https://youtu.be/C_wQmIp9oRg"
       }
     ],
     "services": [
