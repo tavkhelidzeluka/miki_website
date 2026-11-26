@@ -249,6 +249,28 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
   const next = () => { if (variant !== "stories" || i < N - 1) goTo(i + 1); };
   const prev = () => { if (variant !== "stories" || i > 0) goTo(i - 1); };
 
+  // A group that is a single video: show the player itself, full width,
+  // instead of a carousel that would repeat the one tile with arrows.
+  const soloVideo = N === 1 && items[0].videoUrl
+    ? (items[0].videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/) || [])[1]
+    : null;
+  if (soloVideo) {
+    return (
+      <section className={"sm2-section sm2-section--video sm2-section--" + variant}>
+        <SectionHead idx={sectionIdx} label={sectionLabel} count={1} current={0} />
+        <div className="sm2-video">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${soloVideo}?rel=0`}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            loading="lazy"
+            title={items[0].brand}
+          />
+        </div>
+      </section>
+    );
+  }
+
   // Every item deleted — show the section header + placeholder instead of
   // indexing into an empty pool (items[NaN]). The parent section keeps its
   // "+ add" buttons below, so new items can still be created.
