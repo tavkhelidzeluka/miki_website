@@ -995,6 +995,14 @@
       "desc": "",
       "thumb": "assets/images/animations/crypto-ad.jpeg",
       "videoUrl": "https://youtu.be/C_wQmIp9oRg"
+    },
+    {
+      "id": "TRAIN",
+      "title": "TRAIN",
+      "date": "",
+      "desc": "",
+      "thumb": "assets/images/animations/train.jpeg",
+      "videoUrl": "https://youtu.be/y11luCG1MsQ"
     }
   ],
   "canvas": {
