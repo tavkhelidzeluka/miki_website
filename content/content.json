@@ -588,7 +588,7 @@
           "name": "Collection",
           "desc": "A2",
           "thumb": "assets/images/projects/canvas/collection.jpeg",
-          "price": null,
+          "price": "150 $",
           "medium": "Paper, fabric, gouache"
         },
         {
@@ -634,7 +634,7 @@
           "name": "Miki.Lg 3/3",
           "desc": "From the series “Miki.Lg”, 3/3.\n120×160 cm.",
           "thumb": "assets/images/projects/canvas/miki-lg-3.jpeg",
-          "price": null,
+          "price": "150 $",
           "medium": "Mixed media: acrylic, paper print, collage, acrylic markers, spray paint",
           "year": "2026"
         },
@@ -642,7 +642,7 @@
           "name": "Boy in the Field",
           "desc": "Diptych.",
           "thumb": "assets/images/projects/canvas/boy-in-the-field.jpeg",
-          "price": null,
+          "price": "150 $",
           "medium": "Acrylic, mixed media, spray paint",
           "year": "2026"
         }
@@ -905,7 +905,7 @@
         "medium": "(paper, fabric, gouache, A2)",
         "mediumUa": "(папір, тканина, гуаш, А2)",
         "img": "assets/images/projects/canvas/collection.jpeg",
-        "price": null
+        "price": 150
       },
       {
         "id": "04",
@@ -946,7 +946,7 @@
         "medium": "(mixed media: acrylic, paper print, collage, 120×160, 2026)",
         "mediumUa": "(змішана техніка: акрил, паперовий принт, колаж, 120×160, 2026)",
         "img": "assets/images/projects/canvas/miki-lg-3.jpeg",
-        "price": null
+        "price": 150
       },
       {
         "id": "13",
@@ -954,7 +954,7 @@
         "medium": "(diptych · acrylic, mixed media, spray paint, 2026)",
         "mediumUa": "(диптих · акрил, змішана техніка, аерозольна фарба, 2026)",
         "img": "assets/images/projects/canvas/boy-in-the-field.jpeg",
-        "price": null
+        "price": 150
       }
     ]
   },
