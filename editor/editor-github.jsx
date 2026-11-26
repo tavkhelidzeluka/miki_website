@@ -67,6 +67,15 @@ window.__editor.github = (function () {
     });
   }
 
+  // Reads content/content.json as committed at `commitSha` (straight from
+  // GitHub, not the deploy, which lags ~1 min behind).
+  async function getContentAt(commitSha) {
+    const file = await api('GET', `/contents/content/content.json?ref=${commitSha}`);
+    const bin = atob((file.content || '').replace(/\n/g, ''));
+    const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+
   // Reads `path/in/repo` from the live deploy (faster than a GET via API).
   async function fetchPublicJson(repoPath) {
     const res = await fetch(repoPath + '?_=' + Date.now(), { cache: 'no-cache' });
@@ -96,7 +105,10 @@ window.__editor.github = (function () {
   async function saveAtomic(changes, message, options) {
     options = options || {};
 
-    const headSha = await getHeadCommitSha();
+    // A caller that merged against a specific head passes it in, so the
+    // commit's parent is exactly what the merge saw: if main moved since,
+    // the non-force ref update below fails instead of silently overwriting.
+    const headSha = options.headSha || (await getHeadCommitSha());
     const baseTreeSha = await getCommitTreeSha(headSha);
 
     // Build all blobs in parallel.
@@ -132,5 +144,5 @@ window.__editor.github = (function () {
     return newCommitSha;
   }
 
-  return { fetchPublicJson, saveAtomic, getHeadCommitSha };
+  return { fetchPublicJson, saveAtomic, getHeadCommitSha, getContentAt };
 })();

@@ -55,3 +55,58 @@ window.__editor.i18nDisplay = function (value, lang) {
   const k = (lang || 'EN').toLowerCase();
   return value[k] !== undefined ? value[k] : value.en;
 };
+
+// Three-way merge for content.json.
+//   base   — content as it was when this page loaded
+//   mine   — base + this session's edits
+//   latest — content.json at the current head of the branch
+// Re-applies only what this session changed (leaf by leaf) on top of
+// `latest`, so commits made since the page loaded (another tab, a direct
+// push, the deploy lagging behind GitHub) are kept instead of overwritten.
+// Items appended to a list are appended to latest's list; a list that
+// shrank (items deleted here) is taken from `mine` as a whole.
+window.__editor.mergeContent = function (base, mine, latest) {
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  const ops = [];
+  (function walk(b, m, path) {
+    if (same(b, m)) return;
+    if (isObj(b) && isObj(m)) {
+      for (const k of new Set([...Object.keys(b), ...Object.keys(m)])) {
+        const p = path.concat(k);
+        if (!(k in m)) ops.push({ path: p, del: true });
+        else if (!(k in b)) ops.push({ path: p, value: m[k] });
+        else walk(b[k], m[k], p);
+      }
+      return;
+    }
+    if (Array.isArray(b) && Array.isArray(m) && m.length >= b.length) {
+      for (let i = 0; i < b.length; i++) walk(b[i], m[i], path.concat(i));
+      for (let i = b.length; i < m.length; i++) ops.push({ path, append: m[i] });
+      return;
+    }
+    ops.push({ path, value: m });
+  })(base, mine, []);
+
+  const out = JSON.parse(JSON.stringify(latest));
+  for (const op of ops) {
+    if (op.path.length === 0) return JSON.parse(JSON.stringify(mine));
+    let cur = out;
+    for (let i = 0; i < op.path.length - 1 && cur != null; i++) {
+      const k = op.path[i];
+      if (cur[k] == null && !op.del) cur[k] = typeof op.path[i + 1] === 'number' ? [] : {};
+      cur = cur[k];
+    }
+    if (cur == null || typeof cur !== 'object') continue;
+    const last = op.path[op.path.length - 1];
+    if (op.del) {
+      if (Array.isArray(cur)) cur.splice(last, 1); else delete cur[last];
+    } else if ('append' in op) {
+      if (!Array.isArray(cur[last])) cur[last] = [];
+      cur[last].push(op.append);
+    } else {
+      cur[last] = op.value;
+    }
+  }
+  return out;
+};

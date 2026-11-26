@@ -1103,9 +1103,15 @@ window.__editor = window.__editor || {};
           `edit(inline): ${counts.text} text, ${counts.img} image, ${counts.add} added, ${counts.del} deleted` +
           (counts.move ? `, ${counts.move} reordered` : '');
         const message = summary + '\n\n' + lines.join('\n');
+        // Merge onto the branch head instead of overwriting it with this
+        // page's (possibly stale) copy of content.json.
+        const headSha = await github.getHeadCommitSha();
+        const latest = await github.getContentAt(headSha);
+        nextContent = window.__editor.mergeContent(window.__CONTENT_BASE || window.CONTENT, nextContent, latest);
         await github.saveAtomic(
           { contentJson: nextContent, images },
-          message
+          message,
+          { headSha }
         );
         // Keep the in-memory content in sync so the reconciler doesn't
         // repaint just-saved changes back to their old values during the
@@ -1278,6 +1284,8 @@ window.__editor = window.__editor || {};
 
   // Mount the editor into its own root, kept separate from the main app.
   function mount() {
+    // Snapshot of content.json as loaded; saves merge against it.
+    window.__CONTENT_BASE = JSON.parse(JSON.stringify(window.CONTENT));
     const host = document.createElement('div');
     host.id = 'editor-root';
     document.body.appendChild(host);

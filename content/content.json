@@ -892,18 +892,18 @@
       },
       {
         "id": "03",
-        "title": "в пиджаке",
-        "medium": "(collage A3)",
-        "mediumUa": "(колаж А3)",
-        "img": null,
+        "title": "Collection",
+        "medium": "(paper, fabric, gouache, A2)",
+        "mediumUa": "(папір, тканина, гуаш, А2)",
+        "img": "assets/images/projects/canvas/collection.jpeg",
         "price": null
       },
       {
         "id": "04",
-        "title": "ночной",
-        "medium": "(riso print, edition of 25)",
-        "mediumUa": "(різо-друк, тираж 25)",
-        "img": null,
+        "title": "To the Heart",
+        "medium": "(acrylic, gouache, pastel, A1, 2024 · sold)",
+        "mediumUa": "(акрил, гуаш, пастель, А1, 2024 · продано)",
+        "img": "assets/images/projects/canvas/new-baby.jpeg",
         "price": null
       },
       {
