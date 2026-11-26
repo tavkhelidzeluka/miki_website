@@ -627,6 +627,13 @@
           "thumb": "assets/images/projects/canvas/miki-lg-2.jpeg",
           "price": "150 $",
           "medium": "Acrylic"
+        },
+        {
+          "name": "Boy in the Field",
+          "desc": "Diptych.",
+          "thumb": "assets/images/projects/canvas/boy-in-the-field.jpeg",
+          "price": null,
+          "medium": "Acrylic, mixed media, spray paint"
         }
       ],
       "name": "originals on canvas",
@@ -921,6 +928,14 @@
         "mediumUa": "(акрил)",
         "img": "assets/images/projects/canvas/miki-lg-2.jpeg",
         "price": 150
+      },
+      {
+        "id": "13",
+        "title": "Boy in the Field",
+        "medium": "(diptych · acrylic, mixed media, spray paint)",
+        "mediumUa": "(диптих · акрил, змішана техніка, аерозольна фарба)",
+        "img": "assets/images/projects/canvas/boy-in-the-field.jpeg",
+        "price": null
       }
     ]
   },
