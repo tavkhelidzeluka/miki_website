@@ -889,8 +889,8 @@
       "videoUrl": "https://youtu.be/ocNJM_UBS-k"
     },
     {
-      "id": "CRYPTO",
-      "title": "CRYPTO AD",
+      "id": "GAUS",
+      "title": "GAUS CRYPTO",
       "date": "",
       "desc": "",
       "thumb": "assets/images/animations/crypto-ad.jpeg",
@@ -1116,7 +1116,7 @@
       {
         "src": "assets/images/social/ads-crypto.webp",
         "aspect": "16 / 9",
-        "brand": "CRYPTO AD",
+        "brand": "GAUS CRYPTO",
         "videoUrl": "https://youtu.be/C_wQmIp9oRg"
       }
     ],
