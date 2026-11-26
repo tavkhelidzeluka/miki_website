@@ -959,88 +959,8 @@
     ]
   },
   "social": {
-    "posts": [
-      {
-        "src": "assets/images/social/legnacat/post-1.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-2.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-3.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-4.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-5.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-6.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-7.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-8.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-9.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-10.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-11.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/legnacat/post-12.webp",
-        "brand": "@legnacat"
-      },
-      {
-        "src": "assets/images/social/khedi/post-1.webp",
-        "brand": "KHEDI"
-      },
-      {
-        "src": "assets/images/social/khedi/post-2.webp",
-        "brand": "KHEDI"
-      },
-      {
-        "src": "assets/images/social/khedi/post-3.webp",
-        "brand": "KHEDI"
-      },
-      {
-        "src": "assets/images/social/khedi/post-4.webp",
-        "brand": "KHEDI"
-      }
-    ],
+    "posts": [],
     "carousels": [
-      {
-        "id": "01",
-        "brand": "@legnacat",
-        "title": "Кризис четверти жизни",
-        "titleEn": "Quarter-life crisis",
-        "cover": "assets/images/social/legnacat/crisis-cover.webp",
-        "slides": [
-          "assets/images/social/legnacat/crisis-1.webp",
-          "assets/images/social/legnacat/crisis-2.webp",
-          "assets/images/social/legnacat/crisis-3.webp",
-          "assets/images/social/legnacat/crisis-5.webp",
-          "assets/images/social/legnacat/crisis-6.webp",
-          "assets/images/social/legnacat/crisis-7.webp"
-        ]
-      },
       {
         "id": "02",
         "brand": "@legnacat",
