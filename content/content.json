@@ -615,6 +615,13 @@
           "year": "2026"
         },
         {
+          "name": "Miki.Lg 1/3",
+          "desc": "From the series “Miki.Lg”, 1/3.",
+          "thumb": "assets/images/projects/canvas/miki-lg-1.jpeg",
+          "price": "150 $",
+          "medium": "Mixed media: acrylic, paper print"
+        },
+        {
           "name": "Miki.Lg 2/3",
           "desc": "From the series “Miki.Lg”, 2/3.\n\nA series of works that look nothing alike in style — this one leans more on collage. What ties them together is only the theme, and me. Each piece is a separate period of my life and what I felt at that moment.\n\nI decided to show the second work first, not the first one. Starting from the middle! I think that's fine for this series, because there is no right order here.\n\nThis work is about the time when I had almost stopped thinking about the occupation all the time. Back then it seemed that one day I would be able to study in Lviv or Kharkiv. I watched Ukrainian art bloggers and thought that someday I'd end up in that bubble too.\n\nIt was a time when Ukrainian artists were almost always playing in my headphones — Poshlaya Molly, Nervy and others. Back then it felt like everything was going to be fine.\n\nNow this painting is more about who I was at that moment.",
           "thumb": "assets/images/projects/canvas/miki-lg-2.jpeg",
@@ -897,6 +904,14 @@
         "medium": "(acrylic, 2026)",
         "mediumUa": "(акрил, 2026)",
         "img": "assets/images/projects/canvas/boys-mwxjep2r.png",
+        "price": 150
+      },
+      {
+        "id": "12",
+        "title": "Miki.Lg 1/3",
+        "medium": "(mixed media: acrylic, paper print)",
+        "mediumUa": "(змішана техніка: акрил, паперовий принт)",
+        "img": "assets/images/projects/canvas/miki-lg-1.jpeg",
         "price": 150
       },
       {
