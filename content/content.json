@@ -579,7 +579,7 @@
       "works": [
         {
           "name": "recovery",
-          "desc": "Oil.",
+          "desc": "Coloured paper A3, acrylic + pencils.",
           "thumb": "assets/images/projects/canvas/recovery.jpeg",
           "price": null,
           "medium": "Oil"
@@ -605,6 +605,12 @@
           "thumb": "assets/images/projects/canvas/no-title.jpeg",
           "price": null,
           "medium": "mix media "
+        },
+        {
+          "name": "Boys",
+          "desc": "",
+          "thumb": "assets/images/projects/canvas/boys-mwxjep2r.png",
+          "price": "150 $"
         }
       ],
       "name": "originals on canvas",
