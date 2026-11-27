@@ -681,7 +681,7 @@
           "name": "recovery",
           "desc": "Oil.",
           "thumb": "assets/images/projects/canvas/recovery.jpeg",
-          "price": null,
+          "price": "100 $",
           "medium": "Oil"
         },
         {
