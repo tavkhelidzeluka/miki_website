@@ -839,7 +839,7 @@ function VariantJ() {
                   <dt>PRICE</dt><dd>{jPrice(pk.price) || (pk.cat.id === J_SHOP ? t(UI.priceOnRequest) : "—")}</dd>
                 </dl>
                 {pk.href && <a className="mpj-link mpj-watch" href={pk.href} target="_blank">[ ▶ watch ]</a>}
-                {pk.cat.id === J_SHOP && (
+                {pk.cat.id === J_SHOP && !/^\s*(sold|продано)/i.test(String(pk.price || "")) && (
                   <div className="mpj-buy">
                     <button className="mpj-buy-btn" data-on={inCart(picked)} onClick={() => toggleCart(picked)}>
                       {inCart(picked)
