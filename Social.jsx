@@ -407,7 +407,7 @@ function workRowGroups(s) {
     out.push({
       key: `carousel:${c.id}`,
       kind: "carousel",
-      label: c.title || c.titleEn || c.brand,
+      label: c.titleEn || c.title || c.brand,
       items: srcs.map((src, si) => ({
         src,
         brand: c.brand,
