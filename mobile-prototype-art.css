@@ -182,7 +182,9 @@
 .mpj-detail-desc { margin: 0 0 18px; white-space: pre-line; font-size: 15px; font-style: italic; color: var(--fg-2); }
 .mpj-detail-table { display: grid; grid-template-columns: 96px 1fr; margin: 0; border-top: 1px solid var(--grey-line); }
 .mpj-detail-table dt, .mpj-detail-table dd { margin: 0; padding: 10px 0; border-bottom: 1px solid var(--grey-line); font-size: 13px; }
-.mpj-detail-table dt { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--fg-2); align-self: center; }
+/* Label and value share one row line: the label stretches to the row height
+   and centres its text, so both bottom borders sit at the same height. */
+.mpj-detail-table dt { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--fg-2); align-self: stretch; display: flex; align-items: center; }
 .mpj-watch { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; }
 .mpj-detail-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; font-size: 13px; }
 .mpj-detail-nav button { min-height: 44px; font-size: 13px !important; font-weight: 600 !important; }

@@ -17,7 +17,10 @@ function protoCategories(t) {
     } else if (p.id === "07") {
       items = vis(C.social && C.social.posts).map((s, i) => ({ title: s.brand, sub: `post ${i + 1}`, img: s.src }));
     } else {
-      items = vis(p.works).map((w) => ({ title: w.name, sub: w.desc, img: w.thumb || null, price: w.price }));
+      items = vis(p.works).map((w) => ({
+        title: w.name, sub: w.desc, img: w.thumb || null, price: w.price,
+        client: w.client, role: w.role, medium: w.medium, year: w.year,
+      }));
     }
     const cover = p.coverImage || (items.find((i) => i.img) || {}).img || null;
     return {

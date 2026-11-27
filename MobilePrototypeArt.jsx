@@ -142,7 +142,17 @@ const J_MESSY = "02";                   // ILLUSTRATION also has the messy pile 
 const J_ANIM = "01";                    // ANIMATION: one wide 16:9 still per row, plays inline
 const J_BOOKS = "05";                   // BOOKS: no images yet — black tiles, opens straight to detail
 const J_SHOP = "04";                    // CANVAS: originals for sale — the only works with [ add to cart ]
-const jPrice = (p) => (typeof p === "number" && p > 0 ? `€${p}` : null);
+// Prices are numbers (150) or text ("150 $", "Sold"); shown like the desktop: "150 $".
+const jPriceNum = (p) => {
+  if (typeof p === "number") return p > 0 ? p : null;
+  const m = /^\s*[$€]?\s*(\d+(?:[.,]\d+)?)\s*[$€]?\s*$/.exec(String(p || ""));
+  return m ? parseFloat(m[1].replace(",", ".")) : null;
+};
+const jPrice = (p) => {
+  const n = jPriceNum(p);
+  if (n) return `${n} $`;
+  return typeof p === "string" && p.trim() ? p.trim() : null;
+};
 
 // Content images fade in once loaded; until then their frame shimmers (.jimg
 // in mobile-prototype-art.css). An image already in the cache is marked
@@ -518,7 +528,7 @@ function VariantJ() {
   const inCart = (i) => cart.some((c) => c.id === shopId(i));
   const toggleCart = (i) => {
     const it = all[i], id = shopId(i);
-    setCart((c) => (c.some((x) => x.id === id) ? c.filter((x) => x.id !== id) : [...c, { id, title: it.title, medium: it.sub || "", img: it.img, price: it.price }]));
+    setCart((c) => (c.some((x) => x.id === id) ? c.filter((x) => x.id !== id) : [...c, { id, title: it.title, medium: it.medium || it.sub || "", img: it.img, price: jPriceNum(it.price) }]));
   };
 
   // The work-page track follows `picked` (arrows, opening a work) and
@@ -819,13 +829,13 @@ function VariantJ() {
             <div className={"mpj-drawer" + (drawer ? " mpj-drawer--open" : "")} aria-hidden={!drawer}>
               <div className="mpj-drawer-panel" id="mpj-drawer">
                 <button className="mpj-drawer-grab" onClick={() => setDrawer(false)} aria-label="close details"><i /></button>
-                <div className="mpj-detail-label">[ {pk.cat.id} ] / {pk.cat.label}{pk.cat.year ? ` / ${pk.cat.year}` : ""}</div>
+                <div className="mpj-detail-label">[ {pk.cat.id} ] / {pk.cat.label}{(pk.year || pk.cat.year) ? ` / ${pk.year || pk.cat.year}` : ""}</div>
                 <h2 className="mpj-detail-title">{pk.title}</h2>
                 {pk.sub && <p className="mpj-detail-desc">{pk.sub}</p>}
                 <dl className="mpj-detail-table">
-                  <dt>CLIENT</dt><dd>{pk.group ? pk.title : (pk.cat.client || "")}</dd>
-                  <dt>ROLE</dt><dd>{pk.cat.role || ""}</dd>
-                  <dt>MEDIUM</dt><dd>{pk.cat.medium || ""}</dd>
+                  <dt>CLIENT</dt><dd>{pk.group ? pk.title : (pk.client || pk.cat.client || "")}</dd>
+                  <dt>ROLE</dt><dd>{pk.role || pk.cat.role || ""}</dd>
+                  <dt>MEDIUM</dt><dd>{pk.medium || pk.cat.medium || ""}</dd>
                   <dt>PRICE</dt><dd>{jPrice(pk.price) || (pk.cat.id === J_SHOP ? t(UI.priceOnRequest) : "—")}</dd>
                 </dl>
                 {pk.href && <a className="mpj-link mpj-watch" href={pk.href} target="_blank">[ ▶ watch ]</a>}
