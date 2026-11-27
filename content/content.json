@@ -1337,6 +1337,73 @@
         "sub": "Voice & tone, narrative guidelines, case studies.",
         "subUa": "Голос і тон, наративний гайд, кейс-студії."
       }
+    ],
+    "reels": [
+      {
+        "src": "assets/videos/reels/reel-01.jpg",
+        "video": "assets/videos/reels/reel-01.mp4",
+        "title": "Real Estate: Europe vs Georgia"
+      },
+      {
+        "src": "assets/videos/reels/reel-02.jpg",
+        "video": "assets/videos/reels/reel-02.mp4",
+        "title": "Quiet Capital"
+      },
+      {
+        "src": "assets/videos/reels/reel-03.jpg",
+        "video": "assets/videos/reels/reel-03.mp4",
+        "title": "Sketchbook: Through Notes in Exile"
+      },
+      {
+        "src": "assets/videos/reels/reel-04.jpg",
+        "video": "assets/videos/reels/reel-04.mp4",
+        "title": "Drawing My Childhood Photos"
+      },
+      {
+        "src": "assets/videos/reels/reel-05.jpg",
+        "video": "assets/videos/reels/reel-05.mp4",
+        "title": "5 Red Flags"
+      },
+      {
+        "src": "assets/videos/reels/reel-06.jpg",
+        "video": "assets/videos/reels/reel-06.mp4",
+        "title": "Type in Motion"
+      },
+      {
+        "src": "assets/videos/reels/reel-07.jpg",
+        "video": "assets/videos/reels/reel-07.mp4",
+        "title": "Vibe?"
+      },
+      {
+        "src": "assets/videos/reels/reel-08.jpg",
+        "video": "assets/videos/reels/reel-08.mp4",
+        "title": "Sketchbook Flip"
+      },
+      {
+        "src": "assets/videos/reels/reel-09.jpg",
+        "video": "assets/videos/reels/reel-09.mp4",
+        "title": "Voice Note"
+      },
+      {
+        "src": "assets/videos/reels/reel-10.jpg",
+        "video": "assets/videos/reels/reel-10.mp4",
+        "title": "Second Year Straight Away"
+      },
+      {
+        "src": "assets/videos/reels/reel-11.jpg",
+        "video": "assets/videos/reels/reel-11.mp4",
+        "title": "You Know How"
+      },
+      {
+        "src": "assets/videos/reels/reel-12.jpg",
+        "video": "assets/videos/reels/reel-12.mp4",
+        "title": "Halftone Collage"
+      },
+      {
+        "src": "assets/videos/reels/reel-13.jpg",
+        "video": "assets/videos/reels/reel-13.mp4",
+        "title": "Hands"
+      }
     ]
   }
 }

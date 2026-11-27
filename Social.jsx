@@ -129,7 +129,8 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, onGroupPrev, onGroup
   // Stories autoplay like Instagram: each one advances after STORY_MS, and the
   // last one closes the viewer. The ref keeps the timer on the latest callbacks
   // without restarting it on every parent render.
-  const isStory = aspect === "9 / 16";
+  const isReel = !!(cur && cur.video);
+  const isStory = aspect === "9 / 16" && !isReel;
   const advance = React.useRef(null);
   // At the end of a group, autoplay moves on to the next group (or closes).
   advance.current = () => {
@@ -183,14 +184,23 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, onGroupPrev, onGroup
           onTouchStart={onFrameTouchStart}
           onTouchEnd={onFrameTouchEnd}
           onClick={(e) => {
-            if (ytId) return; // the video player takes its own clicks
+            if (ytId || isReel) return; // the video player takes its own clicks
             // Instagram-style: the left half goes back, the right half forward.
             const r = e.currentTarget.getBoundingClientRect();
             if (e.clientX - r.left < r.width / 2) goPrev();
             else goNext();
           }}
         >
-          {ytId ? (
+          {isReel ? (
+            <video
+              className="sm2-zoom-reel"
+              src={cur.video}
+              poster={cur.src}
+              controls
+              autoPlay
+              playsInline
+            />
+          ) : ytId ? (
             <iframe
               className="sm2-zoom-video"
               src={`https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0`}
@@ -203,7 +213,7 @@ function GalleryZoom({ items, idx, onClose, onPrev, onNext, onGroupPrev, onGroup
             <div className="sm2-zoom-img" style={{ ...smBg(cur.src), aspectRatio: aspect || cur.aspect || "4 / 5" }} />
           )}
           {isStory && <div className="sm2-zoom-head">{cur.brand}</div>}
-          {aspect === "9 / 16" && (
+          {isStory && (
             <div className="sm2-zoom-progress">
               {items.map((_, i) => (
                 <span
@@ -328,7 +338,10 @@ function GalleryStrip({ items, aspect, kindLabel, lang, sectionIdx, sectionLabel
                 {...(item.hidden ? { 'data-item-hidden': 'true' } : {})}
               >
                 <div className="sm2-gal-img" style={smBg(item.src, editPath)} />
-                {item.videoUrl && <span className="sm2-gal-play" aria-hidden="true">[ ▶ ]</span>}
+                {item.video && active && (
+                  <video className="sm2-gal-video" src={item.video} poster={item.src} muted autoPlay loop playsInline preload="metadata" />
+                )}
+                {(item.videoUrl || (item.video && !active)) && <span className="sm2-gal-play" aria-hidden="true">[ ▶ ]</span>}
                 {listPath && (
                   <span
                     className="editor-delete-action editor-delete-action--corner"
@@ -377,6 +390,9 @@ const workKindLabel = (cur, lang) =>
     : cur.role === "slide"
       ? (lang === "UA" ? "слайд карусели #" + cur.set + " / " + cur.n : "carousel slide #" + cur.set + " / " + cur.n)
       : (lang === "UA" ? "стрічковий пост" : "feed post");
+
+const reelKindLabel = (cur, lang) =>
+  lang === "UA" ? "рілс · 9:16" : "reel · 9:16";
 
 const storyKindLabel = (cur, lang) =>
   lang === "UA" ? "сторіс · 9:16" : "story · 9:16";
@@ -475,6 +491,34 @@ function WorkSection({ lang }) {
 }
 
 // Desktop Social page stories block: the Instagram-style tray.
+// Reels: vertical videos. The centre tile plays muted on a loop; opening it
+// plays the reel with sound in the viewer.
+function ReelsSection({ lang }) {
+  const REELS = window.visibleEntries((window.CONTENT.social && window.CONTENT.social.reels) || []).map(({ item, srcIdx }) => ({
+    ...item,
+    brand: item.title || item.brand || `reel ${srcIdx + 1}`,
+    _editPath: `social.reels.${srcIdx}.src`,
+    _listPath: 'social.reels',
+    _listIdx: srcIdx,
+    _label: item.title || `reel ${srcIdx + 1}`,
+    _hideable: true,
+  }));
+  if (!REELS.length) return null;
+  return (
+    <GalleryStrip
+      items={REELS}
+      aspect="9 / 16"
+      kindLabel={reelKindLabel}
+      lang={lang}
+      sectionIdx={4}
+      sectionLabel={lang === "UA" ? "РІЛС" : "REELS"}
+      variant="reels"
+      pathBase="social.reels"
+      assetFolder="assets/videos/reels"
+    />
+  );
+}
+
 function StoriesSection({ lang }) {
   return <StoryTrayStrip lang={lang} />;
 }
@@ -732,6 +776,7 @@ function SocialMediaStrip({ tweaks }) {
       <div className="sm-scroll">
         <SocialHero lang={lang} />
         <StoriesSection lang={lang} />
+        <ReelsSection lang={lang} />
         <WorkSection lang={lang} />
         <Statement lang={lang} />
         <AdsSection lang={lang} />

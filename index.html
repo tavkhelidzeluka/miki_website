@@ -3771,6 +3771,38 @@ button.prod-img:disabled { cursor: default; }
   box-shadow: none;
 }
 
+/* Reels (same ramp as stories) — taller, centre tile dominates */
+.sm2-section--reels { padding-bottom: 96px; }
+.sm2-gal--reels .sm2-gal-strip { height: 540px; gap: 22px; padding: 24px 0; }
+.sm2-gal--reels .sm2-gal-tile { height: 100%; width: auto; }
+.sm2-gal--reels .sm2-gal-tile--o0   { height: 100%; opacity: 1; }
+.sm2-gal--reels .sm2-gal-tile--o1,
+.sm2-gal--reels .sm2-gal-tile--on1  { height: 78%; opacity: 0.95; }
+.sm2-gal--reels .sm2-gal-tile--o2,
+.sm2-gal--reels .sm2-gal-tile--on2  { height: 58%; opacity: 0.7; filter: grayscale(0.15); }
+.sm2-gal--reels .sm2-gal-tile--o3,
+.sm2-gal--reels .sm2-gal-tile--on3  { height: 42%; opacity: 0.45; filter: grayscale(0.35); }
+.sm2-gal--reels .sm2-gal-tile--o4,
+.sm2-gal--reels .sm2-gal-tile--on4  { height: 32%; opacity: 0.25; filter: grayscale(0.5); }
+
+/* Ramp — REELS (9/16, narrower tiles by nature) */
+.sm2-gal--reels .sm2-gal-tile--o0   { width: auto; }
+.sm2-gal--reels .sm2-gal-tile--o1,
+.sm2-gal--reels .sm2-gal-tile--on1  { width: auto; }
+.sm2-gal--reels .sm2-gal-tile--o2,
+.sm2-gal--reels .sm2-gal-tile--on2  { width: auto; }
+.sm2-gal--reels .sm2-gal-tile--o3,
+.sm2-gal--reels .sm2-gal-tile--on3  { width: auto; }
+.sm2-gal--reels .sm2-gal-tile--o4,
+.sm2-gal--reels .sm2-gal-tile--on4  { width: auto; }
+.sm2-gal--reels .sm2-gal-img {
+  border-radius: 18px;
+  box-shadow: none;
+}
+
+.sm2-gal-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; pointer-events: none; background: #000; }
+.sm2-zoom-reel { display: block; height: min(86vh, 900px); aspect-ratio: 9 / 16; width: auto; max-width: 92vw; background: #000; border: 0; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+
 /* Ramp — ADS (mixed aspect, width-based) */
 .sm2-gal--ads .sm2-gal-strip { padding: 24px 0; height: auto; align-items: center; overflow: hidden; }
 /* Ads mix square, landscape and portrait creatives, so size each tile by height
