@@ -454,3 +454,10 @@
 /* The account (avatar + name) in a post's header; a button when it opens a group. */
 .ig-user { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
 button.ig-user { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+/* Reels and video ads in the mobile feed */
+.ig-media--reel { aspect-ratio: 9 / 16; max-height: 82vh; margin: 0 auto; background: #000; cursor: pointer; }
+.ig-media--reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ig-reel-sound { position: absolute; right: 10px; bottom: 10px; padding: 4px 8px; background: rgba(0,0,0,.72); color: #fff; font: 600 11px/1 var(--font-mono, monospace); letter-spacing: .04em; pointer-events: none; }
+.ig-media--yt { aspect-ratio: 16 / 9; background: #000; }
+.ig-media--yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }

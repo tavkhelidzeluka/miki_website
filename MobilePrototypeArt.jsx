@@ -166,12 +166,17 @@ function socialGroups(lang) {
   const S = window.CONTENT.social || {};
   const vis = (a) => (a || []).filter((x) => !x.hidden);
   const ua = lang === "UA";
-  const kinds = { posts: ua ? "пости" : "posts", carousel: ua ? "карусель" : "carousel", stories: ua ? "сторіс" : "stories", ads: ua ? "реклама" : "ads" };
+  const kinds = { posts: ua ? "пости" : "posts", carousel: ua ? "карусель" : "carousel", stories: ua ? "сторіс" : "stories", ads: ua ? "реклама" : "ads", reels: ua ? "рілс" : "reels" };
   const out = [];
   const byBrand = (list, kind) => {
     const m = new Map();
-    vis(list).forEach((p) => { const b = p.brand || "—"; if (!m.has(b)) m.set(b, []); m.get(b).push(p.src); });
-    m.forEach((srcs, brand) => out.push({ key: `${kind}:${brand}`, kind: kinds[kind], label: brand, imgs: srcs }));
+    const vids = new Map();
+    vis(list).forEach((p) => {
+      const b = p.brand || "—";
+      if (!m.has(b)) { m.set(b, []); vids.set(b, []); }
+      m.get(b).push(p.src); vids.get(b).push(p.videoUrl || null);
+    });
+    m.forEach((srcs, brand) => out.push({ key: `${kind}:${brand}`, kind: kinds[kind], label: brand, imgs: srcs, ytUrls: vids.get(brand) }));
   };
   byBrand(S.posts, "posts");
   vis(S.carousels).forEach((c) => out.push({
@@ -179,6 +184,11 @@ function socialGroups(lang) {
     imgs: [c.cover, ...(c.slides || [])].filter(Boolean),
   }));
   byBrand(S.stories, "stories");
+  const reels = vis(S.reels);
+  if (reels.length) out.push({
+    key: "reels:REELS", kind: kinds.reels, label: "REELS",
+    imgs: reels.map((r) => r.src), videos: reels.map((r) => r.video), titles: reels.map((r) => r.title || ""),
+  });
   byBrand(S.ads, "ads");
   return out;
 }
@@ -964,8 +974,12 @@ function feedPosts(group) {
     sponsored: group.key.startsWith("ads:"),
   };
   if (isCarousel) return [{ ...base, id: "carousel-" + group.key.slice("carousel:".length), imgs: group.imgs, caption: group.label }];
-  return group.imgs.map((src) => ({
-    ...base, imgs: [src], caption: null,
+  if (group.videos) return group.imgs.map((src, k) => ({
+    ...base, handle: "gtxhi", imgs: [src], video: group.videos[k], caption: group.titles[k] || null,
+    id: "reel-" + String(k + 1).padStart(2, "0"),
+  }));
+  return group.imgs.map((src, k) => ({
+    ...base, imgs: [src], caption: null, ytUrl: (group.ytUrls && group.ytUrls[k]) || null,
     id: src.replace(/^assets\/images\/social\//, "").replace(/\.[a-z0-9]+$/i, ""),
   }));
 }
@@ -1000,6 +1014,37 @@ function readSaved() {
 function writeSaved(list) {
   try { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); }
   catch (_) { /* storage can be blocked; saves then last for this visit */ }
+}
+
+// A reel in the feed: plays muted while it is on screen, pauses when it
+// scrolls away; a tap turns the sound on or off.
+function ReelMedia({ post, lang }) {
+  const ref = React.useRef(null);
+  const [muted, setMuted] = React.useState(true);
+  React.useEffect(() => {
+    const v = ref.current;
+    if (!v || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && e.intersectionRatio > 0.6) { v.play().catch(() => {}); }
+      else { v.pause(); }
+    }, { threshold: [0, 0.6, 1] });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  const toggle = () => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setMuted(v.muted);
+    if (v.paused) v.play().catch(() => {});
+  };
+  const ua = lang === "UA";
+  return (
+    <div className="ig-media ig-media--reel" onClick={toggle}>
+      <video ref={ref} src={post.video} poster={post.imgs[0]} muted loop playsInline preload="metadata" />
+      <span className="ig-reel-sound">{muted ? (ua ? "[ звук вимк ]" : "[ sound off ]") : (ua ? "[ звук увімк ]" : "[ sound on ]")}</span>
+    </div>
+  );
 }
 
 function IgPost({ post, lang, saved, onToggleSave, onSeeAll }) {
@@ -1093,6 +1138,13 @@ function IgPost({ post, lang, saved, onToggleSave, onSeeAll }) {
           </div>
         </div>
       )}
+      {post.video ? (
+        <ReelMedia post={post} lang={lang} />
+      ) : post.ytUrl && ytEmbed(post.ytUrl) ? (
+        <div className="ig-media ig-media--yt">
+          <iframe src={ytEmbed(post.ytUrl)} title={handle} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen loading="lazy" />
+        </div>
+      ) : (
       <div className="ig-media" style={{ aspectRatio: String(ratio) }} onClick={onMediaClick}>
         <div className="ig-slides" onScroll={onScroll}>
           {imgs.map((src, k) => (
@@ -1116,6 +1168,7 @@ function IgPost({ post, lang, saved, onToggleSave, onSeeAll }) {
         )}
         {toast && <span className="ig-toast" role="status">{toast}</span>}
       </div>
+      )}
       <div className="ig-actions">
         <button className={"ig-btn" + (liked ? " is-liked" : "")} onClick={() => setLiked((l) => !l)} aria-pressed={liked} aria-label={ua ? "подобається" : "like"}>
           <IgIcon name="heart" filled={liked} />
