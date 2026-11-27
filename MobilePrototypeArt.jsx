@@ -974,6 +974,11 @@ function feedPosts(group) {
     sponsored: group.key.startsWith("ads:"),
   };
   if (isCarousel) return [{ ...base, id: "carousel-" + group.key.slice("carousel:".length), imgs: group.imgs, caption: group.label }];
+  // A brand's feed posts are one post you swipe through, like a carousel.
+  if (group.key.startsWith("posts:")) return [{
+    ...base, imgs: group.imgs, caption: null,
+    id: "posts-" + group.label.replace(/^@/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+  }];
   if (group.videos) return group.imgs.map((src, k) => ({
     ...base, handle: "gtxhi", imgs: [src], video: group.videos[k], caption: group.titles[k] || null,
     id: "reel-" + String(k + 1).padStart(2, "0"),
